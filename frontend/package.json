@@ -10,6 +10,7 @@
     "@aws-amplify/ui-vue": "^0.2.27",
     "bulma": "^0.9.1",
     "core-js": "^3.6.5",
+    "underscore": "^1.13.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",
     "vue-router": "^3.2.0",

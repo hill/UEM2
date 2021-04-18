@@ -11,25 +11,6 @@ const API = {
   init: () => {
     Vue.use(VueAxios, axios);
     Vue.axios.defaults.baseURL = API_URL;
-
-    // Vue.axios.interceptors.request.use(
-    //   (config) => {
-    //     return new Promise((resolve, reject) => {
-    //       // try {
-    //         CognitoAuth.getIdToken((err, jwtToken) => {
-    //           if (err) {
-    //             console.log("Cognito auth error");
-    //             reject(err);
-    //           }
-    //           config.headers = { Authorization: jwtToken.id_token };
-    //           return resolve(config);
-    //         });
-    //     });
-    //   },
-    //   (err) => {
-    //     console.error(err);
-    //   }
-    // );
   },
   setHeader: () => {
     Vue.axios.defaults.headers.common[
@@ -64,5 +45,8 @@ export const ResourceService = {
   list: () => API.get("/resource/"),
   get: (id) => API.get(`/resource/${id}`),
   create: (name, url) => API.post(`/resource/create`, {name, url}),
-  find: (searchTerm) => API.get(`/resource?search=${searchTerm}`)
+  find: (searchTerm) => API.get(`/resource/?search=${searchTerm}`),
+  upvote: (resourceId) => API.post(`/resource/${resourceId}/upvote`),
+  downvote: (resourceId) => API.post(`/resource/${resourceId}/downvote`),
+  broken: (resourceId) => API.post(`/resource/${resourceId}/broken`)
 }

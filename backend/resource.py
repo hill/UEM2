@@ -32,10 +32,39 @@ def get_resource(id):
     return {'errors': ['Resource not found']}, 404
   return ResourceSchema().dump(resource)
 
+def vote_resource(id, vote):
+  resource = Resource.get(Resource.id == id)
+  resource.votes = resource.votes + vote
+  resource.save()
+  return resource
+
+@resource.route('/<id>/upvote', methods=['POST'])
+def upvote_resource(id):
+  resource = vote_resource(id, 1)
+  return ResourceSchema().dump(resource)
+
+@resource.route('/<id>/downvote', methods=['POST'])
+def downvote_resource(id):
+  resource = vote_resource(id, -1)
+  return ResourceSchema().dump(resource)
+
+@resource.route('/<id>/broken', methods=['POST'])
+def mark_broken_resource(id):
+  resource = Resource.get(Resource.id == id)
+  resource.isBroken += 1
+  resource.save()
+  return jsonify({'success': True})
+
 @resource.route('/', methods=['GET'])
 @jwt_required()
 def get_all_resources():
-  resources = Resource.select().limit(100)
+  searchQuery = request.args.get('search')
+  if searchQuery:
+    resources = Resource.select().where(
+      Resource.name.contains(searchQuery)
+    ).limit(100)
+  else:
+    resources = Resource.select().limit(100)
   return {'resources': ResourceSchema().dump(resources, many=True)}
 
 @resource.route('/<id>', methods=['PUT'])

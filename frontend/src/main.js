@@ -5,6 +5,8 @@ import store from './store'
 import API from './services/api.service'
 
 Vue.config.productionTip = false
+Vue.config.ignoredElements = [/^ion-/]
+
 API.init();
 
 new Vue({

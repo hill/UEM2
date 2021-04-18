@@ -29,6 +29,7 @@ class Resource(BaseModel):
   name = CharField()
   url = CharField()
   votes = IntegerField(default=0)
+  isBroken = IntegerField(default=0)
 
 class ResourceTopic(BaseModel):
   topic = ForeignKeyField(Topic)

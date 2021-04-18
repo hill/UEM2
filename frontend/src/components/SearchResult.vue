@@ -1,21 +1,45 @@
 <template lang='pug'>
 .result.is-flex
   .votes
-    <ion-icon name="chevron-up-outline"></ion-icon>
-    p {{votes}}
-    <ion-icon name="chevron-down-outline"></ion-icon>
+    a(@click='upvote()')
+      <ion-icon name="chevron-up-outline"></ion-icon>
+    p {{currVotes}}
+    a(@click='downvote()')
+      <ion-icon name="chevron-down-outline"></ion-icon>
   .content
     a(:href="url" target="_blank")
       h3.is-size-4 {{name}}
     .tags
       span.tag.is-link.is-light(v-for='topic in topics') {{topic.name}}
-      span.tag
+      span.tag(@click='markBroken()')
         <ion-icon name="cloud-offline-outline"></ion-icon>
 </template>
 
 <script>
+import { ResourceService } from '../services/api.service'
+
 export default {
-  props: ['name', 'url', 'topics', 'votes']
+  props: ['name', 'url', 'topics', 'votes', 'id'],
+  data() {
+    return {
+      currVotes: this.votes
+    }
+  },
+  methods: {
+    upvote() {
+      ResourceService.upvote(this.id).then(() => {
+        this.currVotes += 1
+      })
+    },
+    downvote() {
+      ResourceService.downvote(this.id).then(() => {
+        this.currVotes -= 1
+      })
+    },
+    markBroken() {
+      ResourceService.broken(this.id)
+    }
+  }
 }
 </script>
 
@@ -38,5 +62,6 @@ export default {
 
   .votes {
     padding: 0 10px;
+    text-align: center;
   }
 </style>
