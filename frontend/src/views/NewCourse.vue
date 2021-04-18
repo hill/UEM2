@@ -13,19 +13,19 @@ div
             p.help What do you want to learn? Discrete Maths Fundementals? Basket weaving 101?
             .control
               input.input(v-model='name' placeholder='Course Name')
-            p.help.is-danger {{errors.name.join(',')}}
+            p.help.is-danger(v-if='errors.name') {{errors.name.join(',')}}
           .field
             label.label Due
             p.help When do you want to complete the course by?
             .control
               input.input(v-model='due' placeholder='Due At')
-            p.help.is-danger {{errors.due.join(',')}}
+            p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
           .field
             label.label Course Syllabus
             p.help Be specific here. What are you going to learn. Use actual university syllabii or online courses to assist you in the topics. You will need to do some research.
             .control
               textarea.textarea(v-model='description' placeholder='Course Description')
-            p.help.is-danger {{errors.description.join(',')}}
+            p.help.is-danger(v-if='errors.description') {{errors.description.join(',')}}
           .field
             label.label Course Assessment
             p.help How will I know that you've succeeded? What are the assessables and when are they due?
