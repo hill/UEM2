@@ -85,7 +85,7 @@ export default {
   @import '@/assets/theme.scss';
   .header {
     background: $red;
-    height: 170px;
+    height: 150px;
     h1 {
       text-align: center;
       font-size: 4em;

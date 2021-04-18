@@ -24,6 +24,7 @@ div
           .columns.is-multiline.course-columns
             .column.is-3(v-for='course in courses' :key='course.id')
               CourseCard(:title='course.name' :id='course.id' :status='course.status')
+          .watermark
 </template>
 
 <script>
@@ -61,6 +62,7 @@ $ripped-height: 20px;
 $paper-color: #f3f3f3;
 
 .transcript {
+    position: relative;
     margin-top: 5em;
     background: $paper-color;
     box-shadow:
@@ -74,6 +76,7 @@ $paper-color: #f3f3f3;
     0 20px 0 -10px #eee,
     /* The third layer shadow */
     0 20px 1px -9px rgba(0,0,0,0.15);
+    min-height: 75vh;
 }
 
 .transcript-container {
@@ -82,6 +85,18 @@ $paper-color: #f3f3f3;
   background-image: url("/bg_pattern.png");
   background-repeat: no-repeat;
   background-position: -300px 300px;
+}
+
+.watermark {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: url('/logo_watermark.png');
+  background-repeat: no-repeat;
+  background-size: 340px;
+  opacity: 0.5;
 }
 
 .course-columns {
