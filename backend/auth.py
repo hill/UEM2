@@ -32,6 +32,11 @@ def login():
   access_token = create_access_token(identity=user.id)
   return jsonify(access_token=access_token, user=UserSchema().dump(user))
 
+@auth.route('/verify', methods=['POST'])
+@jwt_required()
+def verify_token():
+    return jsonify({'success': True}), 200
+
 @auth.route("/register", methods=["POST"])
 def register():
   json_input = request.json
@@ -50,7 +55,8 @@ def register():
     return {"errors": "You have already registered"}, 400
 
   data = UserSchema().dump(user)
-  return {'user': data, 'message': message}, 201
+  access_token = create_access_token(identity=user.id)
+  return {'user': data, 'message': message, 'access_token': access_token}, 201
 
 @auth.route("/protected", methods=["GET"])
 @jwt_required()

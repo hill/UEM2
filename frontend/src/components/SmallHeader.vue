@@ -13,8 +13,6 @@
 
 <script>
 
-import { Auth } from 'aws-amplify'
-
 export default {
   name: 'Header',
   props: {
@@ -22,11 +20,11 @@ export default {
   },
   methods: {
     async signOut() {
-      try {
-        await Auth.signOut();
-      } catch (error) {
-        console.log('error signing out: ', error);
-      }
+      // try {
+      //   await Auth.signOut();
+      // } catch (error) {
+      //   console.log('error signing out: ', error);
+      // }
     }
   }
 }

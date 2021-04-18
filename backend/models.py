@@ -17,6 +17,7 @@ class Course(BaseModel):
   description = TextField(null=True)
   owner = ForeignKeyField(User, backref='courses')
   due = DateField()
+  status = CharField()
 
   def is_owned_by(self, user_uuid):
     return self.owner.id == str(user_uuid)

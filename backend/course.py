@@ -23,7 +23,7 @@ def create_course():
     return {'errors': err.messages}, 422
   
   # create the course
-  c = Course.create(**data, owner_id=user_id)
+  c = Course.create(**data, owner_id=user_id, status='in progress')
   return CourseSchema().dump(c)
 
 @course.route('/<id>', methods=['GET'])

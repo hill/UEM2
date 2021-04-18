@@ -1,12 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { Auth } from "aws-amplify";
+import API from '../services/api.service';
 
 import Home from "../views/Home.vue";
 import Transcript from "../views/Transcript.vue";
 import Login from "../views/Login.vue";
 import NewCourse from "../views/NewCourse.vue";
 import Course from "../views/Course.vue";
+import jwtService from "../services/jwt.service";
 
 Vue.use(VueRouter);
 
@@ -52,22 +53,32 @@ const router = new VueRouter({
 });
 
 router.beforeResolve((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    Auth.currentAuthenticatedUser()
-      .then((res) => {
-        // if the user is not set
-        // if (!store.state.user) {
-        //   // request the user and set it
-        //   console.log(res);
-        // }
-        next();
-      })
-      .catch(() => {
-        next({ path: "/login" });
-      });
-  }
+  const token = jwtService.getToken();
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  next();
+  if (!requiresAuth) next();
+  if (!token) {console.log('no token!'); next('/login') } else {API.setHeader();}
+  // redirect if going to login, already logged in
+  if (to.path === '/login') {
+		if (token) {
+			API.post('/auth/verify').then(() => {
+				next('/transcript');
+			}).catch(() => {
+				next();
+			});
+		} else {
+			next();
+		}
+	}
+  if (requiresAuth && token) {
+    // verify the token is valid
+    API.post('/auth/verify').then(() => {
+      next();
+    }).catch(() => {
+      console.log("TOKEN INVALID!")
+      next('/login');
+    });
+  }
 });
 
 export default router;

@@ -2,15 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
-// Amplify stuff
-import Amplify from 'aws-amplify';
-import '@aws-amplify/ui-vue';
-import aws_exports from './aws-exports';
-
-Amplify.configure(aws_exports);
+import API from './services/api.service'
 
 Vue.config.productionTip = false
+API.init();
 
 new Vue({
   router,

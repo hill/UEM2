@@ -12,6 +12,7 @@
           label.label Password
           .control
             input.input(v-model='password' type='password')
+        p(v-if='error.login') {{error.login}}
         .field.is-grouped
           .control
             button.button.is-primary(@click='login' :class='{"is-loading": loading}') Login
@@ -32,6 +33,7 @@
           label.label Password
           .control
             input.input(v-model='password' type='password')
+        p(v-if='error.signup') {{error.signup}}
         .field.is-grouped
           .control
             button.button.is-primary(@click='signup' :class='{"is-loading": loading}') Sign Up
@@ -58,9 +60,7 @@
 
 <script>
 
-import {Auth, API} from 'aws-amplify'
-import {} from '@/graphql/mutations'
-import { createStudent } from '../graphql/mutations'
+import API from '../services/api.service'
 
 export default {
   name: 'Login',
@@ -71,50 +71,39 @@ export default {
       name: '',
       password: '',
       code: '',
-      loading: false
+      loading: false,
+      error: {
+        login: '',
+        signup: ''
+      }
     }
   },
   async created() {
     // if you are already logged in, go straight to the transcript
-    try {
-      await Auth.currentAuthenticatedUser()
-      this.$router.push('/transcript')
-    } catch (e) {
-      if (e != 'not authenticated') {
-        console.log(e)
-      }
-    }
+    // TODO
     
   },
   methods: {
     async signup() {
       this.loading = true
-      try {
-          const { user } = await Auth.signUp({
-              username: this.email,
-              password: this.password,
-          });
-
-          // Create a new user in the db
-          await API.graphql({
-            query: createStudent,
-            variables: {input: {email: this.email, name: this.name}}
-          })
-
-          console.log(user);
-          this.$router.push('/transcript')
-      } catch (error) {
-          console.log('error signing up:', error);
-      }
+      this.$store.dispatch('signup', {email: this.email, password: this.password, name: this.name}).then(() => {
+        console.log(this.$store.state.user)
+        this.$router.push('/transcript')
+      }).catch(err => {
+        console.log(err)
+        this.error.signup = err;
+      })
       this.loading = false
     },
     async login() {
       this.loading = true
-      try {
-        const user = await Auth.signIn(this.email, this.password);
-      } catch (error) {
-        console.log('error signing in', error);
-      }
+
+      this.$store.dispatch('login', {email: this.email, password: this.password}).then(() => {
+        this.$router.push('/transcript')
+      }).catch(err => {
+        this.error.login = 'Email or password is incorrect';
+      })
+
       this.loading = false
     },
     async confirm() {
@@ -126,12 +115,12 @@ export default {
       }
     },
     async resendConfirm() {
-      try {
-        await Auth.resendSignUp(this.email);
-        console.log('code resent successfully');
-      } catch (err) {
-        console.log('error resending code: ', err);
-      }
+      // try {
+      //   await Auth.resendSignUp(this.email);
+      //   console.log('code resent successfully');
+      // } catch (err) {
+      //   console.log('error resending code: ', err);
+      // }
     },
     async forgot() {
 

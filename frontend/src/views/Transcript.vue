@@ -7,20 +7,20 @@ div
         .transcript.column.is-10
           h1.subtitle.is-4 Official Academic Transcript – Tom Hill
           h3.title.is-4 Current Semester
-          .columns.is-multiline.course-columns
-            .column.is-3
-              CourseCard(title='Natural Language Processing', status='completing', price='$1200')
-            .column.is-3
-              CourseCard(title='Linear Algebra', status='completing', price='$200')
-            .column.is-3
-              CourseCard(title='+ add new course', :newCourse='true')
-          h3.title.is-4 Semester 2
-          .columns.is-multiline.course-columns
-            .column.is-3
-              CourseCard(title='Natural Language Processing', status='passed', price='$1200')
-            .column.is-3
-              CourseCard(title='Discrete Mathematics', status='failed', price='$1200')
-          h3.title.is-4 Semester 1
+          //- .columns.is-multiline.course-columns
+          //-   .column.is-3
+          //-     CourseCard(title='Natural Language Processing', status='completing', price='$1200')
+          //-   .column.is-3
+          //-     CourseCard(title='Linear Algebra', status='completing', price='$200')
+          //-   .column.is-3
+          //-     CourseCard(title='+ add new course', :newCourse='true')
+          //- h3.title.is-4 Semester 2
+          //- .columns.is-multiline.course-columns
+          //-   .column.is-3
+          //-     CourseCard(title='Natural Language Processing', status='passed', price='$1200')
+          //-   .column.is-3
+          //-     CourseCard(title='Discrete Mathematics', status='failed', price='$1200')
+          //- h3.title.is-4 Semester 1
           .columns.is-multiline.course-columns
             .column.is-3(v-for='course in courses' :key='course.id')
               CourseCard(:title='course.name' :id='course.id' :status='course.status')
@@ -28,12 +28,10 @@ div
 
 <script>
 
+import {CourseService} from '../services/api.service'
+
 import SmallHeader from '../components/SmallHeader'
 import CourseCard from '../components/CourseCard'
-
-import { API } from 'aws-amplify'
-import { listCourses } from '../graphql/queries'
-import { onCreateCourse } from '../graphql/subscriptions';
 
 export default {
   name: 'Transcript',
@@ -48,30 +46,12 @@ export default {
     }
   },
   async created() {
-    this.getCourses()
-    this.subscribe()
-
-    // get the user associated with the cognito identity
-    
+    CourseService.list().then(({data}) => {
+      this.courses = data.courses
+    }).catch(err => {
+      console.log(err)
+    })
   },
-  methods: {
-    async getCourses() {
-      const courses = await API.graphql({
-        query: listCourses
-      })
-
-      this.courses = courses.data.listCourses.items;
-    },
-    subscribe() {
-      API.graphql({query: onCreateCourse}).subscribe({
-        next: (eventData) => {
-          let course = eventData.value.data.onCreateCourse
-          if (this.courses.some(item => item.name === course.name)) return; // remove duplications
-          this.courses = [...this.courses, course]; // add the course to the course list
-        }
-      })
-    }
-  }
 }
 </script>
 

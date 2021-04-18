@@ -23,6 +23,7 @@ class CourseSchema(Schema):
   name = fields.Str(required=True)
   description = fields.Str()
   due = fields.Date(required=True)
+  status = fields.Str(dump_only=True)
   owner = fields.Nested(
     UserSchema(exclude=['password']),
     dump_only=True,

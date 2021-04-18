@@ -13,11 +13,19 @@ div
             p.help What do you want to learn? Discrete Maths Fundementals? Basket weaving 101?
             .control
               input.input(v-model='name' placeholder='Course Name')
+            p.help.is-danger {{errors.name.join(',')}}
+          .field
+            label.label Due
+            p.help When do you want to complete the course by?
+            .control
+              input.input(v-model='due' placeholder='Due At')
+            p.help.is-danger {{errors.due.join(',')}}
           .field
             label.label Course Syllabus
             p.help Be specific here. What are you going to learn. Use actual university syllabii or online courses to assist you in the topics. You will need to do some research.
             .control
               textarea.textarea(v-model='description' placeholder='Course Description')
+            p.help.is-danger {{errors.description.join(',')}}
           .field
             label.label Course Assessment
             p.help How will I know that you've succeeded? What are the assessables and when are they due?
@@ -46,10 +54,8 @@ div
 </template>
 
 <script>
-import { API } from 'aws-amplify'
-import { createCourse } from '../graphql/mutations'
-
 import SmallHeader from '@/components/SmallHeader'
+import { CourseService } from '../services/api.service'
 
 
 export default {
@@ -58,26 +64,28 @@ export default {
     return {
         name: "",
         description: "",
+        due: "",
         price: 0,
         status: "completing",
+        errors: {}
     }
   },
   methods: {
     async createCourse() {
         console.log("create course")
-        const {name, description, status, price} = this;
-        // if (!name || !description) return
-        const course = {name, description, status, price}
-        await API.graphql({
-          query: createCourse,
-          variables: {input: course}
+        const {name, description, due, status, price} = this;
+        CourseService.create(name, description, due).then(res => {
+          console.log(res)
+          this.$router.push('/transcript')
+        }).catch(err => {
+          if (err.response) {
+            this.errors = err.response.data.errors;
+          }
         })
 
         this.name = ''
         this.description = ''
         this.status = 'completing'
-
-        this.$router.push('/transcript')
       },
   }
 }

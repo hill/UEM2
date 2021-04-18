@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import JwtService from '../services/jwt.service'
+import API from '../services/api.service'
 
 Vue.use(Vuex);
 
@@ -9,29 +10,45 @@ export default new Vuex.Store({
     user: null,
   },
   mutations: {
-    setUser: (state, user) => {
+    authUser: (state, {user, access_token}) => {
       state.user = user;
+      JwtService.saveToken(access_token);
+      API.setHeader();
     },
     purgeAuth: (state) => {
       state.user = null;
       JwtService.destroyToken();
     },
+    setUser: (state, user) => {
+      state.user = user
+    }
   },
   actions: {
-    // login: async ({ dispatch, state }, { email, password }) => {
-    //   try {
-    //     await Auth.signIn(email, password);
-    //   } catch (err) {
-    //     console.error(`[Login Error] ${err}`);
-    //   }
-    // },
-    // signup: async ({ dispatch, state }, { email, password }) => {
-    //   try {
-    //     await Auth.signIn(email, password);
-    //   } catch (err) {
-    //     console.error(`[Login Error] ${err}`);
-    //   }
-    // },
+    signup: ({commit}, authCreds) => {
+      return new Promise((resolve, reject) => {
+        API.post("/auth/register", { email: authCreds.email, password: authCreds.password, name: authCreds.name })
+          .then(({ data }) => {
+            commit('authUser', data);
+            resolve(data);
+          })
+          .catch((err) => {
+            reject(err)
+          });
+      });
+    },
+    login: ({commit}, authCreds) => {
+      return new Promise((resolve, reject) => {
+        API.post("/auth/login", { email: authCreds.email, password: authCreds.password })
+          .then(({ data }) => {
+            commit('authUser', data);
+            resolve(data);
+          })
+          .catch((err) => {
+            console.log('reject with ', err)
+            reject(err);
+          });
+      });
+    },
     updateUser: ({ commit }, user) => {
       commit("setUser", user);
     },

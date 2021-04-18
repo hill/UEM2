@@ -13,10 +13,7 @@ div
 <script>
 
 import SmallHeader from '@/components/SmallHeader'
-
-import { API } from 'aws-amplify'
-
-import {getCourse} from '../graphql/queries'
+import { CourseService } from '../services/api.service'
 
 export default {
   components: {SmallHeader},
@@ -26,8 +23,11 @@ export default {
     }
   },
   async created() {
-    const courseRes = await API.graphql({query: getCourse, variables: {id: this.$route.params.id}})
-    this.course = courseRes.data.getCourse
+    // const courseRes = await API.graphql({query: getCourse, variables: {id: this.$route.params.id}})
+    // this.course = courseRes.data.getCourse
+    CourseService.get(this.$route.params.id).then(({data}) => {
+      this.course = data
+    })
   }
 }
 </script>
