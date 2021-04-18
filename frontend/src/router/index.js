@@ -70,6 +70,22 @@ router.beforeResolve((to, from, next) => {
 			next();
 		}
 	}
+
+  // Token refresh
+  const expiry = JSON.parse(window.atob(token.split('.')[1]))["exp"] * 1000;
+  const expiresIn = expiry - new Date().getTime()
+  if (expiresIn < 100000 && expiresIn > 0) {
+    // request a new token
+    API.post('/auth/refresh').then(({data}) => {
+      jwtService.saveToken(data.access_token);
+      API.setHeader();
+      next();
+    }).catch((err) => {
+      console.error(err)
+      next('/login');
+    })
+  }
+
   if (requiresAuth && token) {
     // verify the token is valid
     API.post('/auth/verify').then(() => {

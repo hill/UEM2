@@ -18,7 +18,7 @@ div
             label.label Due
             p.help When do you want to complete the course by?
             .control
-              input.input(v-model='due' placeholder='Due At')
+              input.input(v-model='due' type='date' placeholder='Due At')
             p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
           .field
             label.label Course Syllabus
@@ -40,7 +40,6 @@ div
               input.price-slider(v-model='price' type='range' min=0 max=2000 step=5)
               p cost if you fail: ${{price}}.00
 
-            
           .field
             .control
               .select.is-primary
@@ -82,10 +81,6 @@ export default {
             this.errors = err.response.data.errors;
           }
         })
-
-        this.name = ''
-        this.description = ''
-        this.status = 'completing'
       },
   }
 }
