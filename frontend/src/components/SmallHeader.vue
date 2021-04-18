@@ -2,7 +2,8 @@
   header
     nav
       .container
-        .logo
+        .logo.is-flex
+          img.crest(src='/logo_crest.svg')
           p
             router-link(to='/transcript') The University of Extrinsic Motivation
         .items
@@ -57,6 +58,10 @@ nav {
         padding: 0 0 0 20px;
       }
     }
+  }
+  .crest {
+    height: 1.5em;
+    margin-right: 1em;
   }
 }
 

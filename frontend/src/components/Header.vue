@@ -6,7 +6,7 @@
     nav.bottom-bar
       a About UEM
       a(@click='showLogin = true') Admission & Enrollment
-      a Schools
+      router-link(to='resources') Resources
       router-link(to='transcript') Current Students
     Modal(:show="showLogin", v-on:close="showLogin = false")
       .box

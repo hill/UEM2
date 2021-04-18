@@ -5,7 +5,7 @@
       h1 Resource Search
     .columns.is-centered
       .column.is-6
-        input.search-bar(v-model='searchTerm' @change='search()')
+        input.search-bar(v-model='searchTerm' @change='search()' placeholder='search resources...')
         a(@click='newResourceModal = true') + Add a resource
     .container
       .columns.is-centered
@@ -104,5 +104,6 @@ export default {
     border-color: transparent;
     outline: none;
     font-family: $family-monospace;
+    padding: 0 10px;
   }
 </style>

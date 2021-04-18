@@ -11,7 +11,7 @@
       h3.is-size-4 {{name}}
     .tags
       span.tag.is-link.is-light(v-for='topic in topics') {{topic.name}}
-      span.tag(@click='markBroken()')
+      a.tag(@click='markBroken()')
         <ion-icon name="cloud-offline-outline"></ion-icon>
 </template>
 
