@@ -62,8 +62,8 @@ const router = new VueRouter({
 router.beforeResolve((to, from, next) => {
   const token = jwtService.getToken();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-
-  if (!requiresAuth) next();
+  console.log("requires auth!", requiresAuth)
+  if (!requiresAuth) {next();}
   if (!token) {console.log('no token!'); next('/login') } else {API.setHeader();}
   // redirect if going to login, already logged in
   if (to.path === '/login') {
@@ -78,19 +78,21 @@ router.beforeResolve((to, from, next) => {
 		}
 	}
 
-  // Token refresh
-  const expiry = JSON.parse(window.atob(token.split('.')[1]))["exp"] * 1000;
-  const expiresIn = expiry - new Date().getTime()
-  if (expiresIn < 100000 && expiresIn > 0) {
-    // request a new token
-    API.post('/auth/refresh').then(({data}) => {
-      jwtService.saveToken(data.access_token);
-      API.setHeader();
-      next();
-    }).catch((err) => {
-      console.error(err)
-      next('/login');
-    })
+  if (token) {
+    // Token refresh
+    const expiry = JSON.parse(window.atob(token.split('.')[1]))["exp"] * 1000;
+    const expiresIn = expiry - new Date().getTime()
+    if (expiresIn < 100000 && expiresIn > 0) {
+      // request a new token
+      API.post('/auth/refresh').then(({data}) => {
+        jwtService.saveToken(data.access_token);
+        API.setHeader();
+        next();
+      }).catch((err) => {
+        console.error(err)
+        next('/login');
+      })
+    }
   }
 
   if (requiresAuth && token) {

@@ -20,12 +20,10 @@ export default {
     msg: String
   },
   methods: {
-    async signOut() {
-      // try {
-      //   await Auth.signOut();
-      // } catch (error) {
-      //   console.log('error signing out: ', error);
-      // }
+    signOut() {
+      this.$store.dispatch('logout').then(res => {
+        this.$router.push('/')
+      })
     }
   }
 }
