@@ -3,15 +3,6 @@ from marshmallow import Schema, fields, pre_load, post_dump, validate
 # dump_only = read only fields
 # load_only = write only fields
 
-class TopicSchema(Schema):
-  name = fields.Str()
-
-class ResourceSchema(Schema):
-  name = fields.Str()
-  url = fields.Str()
-  votes = fields.Int(dump_only=True)
-  topic = fields.Nested(TopicSchema)
-
 class UserSchema(Schema):
   id = fields.UUID(dump_only=True)
   name = fields.Str(required=True)
@@ -31,3 +22,13 @@ class CourseSchema(Schema):
   )
   class Meta:
     strict = True
+
+class TopicSchema(Schema):
+  id = fields.UUID(dump_only=True)
+  name = fields.Str(required=True)
+class ResourceSchema(Schema):
+  id = fields.UUID(dump_only=True)
+  name = fields.Str(required=True)
+  url = fields.Url(required=True)
+  votes = fields.Int(dump_only=True)
+  # topics = fields.List(fields.Nested(TopicSchema))

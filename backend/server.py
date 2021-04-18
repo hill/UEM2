@@ -10,6 +10,7 @@ from flask_cors import CORS
 from models import initModels
 from auth import auth
 from course import course
+from resource import resource
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super-secret"
@@ -18,6 +19,7 @@ CORS(app)
 
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(course, url_prefix='/course')
+app.register_blueprint(resource, url_prefix='/resource')
 
 @app.route('/')
 def index():
