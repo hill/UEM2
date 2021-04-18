@@ -1,6 +1,6 @@
 import uuid
 from peewee import *
-db = SqliteDatabase('database.db')
+db = SqliteDatabase('newDb.db')
 
 class BaseModel(Model):
   id = CharField(primary_key=True, default=uuid.uuid4)
@@ -29,7 +29,10 @@ class Resource(BaseModel):
   name = CharField()
   url = CharField()
   votes = IntegerField(default=0)
+
+class ResourceTopic(BaseModel):
   topic = ForeignKeyField(Topic)
+  resource = ForeignKeyField(Resource)
 
 def initModels():
   db.create_tables([User, Course, Topic, Resource], safe=True)

@@ -1,4 +1,5 @@
 # TOM! just build the fucker in flask.
+from datetime import timedelta
 from rich.traceback import install
 install()
 
@@ -14,6 +15,7 @@ from resource import resource
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super-secret"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=10) # TODO(TOM): use refresh tokens
 jwt = JWTManager(app)
 CORS(app)
 

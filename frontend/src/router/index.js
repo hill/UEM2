@@ -4,6 +4,7 @@ import API from '../services/api.service';
 
 import Home from "../views/Home.vue";
 import Transcript from "../views/Transcript.vue";
+import Resources from "../views/Resources.vue";
 import Login from "../views/Login.vue";
 import NewCourse from "../views/NewCourse.vue";
 import Course from "../views/Course.vue";
@@ -21,6 +22,12 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+  },
+  {
+    path: "/resources",
+    name: "Resources",
+    component: Resources,
+    meta: { requiresAuth: true },
   },
   {
     path: "/transcript",

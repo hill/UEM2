@@ -53,19 +53,16 @@ const API = {
 export default API;
 
 export const CourseService = {
-  list: () => {
-    return API.get("/course/")
-  },
-  get: (id) => {
-    return API.get(`/course/${id}`)
-  },
-  create: (name, description, due) => {
-    return API.post(`/course/create`, {name, description, due})
-  },
-  update: (name, description, due) => {
-    return API.put(`/course/${id}`, {name, description, due})
-  },
-  delete: (id) => {
-    return API.delete(`/course/${id}`)
-  }
+  list: () => API.get("/course/"),
+  get: (id) => API.get(`/course/${id}`),
+  create: (name, description, due) => API.post(`/course/create`, {name, description, due}),
+  update: (name, description, due) => API.put(`/course/${id}`, {name, description, due}),
+  delete: (id) => API.delete(`/course/${id}`),
+}
+
+export const ResourceService = {
+  list: () => API.get("/resource/"),
+  get: (id) => API.get(`/resource/${id}`),
+  create: (name, url) => API.post(`/resource/create`, {name, url}),
+  find: (searchTerm) => API.get(`/resource?search=${searchTerm}`)
 }

@@ -27,16 +27,16 @@ def create_resource():
 @resource.route('/<id>', methods=['GET'])
 def get_resource(id):
   try:
-    resource = Resource.get(Course.id == id)
+    resource = Resource.get(Resource.id == id)
   except Resource.DoesNotExist:
-    return {'errors': ['Course not found']}, 404
+    return {'errors': ['Resource not found']}, 404
   return ResourceSchema().dump(resource)
 
 @resource.route('/', methods=['GET'])
 @jwt_required()
 def get_all_resources():
   resources = Resource.select().limit(100)
-  return {'courses': ResourceSchema().dump(resources, many=True)}
+  return {'resources': ResourceSchema().dump(resources, many=True)}
 
 @resource.route('/<id>', methods=['PUT'])
 @jwt_required()
