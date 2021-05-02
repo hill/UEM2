@@ -15,6 +15,7 @@ class CourseSchema(Schema):
   description = fields.Str()
   due = fields.Date(required=True)
   status = fields.Str(dump_only=True)
+  syllabus = fields.List(fields.Dict())
   owner = fields.Nested(
     UserSchema(exclude=['password']),
     dump_only=True,

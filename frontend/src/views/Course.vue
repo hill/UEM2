@@ -5,6 +5,7 @@ div
   br
   .container(v-if='course')
     h1.title {{course.name}}
+    progress.progress.is-primary(value='20' max='100') 20%
     p {{course}}
   .container(v-else)
     p Loading...

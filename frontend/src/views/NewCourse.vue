@@ -5,40 +5,101 @@ div
   br
   .container
     .columns.is-centered
-      .column.is-8
+      .column.is-12
         h1.title.is-3 Begin a New Course
         .form
-          .field
-            label.label Course Name
-            p.help What do you want to learn? Discrete Maths Fundementals? Basket weaving 101?
-            .control
-              input.input(v-model='name' placeholder='Course Name')
-            p.help.is-danger(v-if='errors.name') {{errors.name.join(',')}}
-          .field
-            label.label Due
-            p.help When do you want to complete the course by?
-            .control
-              input.input(v-model='due' type='date' placeholder='Due At')
-            p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
-          .field
-            label.label Course Syllabus
-            p.help Be specific here. What are you going to learn. Use actual university syllabii or online courses to assist you in the topics. You will need to do some research.
-            .control
-              textarea.textarea(v-model='description' placeholder='Course Description')
-            p.help.is-danger(v-if='errors.description') {{errors.description.join(',')}}
-          .field
-            label.label Course Assessment
-            p.help How will I know that you've succeeded? What are the assessables and when are they due?
-            .control
-              textarea.textarea(v-model='description' placeholder='Course Assessment')
-          .field
-            label.label Course Price
-            p.help I am going to charge your card for this. You'll get it back if you don't fuck this up. It should be an amount that will hurt enough to make you do the work.
-            br
-            .control
-              //- input.input(v-model='price' type='number' placeholder='Deposit Price')
-              input.price-slider(v-model='price' type='range' min=0 max=2000 step=5)
-              p cost if you fail: ${{price}}.00
+          .help-field
+            .field
+              label.label Course Name
+              .control
+                input.input(v-model='name' placeholder='Course Name')
+              p.help.is-danger(v-if='errors.name') {{errors.name.join(',')}}
+            .side
+              p What are you learning?
+          .help-field
+            .field
+              label.label Due
+              .control
+                //- input.input(v-model='due' type='date' placeholder='Due At')
+                label.radio
+                  input(type="radio" name="date")
+                  span 1 month
+                label.radio
+                  input(type="radio" name="date")
+                  span 3 months
+                label.radio
+                  input(type="radio" name="date")
+                  span 6 months
+
+              p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
+            .side
+              p When do you plan on completing the course by?
+          .help-field
+            .field
+              label.label Primary Resources
+              .control
+                input.input(placeholder="Lectures / online courses / textbooks")
+              .suggested
+                b Suggested Resources:
+                ul
+                  li
+                    a Introduction to NLP
+                  li
+                    a Standford NLP
+                  li
+                    a NLP Basics with Tensorflow and Pytorch
+            .side
+              p 
+                | What resources are you using to learn this content?
+                br
+                br
+                router-link.button.is-link.is-light.is-small(to='/resources') Find Resources
+          .help-field
+            .field
+              label.label Course Syllabus
+              //- .control
+              //- textarea.textarea(v-model='description' placeholder='Course Description')
+              //- ol
+              //-   li(v-for='(item, idx) in syllabus') {{ item }} <ion-icon @click='removeSyllabusItem(idx)' name="close-circle-outline"></ion-icon>
+              table.table.is-fullwidth
+                thead
+                  th
+                  th Course Point
+                  th Assessment
+                  th Delete
+                tbody
+                  tr(v-for='(item, idx) in syllabus')
+                    td {{idx + 1}}
+                    td {{item}}
+                    td
+                      textarea.textarea
+                    td
+                      a(@click='removeSyllabusItem(idx)') <ion-icon name="close-circle-outline"></ion-icon>
+              div
+                .control.has-icons-right
+                  input.input(v-model='newItem' @keyup='addSyllabusItem' placeholder="New syllabus point")
+                  span.icon.is-small.is-right
+                    span.tag <ion-icon name="return-down-back-outline"></ion-icon> <p>enter</p>
+
+              p.help.is-danger(v-if='errors.description') {{errors.description.join(',')}}
+            .side
+              p What are you going to learn? Use your primary resource to guide. Use chapter headings / lecture titles to guide your syllabus.
+          .help-field
+            .field
+              label.label Course Assessment
+              .control
+                textarea.textarea(v-model='description' placeholder='Course Assessment')
+            .side
+              p How will I know that you've succeeded? What are the assessables and when are they due? Some ideas: chapter summaries; capstone project that uses the skills you learnt.
+          .help-field
+            .field
+              label.label Course Price
+              br
+              .control
+                input.price-slider(v-model='price' type='range' min=0 max=500 step=10)
+                p cost if you fail: ${{price}}.00
+            .side
+              p This is the "extrinsic" part. Put some skin in the game. It should be an amount that will hurt enough to make you complete the work. If you pass 50% of the content you get it back. (This is optional, but I find I will actually complete things if I am about to loose a bunch of casss$ssh)
 
           .field
             .control
@@ -66,7 +127,9 @@ export default {
         due: "",
         price: 0,
         status: "completing",
-        errors: {}
+        errors: {},
+        newItem: "",
+        syllabus: []
     }
   },
   methods: {
@@ -82,12 +145,43 @@ export default {
           }
         })
       },
+    addSyllabusItem(e) {
+      if (e.key == "Enter") {
+        this.syllabus.push(this.newItem)
+        this.newItem = ""
+      }
+    },
+    removeSyllabusItem(idx) {
+      this.syllabus.splice(idx, 1);
+    }
   }
 }
 </script>
 
 <style lang='scss' scoped>
+  @import '@/assets/theme.scss';
   .price-slider {
     width: 500px;
+  }
+
+  .help-field {
+    display: flex;
+    .field {
+      flex: 3;
+    }
+    .side {
+      flex: 1;
+      padding: 24px 15px;
+      p {
+        // font-family: $family-primary;
+        text-align: right;
+        font-size: 12px;
+        font-style: italic;
+      }
+    }
+  }
+
+  .suggested {
+    font-size: 12px;
   }
 </style>

@@ -5,7 +5,8 @@ from flask_jwt_extended.utils import get_jwt_identity
 from playhouse.shortcuts import model_to_dict
 from marshmallow import ValidationError
 
-from models import Course
+import models
+from models import Course, User
 from schemas import CourseSchema
 
 course = Blueprint('course', __name__)
@@ -22,8 +23,13 @@ def create_course():
   except ValidationError as err:
     return {'errors': err.messages}, 422
   
+  # check the user exists
+  user = User.get(User.id == user_id)
+  if not user:
+    return {'errors': ['User not found']}, 404
+  
   # create the course
-  c = Course.create(**data, owner_id=user_id, status='in progress')
+  c = Course.create(**data, owner_id=user.id, status='in progress')
   return CourseSchema().dump(c)
 
 @course.route('/<id>', methods=['GET'])
@@ -37,7 +43,10 @@ def get_course(id):
 @course.route('/', methods=['GET'])
 @jwt_required()
 def get_user_courses():
-  courses = Course.select().where(Course.owner_id == get_jwt_identity())
+  try:
+    courses = Course.select().where(Course.owner_id == get_jwt_identity())
+  except Exception as e:
+    return {'errors': e}, 404
   return {'courses': CourseSchema().dump(courses, many=True)}
 
 @course.route('/<id>', methods=['PUT'])
