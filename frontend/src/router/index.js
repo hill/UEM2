@@ -107,7 +107,6 @@ router.beforeResolve((to, from, next) => {
   if (requiresAuth && token) {
     // verify the token is valid
     AuthService.verify().then(({data}) => {
-      console.log(data)
       store.commit('setUser', data.user)
       next();
     }).catch(() => {
