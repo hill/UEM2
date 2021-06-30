@@ -14,30 +14,10 @@ export default {
       signedIn: false
     }
   },
-  beforeCreate() {
-    // Hub.listen('auth', data => {
-    //   console.log('data: ', data)
-    //   const { payload } = data
-    //   if (payload.event === 'signIn') {
-    //     this.signedIn = true
-    //     this.$router.push('/transcript')
-    //   }
-    //   if (payload.event === 'signOut') {
-    //     this.$router.push('/login')
-    //     this.signedIn = false
-    //   }
-    // })
-
-    // Check if the user is currently signed in
-    // Auth.currentAuthenticatedUser()
-    //   .then(() => {
-    //     this.signedIn = true
-    //   })
-    //   .catch(() => this.signedIn = false)
-  }
 }
 </script>
 
 <style lang="scss">
+@import '~buefy/dist/buefy.css';
 @import './assets/main.scss';
 </style>

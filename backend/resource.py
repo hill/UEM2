@@ -4,8 +4,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended.utils import get_jwt_identity
 from marshmallow import ValidationError
 
-from models import Resource, Topic
-from schemas import ResourceSchema, TopicSchema
+from models import Resource, ResourceTopic, Topic
+from schemas import ResourceSchema, TopicDumpSchema, TopicSchema, ResourceDumpSchema, ResourceLoadSchema
 
 resource = Blueprint('resource', __name__)
 
@@ -13,16 +13,15 @@ resource = Blueprint('resource', __name__)
 @jwt_required()
 def create_resource():
   json_input = request.get_json()
-  
   # validate
   try:
-    data = ResourceSchema().load(json_input)
+    data = ResourceLoadSchema().load(json_input)
   except ValidationError as err:
     return {'errors': err.messages}, 422
-  
+  print(data)
   # create the course
   resource = Resource.create(**data)
-  return ResourceSchema().dump(resource)
+  return ResourceDumpSchema().dump(resource)
 
 @resource.route('/<id>', methods=['GET'])
 def get_resource(id):
@@ -30,7 +29,7 @@ def get_resource(id):
     resource = Resource.get(Resource.id == id)
   except Resource.DoesNotExist:
     return {'errors': ['Resource not found']}, 404
-  return ResourceSchema().dump(resource)
+  return ResourceDumpSchema().dump(resource)
 
 def vote_resource(id, vote):
   resource = Resource.get(Resource.id == id)
@@ -41,12 +40,12 @@ def vote_resource(id, vote):
 @resource.route('/<id>/upvote', methods=['POST'])
 def upvote_resource(id):
   resource = vote_resource(id, 1)
-  return ResourceSchema().dump(resource)
+  return ResourceDumpSchema().dump(resource)
 
 @resource.route('/<id>/downvote', methods=['POST'])
 def downvote_resource(id):
   resource = vote_resource(id, -1)
-  return ResourceSchema().dump(resource)
+  return ResourceDumpSchema().dump(resource)
 
 @resource.route('/<id>/broken', methods=['POST'])
 def mark_broken_resource(id):
@@ -59,13 +58,22 @@ def mark_broken_resource(id):
 @jwt_required()
 def get_all_resources():
   searchQuery = request.args.get('search')
+  topics = request.args.get('topics')
+
+  # TODO(TOM): search and topics similtaniously
   if searchQuery:
     resources = Resource.select().where(
       Resource.name.contains(searchQuery)
     ).limit(100)
+  elif topics:
+    topics = topics.split(',')
+    resources = (Resource.select()
+                        .join(ResourceTopic)
+                        .join(Topic)
+                        .where(Topic.name.in_(topics)))
   else:
     resources = Resource.select().limit(100)
-  return {'resources': ResourceSchema().dump(resources, many=True)}
+  return {'resources': ResourceDumpSchema().dump(resources, many=True)}
 
 @resource.route('/<id>', methods=['PUT'])
 @jwt_required()
@@ -98,3 +106,8 @@ def delete_resource(id):
   
   Resource.delete_by_id(id)
   return {'message': 'success'}
+
+@resource.route('/topics', methods=['GET'])
+def get_all_topics():
+  topics = Topic.select()
+  return {"topics": TopicDumpSchema().dump(topics, many=True)}

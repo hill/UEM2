@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, pre_load, post_dump, validate
+from marshmallow import Schema, fields, pre_load, post_dump, post_load, validate
 
 # dump_only = read only fields
 # load_only = write only fields
@@ -25,11 +25,18 @@ class CourseSchema(Schema):
     strict = True
 
 class TopicSchema(Schema):
-  id = fields.UUID(dump_only=True)
   name = fields.Str(required=True)
-class ResourceSchema(Schema):
+
+class TopicDumpSchema(TopicSchema):
   id = fields.UUID(dump_only=True)
+
+class ResourceSchema(Schema):
   name = fields.Str(required=True)
   url = fields.Url(required=True)
+class ResourceDumpSchema(ResourceSchema):
+  id = fields.UUID(dump_only=True)
+  topics = fields.List(fields.Nested(TopicDumpSchema), dump_only=True)
   votes = fields.Int(dump_only=True)
-  # topics = fields.List(fields.Nested(TopicSchema))
+
+class ResourceLoadSchema(ResourceSchema):
+  topics = fields.List(fields.Str())

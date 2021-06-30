@@ -20,16 +20,16 @@ div
             .field
               label.label Due
               .control
-                //- input.input(v-model='due' type='date' placeholder='Due At')
-                label.radio
-                  input(type="radio" name="date")
-                  span 1 month
-                label.radio
-                  input(type="radio" name="date")
-                  span 3 months
-                label.radio
-                  input(type="radio" name="date")
-                  span 6 months
+                input.input(v-model='due' type='date' placeholder='Due At')
+                //- label.radio
+                //-   input(type="radio" name="date")
+                //-   span 1 month
+                //- label.radio
+                //-   input(type="radio" name="date")
+                //-   span 3 months
+                //- label.radio
+                //-   input(type="radio" name="date")
+                //-   span 6 months
 
               p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
             .side
@@ -136,6 +136,7 @@ export default {
     async createCourse() {
         console.log("create course")
         const {name, description, due, status, price} = this;
+        console.log(name, description, due)
         CourseService.create(name, description, due).then(res => {
           console.log(res)
           this.$router.push('/transcript')

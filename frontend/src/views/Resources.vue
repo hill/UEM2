@@ -16,7 +16,7 @@
             :id='resource.id'
             :name="resource.name",
             :url="resource.url", 
-            :topics='[{name: "mathematics", id:"1"}, {name: "textbooks", id:"2"}]',
+            :topics='resource.topics',
             :votes="resource.votes"
           )
           p.has-text-centered(v-if='!resources') No resources found
@@ -35,6 +35,21 @@
                 label.label URL
                 input.input(v-model='newResource.url' placeholder='url')
                 p.help.is-danger(v-if='newResourceErrors.url') {{newResourceErrors.url.join(',')}}
+              .field
+                b-field(label='Enter some tags')
+                  b-taginput(
+                    v-model='newResource.topics'
+                    :data='filteredTopics'
+                    autocomplete
+                    :allow-new='true'
+                    icon='label'
+                    placeholder='Add a topic'
+                    field="name"
+                    @typing='getFilteredTopics'
+                  ).
+                pre(style='max-height: 400px')
+                  b Topics:
+                  | {{ newResource.topics }}
               button.button(@click='submitResource()') Add Resource
       button.modal-close.is-large(aria-label='close' @click='newResourceModal = false')
 </template>
@@ -44,19 +59,25 @@ import SmallHeader from '../components/SmallHeader'
 import SearchResult from '../components/SearchResult'
 
 import _ from 'underscore'
-import {ResourceService} from '../services/api.service'
+import Fuse from 'fuse.js'
+import {ResourceService, TopicService} from '../services/api.service'
+
+const defaultNewResource = {
+  name: "",
+  url: "",
+  topics: []
+}
 
 export default {
   components: {SmallHeader, SearchResult},
   data() {
     return {
+      topics: [],
+      filteredTopics: [],
       resources: [],
       searchTerm: "",
       newResourceModal: false,
-      newResource: {
-        name: "",
-        url: ""
-      },
+      newResource: defaultNewResource,
       newResourceErrors: {}
     }
   },
@@ -64,16 +85,35 @@ export default {
     ResourceService.list().then(({data}) => {
       this.resources = data.resources;
     })
+
+    TopicService.list().then(({data}) => {
+      this.topics = data.topics;
+      this.filteredTopics = data.topics;
+    })
   },
   methods: {
     search() {
       ResourceService.find(this.searchTerm).then(({data}) => this.resources = data.resources)
     },
+    getFilteredTopics(text) {
+      this.filteredTopics = this.topics.filter((topic) => {
+          return topic.name
+              .toString()
+              .toLowerCase()
+              .indexOf(text.toLowerCase()) >= 0
+      })
+    },
     submitResource() {
-      ResourceService.create(this.newResource.name, this.newResource.url).then(({data}) => {
+      ResourceService.create(
+        this.newResource.name,
+        this.newResource.url,
+        this.newResource.topics.map(t => t.name)
+      ).then(({data}) => {
         this.newResourceModal = false;
-        this.resources.push(data)
+        this.resources.push(data);
+        this.newResource = defaultNewResource;
       }).catch(err => {
+        console.log(err.response)
         this.newResourceErrors = err.response.data.errors;
       })
     }
@@ -105,5 +145,9 @@ export default {
     outline: none;
     font-family: $family-monospace;
     padding: 0 10px;
+  }
+
+  .modal-content {
+    width: 75%;
   }
 </style>

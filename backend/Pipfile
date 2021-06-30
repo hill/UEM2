@@ -11,6 +11,7 @@ marshmallow = "*"
 rich = "*"
 flask-cors = "*"
 sentry-sdk = {extras = ["flask"], version = "*"}
+peewee-migrate = "*"
 
 [dev-packages]
 

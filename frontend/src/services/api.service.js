@@ -44,9 +44,13 @@ export const CourseService = {
 export const ResourceService = {
   list: () => API.get("/resource/"),
   get: (id) => API.get(`/resource/${id}`),
-  create: (name, url) => API.post(`/resource/create`, {name, url}),
+  create: (name, url, topics) => API.post(`/resource/create`, {name, url, topics}),
   find: (searchTerm) => API.get(`/resource/?search=${searchTerm}`),
   upvote: (resourceId) => API.post(`/resource/${resourceId}/upvote`),
   downvote: (resourceId) => API.post(`/resource/${resourceId}/downvote`),
   broken: (resourceId) => API.post(`/resource/${resourceId}/broken`)
+}
+
+export const TopicService = {
+  list: () => API.get("/resource/topics")
 }

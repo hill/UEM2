@@ -38,6 +38,10 @@ export default {
     },
     markBroken() {
       ResourceService.broken(this.id)
+      this.$buefy.snackbar.open({
+        duration: 3000,
+        message:`Thanks - we've flagged that link and will review it`
+      })
     }
   }
 }

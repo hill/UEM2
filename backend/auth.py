@@ -61,6 +61,7 @@ def register():
     user = User.create(name=data.get('name'), email=data.get('email'), passwordHash=hashedPassword)
     message = "Successfully created user: {}".format(user.email)
   else:
+    print('already registered')
     return {"errors": "You have already registered"}, 400
 
   data = UserSchema().dump(user)
