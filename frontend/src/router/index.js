@@ -1,14 +1,18 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import API from '../services/api.service';
+import { AuthService } from '../services/api.service';
+import jwtService from "../services/jwt.service";
+import store from '../store'
 
 import Home from "../views/Home.vue";
+import About from "../views/About.vue";
 import Transcript from "../views/Transcript.vue";
 import Resources from "../views/Resources.vue";
 import Login from "../views/Login.vue";
 import NewCourse from "../views/NewCourse.vue";
 import Course from "../views/Course.vue";
-import jwtService from "../services/jwt.service";
+import Student from "../views/Student.vue";
 
 Vue.use(VueRouter);
 
@@ -50,8 +54,14 @@ const routes = [
   {
     path: "/about",
     name: "About",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    meta: { requiresAuth: false },
+    component: About,
+  },
+  {
+    path: "/student/:studentId",
+    name: "Student",
+    component: Student,
+    meta: { requiresAuth: false },
   },
 ];
 
@@ -61,14 +71,13 @@ const router = new VueRouter({
 
 router.beforeResolve((to, from, next) => {
   const token = jwtService.getToken();
+  if (token) { API.setHeader(); }
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  console.log("requires auth!", requiresAuth)
-  if (!requiresAuth) {next();}
-  if (!token) {console.log('no token!'); next('/login') } else {API.setHeader();}
+  if (!requiresAuth) {next(); return;}
   // redirect if going to login, already logged in
   if (to.path === '/login') {
 		if (token) {
-			API.post('/auth/verify').then(() => {
+			AuthService.verify().then(() => {
 				next('/transcript');
 			}).catch(() => {
 				next();
@@ -84,7 +93,7 @@ router.beforeResolve((to, from, next) => {
     const expiresIn = expiry - new Date().getTime()
     if (expiresIn < 100000 && expiresIn > 0) {
       // request a new token
-      API.post('/auth/refresh').then(({data}) => {
+      AuthService.refresh().then(({data}) => {
         jwtService.saveToken(data.access_token);
         API.setHeader();
         next();
@@ -97,12 +106,17 @@ router.beforeResolve((to, from, next) => {
 
   if (requiresAuth && token) {
     // verify the token is valid
-    API.post('/auth/verify').then(() => {
+    AuthService.verify().then(({data}) => {
+      console.log(data)
+      store.commit('setUser', data.user)
       next();
     }).catch(() => {
       console.log("TOKEN INVALID!")
       next('/login');
     });
+  } else {
+    // you don't have a token!
+    next('/login');
   }
 });
 

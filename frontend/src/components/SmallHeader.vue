@@ -5,15 +5,15 @@
         .logo.is-flex
           img.crest(src='/logo_crest.svg')
           p
-            router-link(to='/transcript') The University of Extrinsic Motivation
-        .items
+            router-link(:to='user ? "/transcript" : "/"') The University of Extrinsic Motivation
+        .items(v-if='user')
           router-link(to='/new') + New Course
-          a Tom Hill
+          router-link(:to='"/student/" + user.id') {{user.name}}
           a(@click='signOut') Sign Out
 </template>
 
 <script>
-
+import {mapState} from 'vuex'
 export default {
   name: 'Header',
   props: {
@@ -25,6 +25,9 @@ export default {
         this.$router.push('/')
       })
     }
+  },
+  computed: {
+    ...mapState(['user'])
   }
 }
 </script>

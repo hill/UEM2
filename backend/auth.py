@@ -7,6 +7,7 @@ from flask_jwt_extended import (
 from marshmallow.exceptions import ValidationError
 from playhouse.shortcuts import model_to_dict
 
+import models
 from models import User
 from schemas import UserSchema
 
@@ -44,7 +45,12 @@ def refresh_token():
 @auth.route('/verify', methods=['POST'])
 @jwt_required()
 def verify_token():
-    return jsonify({'success': True}), 200
+    try:
+      current_user = get_jwt_identity()
+      user = User.select().where(User.id == current_user).get()
+      return jsonify({'success': True, 'user': UserSchema().dump(user)}), 200
+    except models.UserDoesNotExist:
+      return jsonify({'success': False}), 401
 
 @auth.route("/register", methods=["POST"])
 def register():

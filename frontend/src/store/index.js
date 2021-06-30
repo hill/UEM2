@@ -24,6 +24,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // When you need an asynchronous action alongside a mutation
     signup: ({commit}, authCreds) => {
       return new Promise((resolve, reject) => {
         API.post("/auth/register", { email: authCreds.email, password: authCreds.password, name: authCreds.name })
@@ -49,7 +50,7 @@ export default new Vuex.Store({
           });
       });
     },
-    updateUser: ({ commit }, user) => {
+    updateUser: ({ commit }, user) => { // technically don't need this...not doing async work.
       commit("setUser", user);
     },
     logout: ({ commit }) => {

@@ -33,6 +33,11 @@ const API = {
 
 export default API;
 
+export const AuthService = {
+  verify: () => API.post('/auth/verify'),
+  refresh: () => API.post('/auth/refresh'),
+}
+
 export const CourseService = {
   list: () => API.get("/course/"),
   get: (id) => API.get(`/course/${id}`),
