@@ -1,3 +1,4 @@
+import bcrypt
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
   create_access_token,
@@ -14,7 +15,7 @@ from schemas import UserSchema
 auth = Blueprint('auth', __name__)
 
 def pw_hash(pw):
-  return pw + "_hashed"
+  return bcrypt.hashpw(pw.encode('utf8'), bcrypt.gensalt())
 
 # --- Auth --- #
 @auth.route("/login", methods=["POST"])
@@ -27,11 +28,11 @@ def login():
   except:
     return jsonify({"message": "Bad email or password"}), 401
 
-  if user.passwordHash != pw_hash(password):
-    return jsonify({"message": "Bad email or password"}), 401
+  if bcrypt.checkpw(password.encode('utf-8'), user.passwordHash.encode('utf-8')):
+    access_token = create_access_token(identity=user.id)
+    return jsonify(access_token=access_token, user=UserSchema().dump(user))
 
-  access_token = create_access_token(identity=user.id)
-  return jsonify(access_token=access_token, user=UserSchema().dump(user))
+  return jsonify({"message": "Bad email or password"}), 401
 
 @auth.route('/refresh', methods=['POST'])
 @jwt_required()

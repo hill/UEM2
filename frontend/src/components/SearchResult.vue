@@ -12,7 +12,7 @@
     .tags
       span.tag.is-link.is-light(v-for='topic in topics') {{topic.name}}
       a.tag(data-tooltip="mark link as broken" @click='markBroken()')
-        <ion-icon name="unlink-outline"></ion-icon>
+        <b-icon icon="link-variant-off" size="is-small"></b-icon>
 </template>
 
 <script>

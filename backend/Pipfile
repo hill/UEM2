@@ -12,6 +12,8 @@ rich = "*"
 flask-cors = "*"
 sentry-sdk = {extras = ["flask"], version = "*"}
 peewee-migrate = "*"
+flask-apispec = "*"
+bcrypt = "*"
 
 [dev-packages]
 
