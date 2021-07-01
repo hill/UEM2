@@ -20,6 +20,8 @@
           .is-flex.is-justify-content-center.mt-3
             router-link.button(to='/login?signup=true') Begin Here
           .watermark
+      .is-flex.is-justify-content-center
+        router-link.wtf(to='/about') <em>What the fuck was that?</em>
 
 </template>
 
@@ -95,4 +97,8 @@ export default {
   opacity: 0.05;
 }
 
+.wtf {
+  color: white;
+  text-align: center;
+}
 </style>
