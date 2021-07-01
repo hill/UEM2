@@ -9,6 +9,8 @@
           h2.letter-title Welcome, class of <span class='interactive' contenteditable>{{deathYear}}</span>
           p Dear <span class='interactive' contenteditable>[name]</span>,
           p On behalf of the Admission Committee, it is my pleasure to offer you admission to the University of Extrinsic Motivation, Class of <span class='interactive' contenteditable>{{deathYear}}</span>.
+          .is-flex.is-justify-content-center.mt-3
+            router-link.button(to='/login?signup=true') Begin Here
           .watermark
 
 </template>
@@ -32,14 +34,18 @@ export default {
 
 <style lang='scss' scoped>
 
-section {
+.home {
   background-color: black;
   min-height: 100vh;
 }
 
+.columns {
+  margin-top: 0; // odd. for some reason margin-top here is -12px? ... invesitgate further
+}
+
 .acceptance-letter {
   position: relative;
-  margin: 4rem;
+  margin: 8rem 4rem;
   padding: 2rem;
   background-color: #171616;
   color: white;

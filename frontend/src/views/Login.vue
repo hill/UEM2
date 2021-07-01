@@ -78,10 +78,11 @@ export default {
       }
     }
   },
-  async created() {
-    // if you are already logged in, go straight to the transcript
-    // TODO
-    
+  mounted() {
+    console.log(this.$route.query.signup)
+    if (this.$route.query.signup) {
+      this.state = 'signup'
+    }
   },
   methods: {
     async signup() {

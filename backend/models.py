@@ -1,4 +1,5 @@
 import uuid
+import datetime
 from peewee import *
 from playhouse.sqlite_ext import JSONField
 db = SqliteDatabase('newDb.db', pragmas={'foreign_keys': 1})
@@ -21,6 +22,7 @@ class Course(BaseModel):
   description = TextField(null=True)
   owner = ForeignKeyField(User, backref='courses')
   due = DateField()
+  startDate = DateField(default=datetime.datetime.now)
   status = CharField()
   syllabus = JSONField(null=True)
 

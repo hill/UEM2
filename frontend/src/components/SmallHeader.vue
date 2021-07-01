@@ -8,6 +8,7 @@
             router-link(:to='user ? "/transcript" : "/"') The University of Extrinsic Motivation
         .items(v-if='user')
           router-link(to='/new') + New Course
+          router-link(to='/resources/') Resources
           router-link(:to='"/student/" + user.id') {{user.name}}
           a(@click='signOut') Sign Out
 </template>
