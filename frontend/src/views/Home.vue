@@ -9,6 +9,14 @@
           h2.letter-title Welcome, class of <span class='interactive' contenteditable>{{deathYear}}</span>
           p Dear <span class='interactive' contenteditable>[name]</span>,
           p On behalf of the Admission Committee, it is my pleasure to offer you admission to the University of Extrinsic Motivation, Class of <span class='interactive' contenteditable>{{deathYear}}</span>.
+          p Your remarkable application has convinced us that you already know how to learn. And now you want to keep on going.
+          p But we understand, life get in the way:
+          ul
+            li work
+            li dishes
+            li <span class='interactive' contenteditable>[enter life event that resonates with reader]</span>
+          p What is the University of Extrinsic Motivation? We're an institution that keeps you on track. We're like a regular university. But we do no research. And teach no classes. We don't have any buildings either.
+          p But we do keep you accountable to learning the <em>hard stuff</em>.
           .is-flex.is-justify-content-center.mt-3
             router-link.button(to='/login?signup=true') Begin Here
           .watermark
@@ -49,6 +57,15 @@ export default {
   padding: 2rem;
   background-color: #171616;
   color: white;
+
+  p {
+    padding: 1em;
+  }
+
+  ul {
+    padding: 0 1em;
+    list-style-type: disc;
+  }
 }
 
 .letter-title {
