@@ -1,8 +1,15 @@
+import os
 import uuid
 import datetime
 from peewee import *
 from playhouse.sqlite_ext import JSONField
-db = SqliteDatabase('newDb.db', pragmas={'foreign_keys': 1})
+
+environment = os.environ.get('ENVIRONMENT', None)
+
+if environment == 'production':
+  db = PostgresqlDatabase(os.environ.get('DATABASE_URL'))
+else:
+  db = SqliteDatabase('newDb.db', pragmas={'foreign_keys': 1})
 
 class BaseModel(Model):
   id = CharField(primary_key=True, default=uuid.uuid4)
