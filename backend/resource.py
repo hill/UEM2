@@ -55,7 +55,6 @@ def mark_broken_resource(id):
   return jsonify({'success': True})
 
 @resource.route('/', methods=['GET'])
-@jwt_required()
 def get_all_resources():
   searchQuery = request.args.get('search')
   topics = request.args.get('topics')
@@ -111,3 +110,14 @@ def delete_resource(id):
 def get_all_topics():
   topics = Topic.select()
   return {"topics": TopicDumpSchema().dump(topics, many=True)}
+
+@resource.route('/topic', methods=['POST'])
+def create_topic():
+  json_input = request.get_json()
+  try:
+    data = TopicSchema().load(json_input)
+  except ValidationError as err:
+    return {'errors': err.messages}, 422
+  # create the topic
+  topic = Topic.create(**data)
+  return TopicDumpSchema().dump(topic)

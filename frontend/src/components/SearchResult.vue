@@ -1,10 +1,10 @@
 <template lang='pug'>
 .result.is-flex
   .votes
-    a(@click='upvote()')
+    a(@click='upvote()' :class='{"disabled": vote == 1}')
       <ion-icon name="chevron-up-outline"></ion-icon>
     p {{currVotes}}
-    a(@click='downvote()')
+    a(@click='downvote()' :class='{"disabled": vote == -1}')
       <ion-icon name="chevron-down-outline"></ion-icon>
   .content
     a(:href="url" target="_blank")
@@ -22,19 +22,27 @@ export default {
   props: ['name', 'url', 'topics', 'votes', 'id'],
   data() {
     return {
-      currVotes: this.votes
+      currVotes: this.votes,
+      vote: 0
     }
   },
   methods: {
     upvote() {
-      ResourceService.upvote(this.id).then(() => {
-        this.currVotes += 1
-      })
+      if (this.vote <= 0) {
+        ResourceService.upvote(this.id).then(() => {
+          this.currVotes += 1
+        })
+        this.vote = this.vote == 0 ? 1 : 0;
+      }
+      
     },
     downvote() {
-      ResourceService.downvote(this.id).then(() => {
-        this.currVotes -= 1
-      })
+      if (this.vote >= 0) {
+        ResourceService.downvote(this.id).then(() => {
+          this.currVotes -= 1
+        })
+        this.vote = this.vote == 0 ? -1 : 0;
+      }
     },
     markBroken() {
       ResourceService.broken(this.id)
@@ -67,5 +75,9 @@ export default {
   .votes {
     padding: 0 10px;
     text-align: center;
+  }
+
+  .disabled {
+    color: gray;
   }
 </style>

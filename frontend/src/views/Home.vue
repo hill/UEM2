@@ -6,8 +6,9 @@
         .acceptance-letter.column.is-8
           .is-flex.is-justify-content-center
             img.logo(src='/logo_watermark.png')
-          p Dear [enter name here],
-          p On behalf of the Admission Committee, it is my pleasure to offer you admission to the University of Extrinsic Motivation, Class of [death year].
+          h2.letter-title Welcome, class of <span class='interactive' contenteditable>{{deathYear}}</span>
+          p Dear <span class='interactive' contenteditable>[name]</span>,
+          p On behalf of the Admission Committee, it is my pleasure to offer you admission to the University of Extrinsic Motivation, Class of <span class='interactive' contenteditable>{{deathYear}}</span>.
           .watermark
 
 </template>
@@ -20,6 +21,11 @@ export default {
   components: {
     Header,
   },
+  data() {
+    return {
+      deathYear: "[death year]"
+    }
+  }
   
 }
 </script>
@@ -33,15 +39,25 @@ section {
 
 .acceptance-letter {
   position: relative;
-  margin: 4em;
-  padding: 2em;
+  margin: 4rem;
+  padding: 2rem;
   background-color: #171616;
   color: white;
 }
 
+.letter-title {
+  font-size: 3em;
+  text-align: center;
+}
+
+.interactive {
+  background-color: white;
+  color: black;
+}
+
 .logo {
-  height: 6em;
-  margin: 1em;
+  height: 6rem;
+  margin: 1rem;
 }
 
 .watermark {

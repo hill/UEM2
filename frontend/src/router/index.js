@@ -31,7 +31,7 @@ const routes = [
     path: "/resources",
     name: "Resources",
     component: Resources,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: false },
   },
   {
     path: "/transcript",
@@ -73,6 +73,13 @@ router.beforeResolve((to, from, next) => {
   const token = jwtService.getToken();
   if (token) { API.setHeader(); }
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  // TODO(TOM): refactor this. Try to log in (for the case we go to a page that does not require auth but we could use the user)
+  AuthService.verify().then(({data}) => {
+    store.commit('setUser', data.user)
+  }).catch()
+
+
   if (!requiresAuth) {next(); return;}
   // redirect if going to login, already logged in
   if (to.path === '/login') {

@@ -87,8 +87,11 @@ export default {
     async signup() {
       this.loading = true
       this.$store.dispatch('signup', {email: this.email, password: this.password, name: this.name}).then(() => {
-        console.log(this.$store.state.user)
-        this.$router.push('/transcript')
+        if (this.$route.query.next) {
+          this.$router.push(this.$route.query.next)
+        } else {
+          this.$router.push('/transcript')
+        }
       }).catch(err => {
         console.log(err)
         this.error.signup = err;
@@ -99,7 +102,11 @@ export default {
       this.loading = true
 
       this.$store.dispatch('login', {email: this.email, password: this.password}).then(() => {
-        this.$router.push('/transcript')
+        if (this.$route.query.next) {
+          this.$router.push(this.$route.query.next)
+        } else {
+          this.$router.push('/transcript')
+        }
       }).catch(err => {
         this.error.login = 'Email or password is incorrect';
       })

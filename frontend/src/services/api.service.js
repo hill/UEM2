@@ -57,5 +57,6 @@ export const ResourceService = {
 }
 
 export const TopicService = {
-  list: () => API.get("/resource/topics")
+  list: () => API.get("/resource/topics"),
+  create: (name) => API.post('/resource/topic', {name})
 }

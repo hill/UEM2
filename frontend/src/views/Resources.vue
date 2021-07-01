@@ -6,7 +6,8 @@
     .columns.is-centered
       .column.is-6
         input.search-bar(v-model='searchTerm' @change='search()' placeholder='search resources...')
-        a(@click='newResourceModal = true') + Add a resource
+        a(v-if='user' @click='newResourceModal = true') + Add a resource
+        router-link(v-else to='/login?next=/resources') + Add a resource (log in)
     .container
       .columns.is-centered
         .column.is-8
@@ -41,12 +42,18 @@
                     v-model='newResource.topics'
                     :data='filteredTopics'
                     autocomplete
-                    :allow-new='true'
+                    ref="autocomplete"
+                    :allow-new='false'
                     icon='label'
                     placeholder='Add a topic'
                     field="name"
                     @typing='getFilteredTopics'
-                  ).
+                  )
+                    <template #header>
+                      <a @click="showNewTopic">
+                        <span> Add new... </span>
+                      </a>
+                    </template>
                 pre(style='max-height: 400px')
                   b Topics:
                   | {{ newResource.topics }}
@@ -59,7 +66,7 @@ import SmallHeader from '../components/SmallHeader'
 import SearchResult from '../components/SearchResult'
 
 import _ from 'underscore'
-import Fuse from 'fuse.js'
+import {mapState} from 'vuex'
 import {ResourceService, TopicService} from '../services/api.service'
 
 const defaultNewResource = {
@@ -72,6 +79,7 @@ export default {
   components: {SmallHeader, SearchResult},
   data() {
     return {
+      name: '',
       topics: [],
       filteredTopics: [],
       resources: [],
@@ -116,8 +124,24 @@ export default {
         console.log(err.response)
         this.newResourceErrors = err.response.data.errors;
       })
+    },
+    showNewTopic() {
+      this.$buefy.dialog.prompt({
+        message: `New Topic`,
+        inputAttrs: {
+          placeholder: 'e.g. Mathematics',
+        },
+        confirmText: 'Add',
+        onConfirm: async (value) => {
+          const response = await TopicService.create(value)
+          this.topics.push(response.data)
+          this.newResource.topics.push(response.data)
+        }
+      })
     }
-  }
+  },
+  computed: mapState(['user'])
+  
 }
 </script>
 
