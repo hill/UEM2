@@ -64,7 +64,11 @@ def register():
     User.get(User.email == data["email"])
   except User.DoesNotExist:
     hashedPassword = pw_hash(data.get('password'))
-    user = User.create(name=data.get('name'), email=data.get('email'), passwordHash=hashedPassword)
+    user = User.create(
+      name=data.get('name'),
+      email=data.get('email'),
+      passwordHash=hashedPassword
+    )
     message = "Successfully created user: {}".format(user.email)
   else:
     print('already registered')
