@@ -8,7 +8,7 @@
       <ion-icon name="chevron-down-outline"></ion-icon>
   .content
     a(:href="url" target="_blank")
-      h3.is-size-4 {{name}}
+      h3.is-size-5 {{name}}
     .tags
       span.tag.is-link.is-light(v-for='topic in topics') {{topic.name}}
       a.tag(data-tooltip="mark link as broken" @click='markBroken()')

@@ -54,9 +54,6 @@
                         <span> Add new... </span>
                       </a>
                     </template>
-                pre(style='max-height: 400px')
-                  b Topics:
-                  | {{ newResource.topics }}
               button.button(@click='submitResource()') Add Resource
       button.modal-close.is-large(aria-label='close' @click='newResourceModal = false')
 </template>
@@ -85,7 +82,7 @@ export default {
       resources: [],
       searchTerm: "",
       newResourceModal: false,
-      newResource: defaultNewResource,
+      newResource: JSON.parse(JSON.stringify(defaultNewResource)),
       newResourceErrors: {}
     }
   },
@@ -119,7 +116,7 @@ export default {
       ).then(({data}) => {
         this.newResourceModal = false;
         this.resources.push(data);
-        this.newResource = defaultNewResource;
+        this.newResource = JSON.parse(JSON.stringify(defaultNewResource));
       }).catch(err => {
         console.log(err.response)
         this.newResourceErrors = err.response.data.errors;
@@ -137,6 +134,7 @@ export default {
           const response = await TopicService.create(value)
           this.topics.push(response.data)
           this.newResource.topics.push(response.data)
+          this.$refs.autocomplete.newTag = null;
         }
       })
     }
@@ -174,5 +172,8 @@ export default {
 
   .modal-content {
     width: 75%;
+    .card {
+      min-height: 80vh;
+    }
   }
 </style>
