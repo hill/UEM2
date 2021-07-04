@@ -7,7 +7,7 @@ div
     .is-flex
       h1.title.mr-3 {{course.name}}
       p.tag.is-medium.is-dark {{course.due}}
-    progress.progress.is-primary.my-3(value='20' max='100') 20%
+    progress.progress.is-primary.my-3(:value='syllabusComplete' max='100') {{syllabusComplete}}%
     .columns.mt-3
       .column.is-8
         .syllabus(v-if='course.syllabus')
@@ -15,8 +15,8 @@ div
           hr
           ul.syllabus-content
             li(v-for='point in course.syllabus')
-              input(type='checkbox' :name='point.name' v-model='point.completed')
-              label &nbsp;{{point.name}}
+              input(type='checkbox' :id='point.name' :name='point.name' v-model='point.completed')
+              label(:for='point.name') &nbsp;{{point.name}}
       .column.is-4
         h3.is-4.title Assessment
         hr
@@ -70,5 +70,9 @@ export default {
 <style lang='scss' scoped>
 .syllabus-content {
   border-right: 2px solid whitesmoke;
+}
+
+.progress::-webkit-progress-value {
+  transition: width 0.5s ease;
 }
 </style>
