@@ -2,12 +2,12 @@ from rich import print
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended.utils import get_jwt_identity
-from playhouse.shortcuts import model_to_dict
 from marshmallow import ValidationError
 
 import models
 from models import Course, User
 from schemas import CourseSchema
+from util import UserError, get_user_from_jwt
 
 course = Blueprint('course', __name__)
 
@@ -15,18 +15,17 @@ course = Blueprint('course', __name__)
 @jwt_required()
 def create_course():
   json_input = request.get_json()
-  user_id = get_jwt_identity()
+
+  try:
+    user = get_user_from_jwt()
+  except UserError as e:
+    return {'errors': [e.message]}, 400
   
   # validate
   try:
     data = CourseSchema().load(json_input)
   except ValidationError as err:
     return {'errors': err.messages}, 422
-  
-  # check the user exists
-  user = User.get(User.id == user_id)
-  if not user:
-    return {'errors': ['User not found']}, 404
   
   # create the course
   c = Course.create(**data, owner_id=user.id, status='in progress')

@@ -72,7 +72,7 @@ def register():
     message = "Successfully created user: {}".format(user.email)
   else:
     print('already registered')
-    return {"errors": "You have already registered"}, 400
+    return jsonify({"errors": "You have already registered"}), 400
 
   data = UserSchema().dump(user)
   access_token = create_access_token(identity=user.id)

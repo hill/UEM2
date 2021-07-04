@@ -70,7 +70,7 @@ div
                 tbody
                   tr(v-for='(item, idx) in syllabus')
                     td {{idx + 1}}
-                    td {{item}}
+                    td {{item.name}}
                     td
                       textarea.textarea
                     td
@@ -135,9 +135,9 @@ export default {
   methods: {
     async createCourse() {
         console.log("create course")
-        const {name, description, due, status, price} = this;
+        const {name, description, due, status, price, syllabus} = this;
         console.log(name, description, due)
-        CourseService.create(name, description, due).then(res => {
+        CourseService.create(name, description, due, syllabus).then(res => {
           console.log(res)
           this.$router.push('/transcript')
         }).catch(err => {
@@ -148,7 +148,10 @@ export default {
       },
     addSyllabusItem(e) {
       if (e.key == "Enter") {
-        this.syllabus.push(this.newItem)
+        this.syllabus.push({
+          name: this.newItem,
+          completed: false
+        })
         this.newItem = ""
       }
     },

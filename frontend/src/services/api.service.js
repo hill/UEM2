@@ -41,8 +41,8 @@ export const AuthService = {
 export const CourseService = {
   list: () => API.get("/course/"),
   get: (id) => API.get(`/course/${id}`),
-  create: (name, description, due) => API.post(`/course/create`, {name, description, due}),
-  update: (name, description, due) => API.put(`/course/${id}`, {name, description, due}),
+  create: (name, description, due, syllabus) => API.post(`/course/create`, {name, description, due, syllabus}),
+  update: (id, name, description, due, syllabus) => API.put(`/course/${id}`, {name, description, due, syllabus}), // TODO(TOM): wrap args in obj?
   delete: (id) => API.delete(`/course/${id}`),
 }
 
