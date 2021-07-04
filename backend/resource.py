@@ -63,15 +63,17 @@ def get_all_resources():
   if searchQuery:
     resources = Resource.select().where(
       Resource.name.contains(searchQuery)
-    ).limit(100)
+    ).order_by(Resource.votes.desc()).limit(100)
   elif topics:
     topics = topics.split(',')
     resources = (Resource.select()
                         .join(ResourceTopic)
                         .join(Topic)
-                        .where(Topic.name.in_(topics)))
+                        .where(Topic.name.in_(topics))
+                        .order_by(Resource.votes.desc())
+                )
   else:
-    resources = Resource.select().limit(100)
+    resources = Resource.select().order_by(Resource.votes.desc()).limit(100)
   return {'resources': ResourceDumpSchema().dump(resources, many=True)}
 
 @resource.route('/<id>', methods=['PUT'])

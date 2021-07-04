@@ -127,9 +127,10 @@ export default {
     },
     showNewTopic() {
       this.$buefy.dialog.prompt({
-        message: `New Topic`,
+        message: `Create New Topic`,
         inputAttrs: {
           placeholder: 'e.g. Mathematics',
+          value: this.$refs.autocomplete.newTag,
         },
         confirmText: 'Add',
         onConfirm: async (value) => {
