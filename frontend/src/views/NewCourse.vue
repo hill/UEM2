@@ -12,7 +12,7 @@ div
             .field
               label.label Course Name
               .control
-                input.input(v-model='name' placeholder='Course Name')
+                input.input(v-model.lazy='name' placeholder='Course Name')
               p.help.is-danger(v-if='errors.name') {{errors.name.join(',')}}
             .side
               p What are you learning?
@@ -21,16 +21,6 @@ div
               label.label Due
               .control
                 input.input(v-model='due' type='date' placeholder='Due At')
-                //- label.radio
-                //-   input(type="radio" name="date")
-                //-   span 1 month
-                //- label.radio
-                //-   input(type="radio" name="date")
-                //-   span 3 months
-                //- label.radio
-                //-   input(type="radio" name="date")
-                //-   span 6 months
-
               p.help.is-danger(v-if='errors.due') {{errors.due.join(',')}}
             .side
               p When do you plan on completing the course by?
@@ -39,51 +29,44 @@ div
               label.label Primary Resources
               .control
                 input.input(placeholder="Lectures / online courses / textbooks")
-              .suggested
+              .suggested(v-if='suggestedResources.length > 0')
                 b Suggested Resources:
                 ul
-                  li
-                    a Introduction to NLP
-                  li
-                    a Standford NLP
-                  li
-                    a NLP Basics with Tensorflow and Pytorch
+                  li(v-for='resource in suggestedResources')
+                    a(:href="resource.url" target="_blank") {{resource.name}} <ion-icon name="open-outline"></ion-icon>
             .side
               p 
                 | What resources are you using to learn this content?
                 br
                 br
                 router-link.button.is-link.is-light.is-small(to='/resources') Find Resources
+          hr
           .help-field
             .field
               label.label Course Syllabus
-              //- .control
-              //- textarea.textarea(v-model='description' placeholder='Course Description')
-              //- ol
-              //-   li(v-for='(item, idx) in syllabus') {{ item }} <ion-icon @click='removeSyllabusItem(idx)' name="close-circle-outline"></ion-icon>
               table.table.is-fullwidth
                 thead
                   th
                   th Course Point
-                  th Assessment
                   th Delete
                 tbody
                   tr(v-for='(item, idx) in syllabus')
                     td {{idx + 1}}
                     td {{item.name}}
                     td
-                      textarea.textarea
-                    td
                       a(@click='removeSyllabusItem(idx)') <ion-icon name="close-circle-outline"></ion-icon>
-              div
+              .field.has-addons
                 .control.has-icons-right
                   input.input(v-model='newItem' @keyup='addSyllabusItem' placeholder="New syllabus point")
                   span.icon.is-small.is-right
-                    span.tag <ion-icon name="return-down-back-outline"></ion-icon> <p>enter</p>
+                    ion-icon(name="return-down-back-outline")
+                .control
+                  .button.is-primary Add
 
               p.help.is-danger(v-if='errors.description') {{errors.description.join(',')}}
             .side
               p What are you going to learn? Use your primary resource to guide. Use chapter headings / lecture titles to guide your syllabus.
+          hr
           .help-field
             .field
               label.label Course Assessment
@@ -100,7 +83,14 @@ div
                 p cost if you fail: ${{price}}.00
             .side
               p This is the "extrinsic" part. Put some skin in the game. It should be an amount that will hurt enough to make you complete the work. If you pass 50% of the content you get it back. (This is optional, but I find I will actually complete things if I am about to loose a bunch of casss$ssh)
-
+          .field
+            .control
+              label.label Course Privacy
+              input(type="radio" name="privacy" id="private" value="private")
+              label(for="private") Private
+              br
+              input(type="radio" name="privacy" id="public" value="public")
+              label(for="public") Public
           .field
             .control
               .select.is-primary
@@ -115,7 +105,7 @@ div
 
 <script>
 import SmallHeader from '@/components/SmallHeader'
-import { CourseService } from '../services/api.service'
+import { CourseService, ResourceService } from '../services/api.service'
 
 
 export default {
@@ -129,7 +119,8 @@ export default {
         status: "completing",
         errors: {},
         newItem: "",
-        syllabus: []
+        syllabus: [],
+        suggestedResources: []
     }
   },
   methods: {
@@ -157,6 +148,14 @@ export default {
     },
     removeSyllabusItem(idx) {
       this.syllabus.splice(idx, 1);
+    }
+  },
+  watch: {
+    name: function(oldName, newName) {
+      // search for resources with this course name
+      ResourceService.find(oldName).then(({data}) => {
+        this.suggestedResources = data.resources.slice(0,3);
+      })
     }
   }
 }

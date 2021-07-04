@@ -25,6 +25,7 @@ export default {
   padding: 5px 10px;
   display: flex;
   flex-direction: column;
+  transition: all 0.2s ease;
 
   p {
     display: inline-block;
@@ -36,6 +37,10 @@ export default {
       width: 100%;
       display: flex;
       justify-content: space-between;
+  }
+
+  &:hover {
+    transform: scale(1.05);
   }
 }
 
