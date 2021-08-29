@@ -4,7 +4,9 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
-from fuckme.app.main import Course, Resource, User, app, get_session
+from app.main import app
+from app.database import get_session
+from app.models import Course, Resource, User
 
 
 @pytest.fixture(name="session")
