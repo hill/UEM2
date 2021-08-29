@@ -57,8 +57,8 @@ class ResourceRead(ResourceBase):
 
 class ResourceUpdate(SQLModel):
     id: Optional[int] = None
-    name: Optional[int] = None
-    url: Optional[int] = None
+    name: Optional[str] = None
+    url: Optional[str] = None
     user_id: Optional[int] = None
 
 
@@ -74,11 +74,11 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
 
-def create_db_and_tables():
+def create_db_and_tables():  # pragma: no cover
     SQLModel.metadata.create_all(engine)
 
 
-def get_session():
+def get_session():  # pragma: no cover
     with Session(engine) as session:
         yield session
 
@@ -87,7 +87,7 @@ app = FastAPI()
 
 
 @app.on_event("startup")
-def on_startup():
+def on_startup():  # pragma: no cover
     create_db_and_tables()
 
 

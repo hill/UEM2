@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
-from .app import User, app, get_session
+from .app import Resource, User, app, get_session
 
 
 @pytest.fixture(name="session")
@@ -38,7 +38,15 @@ def user_fixture(session: Session):
     )
     session.add(user)
     session.commit()
-    return user
+    yield user
+
+
+@pytest.fixture(name="resource")
+def resource_fixture(user: User, session: Session):
+    resource = Resource(name="UNSW", url="unsw.edu.au", user_id=user.id)
+    session.add(resource)
+    session.commit()
+    yield resource
 
 
 class TestUsers:
@@ -125,3 +133,70 @@ class TestUsers:
 
         assert response.status_code == 200
         assert user_in_db is None
+
+    def test_user_not_found(self, client: TestClient):
+        response = client.get("/users/69")
+        assert response.status_code == 404
+
+
+class TestResource:
+    def test_create_resource(self, user: User, client: TestClient):
+        new_resource = {"name": "google", "url": "google.com", "user_id": user.id}
+        response = client.post("/resources/", json=new_resource)
+        data = response.json()
+        assert response.status_code == 200
+        # check resource is a subset of the response
+        assert all(item in data.items() for item in new_resource.items())
+
+    def test_read_resources(self, resource: Resource, client: TestClient):
+        response = client.get("/resources/")
+        data = response.json()
+        assert response.status_code == 200
+        assert data[0]["name"] == resource.name
+        assert data[0]["url"] == resource.url
+        assert data[0]["user_id"] == resource.user_id
+        assert len(data) == 1
+
+    def test_update_resource(self, resource: Resource, client: TestClient):
+        response = client.patch(f"/resources/{resource.id}", json={"name": "Xoogle"})
+        data = response.json()
+
+        assert response.status_code == 200
+        assert data["name"] == "Xoogle"
+        assert data["url"] == resource.url
+        assert data["user_id"] == resource.user_id
+        assert data["votes"] == resource.votes
+
+    def test_delete_resource(
+        self, resource: Resource, session: Session, client: TestClient
+    ):
+        response = client.delete(f"/resources/{resource.id}")
+        assert response.status_code == 200
+        resource_in_db = session.get(Resource, resource.id)
+        assert resource_in_db is None
+
+    def test_upvote_resource(self, resource: Resource, client: TestClient):
+        old_vote_count = resource.votes
+        response = client.patch(f"/resources/{resource.id}/vote?vote=1")
+        data = response.json()
+        assert response.status_code == 200
+        assert data["votes"] == resource.votes
+        assert data["votes"] == old_vote_count + 1
+
+    def test_downvote_resource(self, resource: Resource, client: TestClient):
+        old_vote_count = resource.votes
+        response = client.patch(f"/resources/{resource.id}/vote?vote=-1")
+        data = response.json()
+        assert response.status_code == 200
+        assert data["votes"] == resource.votes
+        assert data["votes"] == old_vote_count - 1
+
+    def test_too_many_votes_resource(self, resource: Resource, client: TestClient):
+        old_vote_count = resource.votes
+        response = client.patch(f"/resources/{resource.id}/vote?vote=100")
+        assert response.status_code == 400
+        assert resource.votes == old_vote_count
+
+    def test_resource_not_found(self, client: TestClient):
+        response = client.get("/resources/69")
+        assert response.status_code == 404
