@@ -1,9 +1,19 @@
-from typing import List, Optional
+import datetime
+from typing import Dict, List, Optional
 
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
+from sqlmodel import (
+    Field,
+    Session,
+    SQLModel,
+    create_engine,
+    select,
+    Relationship,
+    Column,
+    JSON,
+)
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -19,6 +29,7 @@ class User(UserBase, table=True):
     password_hash: str
 
     resources: List["Resource"] = Relationship(back_populates="user")
+    courses: List["Course"] = Relationship(back_populates="user")
 
 
 class UserCreate(UserBase):
@@ -62,12 +73,44 @@ class ResourceUpdate(SQLModel):
     user_id: Optional[int] = None
 
 
+class CourseBase(SQLModel):
+    name: str
+    description: str
+    status: str
+    due: datetime.date
+    syllabus: List[Dict] = Field(sa_column=Column(JSON))
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+
+
+class Course(CourseBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user: User = Relationship(back_populates="courses")
+
+
+class CourseCreate(CourseBase):
+    pass
+
+
+class CourseRead(CourseBase):
+    id: int
+
+
+class CourseUpdate(SQLModel):
+    id: Optional[int] = None
+    name: Optional[str]
+    description: Optional[str]
+    status: Optional[str]
+    due: Optional[datetime.date]
+    syllabus: Optional[List[Dict]]
+
+
 class ResourceReadWithUser(ResourceRead):
     user: Optional[UserRead] = None
 
 
-class UserReadWithResources(UserRead):
+class UserReadWithDetails(UserRead):
     resources: List[ResourceRead] = []
+    courses: List[CourseRead] = []
 
 
 connect_args = {"check_same_thread": False}
@@ -118,7 +161,7 @@ def read_users(
     return users
 
 
-@app.get("/users/{user_id}", response_model=UserReadWithResources)
+@app.get("/users/{user_id}", response_model=UserReadWithDetails)
 def read_user(*, session: Session = Depends(get_session), user_id: int):
     return get_user(session, user_id)
 
@@ -138,7 +181,7 @@ def update_user(
 
 
 @app.delete("/users/{user_id}")
-def delete_hero(*, session: Session = Depends(get_session), user_id: int):
+def delete_user(*, session: Session = Depends(get_session), user_id: int):
     user = get_user(session, user_id)
     session.delete(user)
     session.commit()
@@ -217,5 +260,62 @@ def update_resource(
 def delete_resource(*, session: Session = Depends(get_session), resource_id: int):
     resource = get_resource(session, resource_id)
     session.delete(resource)
+    session.commit()
+    return {"ok": True}
+
+
+def get_course(session: Session, course_id: int) -> Course:
+    course = session.get(Course, course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return course
+
+
+@app.post("/courses/", response_model=CourseRead)
+def create_course(*, session: Session = Depends(get_session), course: CourseCreate):
+    db_course = Course.from_orm(course)
+    session.add(db_course)
+    session.commit()
+    session.refresh(db_course)
+    return db_course
+
+
+@app.get("/courses/", response_model=List[CourseRead])
+def read_courses(
+    *,
+    session: Session = Depends(get_session),
+    offset: int = 0,
+    limit: int = Query(default=100, lte=100),
+):
+    courses = session.exec(select(Course).offset(offset).limit(limit)).all()
+    return courses
+
+
+@app.get("/courses/{course_id}", response_model=CourseRead)
+def read_course(*, session: Session = Depends(get_session), course_id: int):
+    return get_course(session, course_id)
+
+
+@app.patch("/courses/{course_id}", response_model=CourseRead)
+def update_course(
+    *,
+    session: Session = Depends(get_session),
+    course_id: int,
+    course: CourseUpdate,
+):
+    db_course = get_course(session, course_id)
+    course_data = course.dict(exclude_unset=True)
+    for key, value in course_data.items():
+        setattr(db_course, key, value)
+    session.add(db_course)
+    session.commit()
+    session.refresh(db_course)
+    return db_course
+
+
+@app.delete("/courses/{course_id}")
+def delete_course(*, session: Session = Depends(get_session), course_id: int):
+    course = get_course(session, course_id)
+    session.delete(course)
     session.commit()
     return {"ok": True}
