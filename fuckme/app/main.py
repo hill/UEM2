@@ -1,130 +1,30 @@
-import datetime
-from typing import Dict, List, Optional
+from typing import List
 
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends, Query
 from sqlmodel import (
-    Field,
     Session,
-    SQLModel,
-    create_engine,
     select,
-    Relationship,
-    Column,
-    JSON,
 )
 
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-
-class UserBase(SQLModel):
-    name: str
-    email: str
-
-
-class User(UserBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    password_hash: str
-
-    resources: List["Resource"] = Relationship(back_populates="user")
-    courses: List["Course"] = Relationship(back_populates="user")
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class UserRead(UserBase):
-    id: int
-
-
-class UserUpdate(SQLModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-
-
-class ResourceBase(SQLModel):
-    name: str
-    url: str
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
-
-
-class Resource(ResourceBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    votes: Optional[int] = Field(default=0)
-    user: User = Relationship(back_populates="resources")
-
-
-class ResourceCreate(ResourceBase):
-    pass
-
-
-class ResourceRead(ResourceBase):
-    id: int
-    votes: int
-
-
-class ResourceUpdate(SQLModel):
-    id: Optional[int] = None
-    name: Optional[str] = None
-    url: Optional[str] = None
-    user_id: Optional[int] = None
-
-
-class CourseBase(SQLModel):
-    name: str
-    description: str
-    status: str
-    due: datetime.date
-    syllabus: List[Dict] = Field(sa_column=Column(JSON))
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
-
-
-class Course(CourseBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user: User = Relationship(back_populates="courses")
-
-
-class CourseCreate(CourseBase):
-    pass
-
-
-class CourseRead(CourseBase):
-    id: int
-
-
-class CourseUpdate(SQLModel):
-    id: Optional[int] = None
-    name: Optional[str]
-    description: Optional[str]
-    status: Optional[str]
-    due: Optional[datetime.date]
-    syllabus: Optional[List[Dict]]
-
-
-class ResourceReadWithUser(ResourceRead):
-    user: Optional[UserRead] = None
-
-
-class UserReadWithDetails(UserRead):
-    resources: List[ResourceRead] = []
-    courses: List[CourseRead] = []
-
-
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
-
-
-def create_db_and_tables():  # pragma: no cover
-    SQLModel.metadata.create_all(engine)
-
-
-def get_session():  # pragma: no cover
-    with Session(engine) as session:
-        yield session
-
+from app.database import create_db_and_tables, get_session
+from app.models import (
+    User,
+    UserCreate,
+    UserRead,
+    UserUpdate,
+    Resource,
+    ResourceCreate,
+    ResourceRead,
+    ResourceUpdate,
+    Course,
+    CourseCreate,
+    CourseRead,
+    CourseUpdate,
+    ResourceReadWithUser,
+    UserReadWithDetails,
+)
 
 app = FastAPI()
 
