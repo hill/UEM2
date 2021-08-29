@@ -1,5 +1,5 @@
 from rich import print
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended.utils import get_jwt_identity
 from marshmallow import ValidationError

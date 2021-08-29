@@ -59,7 +59,7 @@ def get_all_resources():
   searchQuery = request.args.get('search')
   topics = request.args.get('topics')
 
-  # TODO(TOM): search and topics similtaniously
+  # TODO(TOM): search and topics simultaneously
   if searchQuery:
     resources = Resource.select().where(
       Resource.name.contains(searchQuery)
