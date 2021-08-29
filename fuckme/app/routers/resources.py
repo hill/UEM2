@@ -72,9 +72,14 @@ def update_resource(
 
 
 @router.patch("/{resource_id}/vote", response_model=ResourceRead)
-def update_resource(
+def vote_on_resource(
     *, session: Session = Depends(get_session), resource_id: int, vote: int
 ):
+    """Upvote or downvote a resource using the `vote` query param.
+
+    Use `/vote?vote=1` for an upvote, `/vote?vote=-1` for a downvote.
+    Any user (including unauthorized users) may PATCH to this route.
+    """
     if vote not in {1, -1}:
         print("wrong vote!")
         raise HTTPException(

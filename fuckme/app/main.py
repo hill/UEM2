@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 
+from app.core import config
 from app.database import create_db_and_tables, get_session
 from app.routers import users, courses, resources
 
-app = FastAPI()
+app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
 
 @app.on_event("startup")
@@ -11,6 +12,9 @@ def on_startup():  # pragma: no cover
     create_db_and_tables()
 
 
-app.include_router(users.router)
-app.include_router(courses.router)
-app.include_router(resources.router)
+api_router = APIRouter(prefix=config.API_PREFIX)
+api_router.include_router(users.router)
+api_router.include_router(courses.router)
+api_router.include_router(resources.router)
+
+app.include_router(api_router)

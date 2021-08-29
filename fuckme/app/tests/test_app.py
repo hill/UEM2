@@ -5,6 +5,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
 from app.main import app
+from app.core.config import API_PREFIX
 from app.database import get_session
 from app.models import Course, Resource, User
 
@@ -75,7 +76,7 @@ class TestUsers:
             "password": "wizzzard",
         }
         response = client.post(
-            "/users/",
+            API_PREFIX + "/users/",
             json=new_user,
         )
         data = response.json()
@@ -87,12 +88,13 @@ class TestUsers:
         assert "password" not in data
 
     def test_create_user_incomplete(self, client: TestClient):
-        response = client.post("/users/", json={"name": "Harry Potter"})
+        response = client.post(API_PREFIX + "/users/", json={"name": "Harry Potter"})
         assert response.status_code == 422
 
     def test_create_user_invalid(self, client: TestClient):
         response = client.post(
-            "/users/", json={"name": "Harry Potter", "email": {}, "password": "magics"}
+            API_PREFIX + "/users/",
+            json={"name": "Harry Potter", "email": {}, "password": "magics"},
         )
         assert response.status_code == 422
 
@@ -111,7 +113,7 @@ class TestUsers:
         session.add(user_2)
         session.commit()
 
-        response = client.get("/users/")
+        response = client.get(API_PREFIX + "/users/")
         data = response.json()
 
         assert response.status_code == 200
@@ -123,7 +125,7 @@ class TestUsers:
         assert "password_hash" not in data[0]
 
     def test_read_user(self, user: User, client: TestClient):
-        response = client.get(f"/users/{user.id}")
+        response = client.get(API_PREFIX + f"/users/{user.id}")
         data = response.json()
 
         assert response.status_code == 200
@@ -134,7 +136,9 @@ class TestUsers:
         assert "password_hash" not in data
 
     def test_update_user(self, user: User, client: TestClient):
-        response = client.patch(f"/users/{user.id}", json={"name": "Harry Granger"})
+        response = client.patch(
+            API_PREFIX + f"/users/{user.id}", json={"name": "Harry Granger"}
+        )
         data = response.json()
 
         assert response.status_code == 200
@@ -145,7 +149,7 @@ class TestUsers:
 
     def test_delete_user(self, user: User, session: Session, client: TestClient):
 
-        response = client.delete(f"/users/{user.id}")
+        response = client.delete(API_PREFIX + f"/users/{user.id}")
 
         user_in_db = session.get(User, user.id)
 
@@ -153,21 +157,21 @@ class TestUsers:
         assert user_in_db is None
 
     def test_user_not_found(self, client: TestClient):
-        response = client.get("/users/69")
+        response = client.get(API_PREFIX + "/users/69")
         assert response.status_code == 404
 
 
 class TestResource:
     def test_create_resource(self, user: User, client: TestClient):
         new_resource = {"name": "google", "url": "google.com", "user_id": user.id}
-        response = client.post("/resources/", json=new_resource)
+        response = client.post(API_PREFIX + "/resources/", json=new_resource)
         data = response.json()
         assert response.status_code == 200
         # check resource is a subset of the response
         assert all(item in data.items() for item in new_resource.items())
 
     def test_read_resources(self, resource: Resource, client: TestClient):
-        response = client.get("/resources/")
+        response = client.get(API_PREFIX + "/resources/")
         data = response.json()
         assert response.status_code == 200
         assert data[0]["name"] == resource.name
@@ -176,7 +180,9 @@ class TestResource:
         assert len(data) == 1
 
     def test_update_resource(self, resource: Resource, client: TestClient):
-        response = client.patch(f"/resources/{resource.id}", json={"name": "Xoogle"})
+        response = client.patch(
+            API_PREFIX + f"/resources/{resource.id}", json={"name": "Xoogle"}
+        )
         data = response.json()
 
         assert response.status_code == 200
@@ -188,14 +194,14 @@ class TestResource:
     def test_delete_resource(
         self, resource: Resource, session: Session, client: TestClient
     ):
-        response = client.delete(f"/resources/{resource.id}")
+        response = client.delete(API_PREFIX + f"/resources/{resource.id}")
         assert response.status_code == 200
         resource_in_db = session.get(Resource, resource.id)
         assert resource_in_db is None
 
     def test_upvote_resource(self, resource: Resource, client: TestClient):
         old_vote_count = resource.votes
-        response = client.patch(f"/resources/{resource.id}/vote?vote=1")
+        response = client.patch(API_PREFIX + f"/resources/{resource.id}/vote?vote=1")
         data = response.json()
         assert response.status_code == 200
         assert data["votes"] == resource.votes
@@ -203,7 +209,7 @@ class TestResource:
 
     def test_downvote_resource(self, resource: Resource, client: TestClient):
         old_vote_count = resource.votes
-        response = client.patch(f"/resources/{resource.id}/vote?vote=-1")
+        response = client.patch(API_PREFIX + f"/resources/{resource.id}/vote?vote=-1")
         data = response.json()
         assert response.status_code == 200
         assert data["votes"] == resource.votes
@@ -211,12 +217,12 @@ class TestResource:
 
     def test_too_many_votes_resource(self, resource: Resource, client: TestClient):
         old_vote_count = resource.votes
-        response = client.patch(f"/resources/{resource.id}/vote?vote=100")
+        response = client.patch(API_PREFIX + f"/resources/{resource.id}/vote?vote=100")
         assert response.status_code == 400
         assert resource.votes == old_vote_count
 
     def test_resource_not_found(self, client: TestClient):
-        response = client.get("/resources/69")
+        response = client.get(API_PREFIX + "/resources/69")
         assert response.status_code == 404
 
 
@@ -230,13 +236,13 @@ class TestCourse:
             "syllabus": [{"item": 123}],
             "user_id": user.id,
         }
-        response = client.post("/courses/", json=new_course)
+        response = client.post(API_PREFIX + "/courses/", json=new_course)
         data = response.json()
         assert response.status_code == 200
         assert all(item in data.items() for item in new_course.items())
 
     def test_read_courses(self, course: Course, client: TestClient):
-        response = client.get("/courses/")
+        response = client.get(API_PREFIX + "/courses/")
         data = response.json()
         assert response.status_code == 200
         assert data[0]["name"] == course.name
@@ -245,7 +251,7 @@ class TestCourse:
 
     def test_update_course(self, course: Course, client: TestClient):
         response = client.patch(
-            f"/courses/{course.id}", json={"name": "Linear Algebra"}
+            API_PREFIX + f"/courses/{course.id}", json={"name": "Linear Algebra"}
         )
         data = response.json()
         assert response.status_code == 200
@@ -253,11 +259,11 @@ class TestCourse:
         assert data["user_id"] == course.user_id
 
     def test_delete_course(self, course: Course, session: Session, client: TestClient):
-        response = client.delete(f"/courses/{course.id}")
+        response = client.delete(API_PREFIX + f"/courses/{course.id}")
         assert response.status_code == 200
         course_in_db = session.get(Course, course.id)
         assert course_in_db is None
 
     def test_course_not_found(self, client: TestClient):
-        response = client.get("/courses/69")
+        response = client.get(API_PREFIX + "/courses/69")
         assert response.status_code == 404
