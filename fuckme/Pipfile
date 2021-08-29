@@ -7,6 +7,8 @@ name = "pypi"
 sqlmodel = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+pytest = "*"
+requests = "*"
 
 [dev-packages]
 
