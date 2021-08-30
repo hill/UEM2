@@ -93,6 +93,17 @@ def vote_on_resource(
     return db_resource
 
 
+@router.patch("/{resource_id}/broken", response_model=ResourceRead)
+def mark_resource_broken(*, session: Session = Depends(get_session), resource_id: int):
+    """Mark a resource as broken"""
+    db_resource = get_resource(session, resource_id)
+    db_resource.broken += 1
+    session.add(db_resource)
+    session.commit()
+    session.refresh(db_resource)
+    return db_resource
+
+
 @router.delete("/{resource_id}")
 def delete_resource(*, session: Session = Depends(get_session), resource_id: int):
     resource = get_resource(session, resource_id)

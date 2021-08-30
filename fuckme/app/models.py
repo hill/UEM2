@@ -45,6 +45,7 @@ class ResourceBase(SQLModel):
 class Resource(ResourceBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     votes: Optional[int] = Field(default=0)
+    broken: Optional[int] = Field(default=0)
     user: User = Relationship(back_populates="resources")
 
 
@@ -55,6 +56,7 @@ class ResourceCreate(ResourceBase):
 class ResourceRead(ResourceBase):
     id: int
     votes: int
+    broken: int
 
 
 class ResourceUpdate(SQLModel):

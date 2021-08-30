@@ -221,6 +221,12 @@ class TestResource:
         assert response.status_code == 400
         assert resource.votes == old_vote_count
 
+    def test_mark_as_broken(self, resource: Resource, client: TestClient):
+        assert resource.broken == 0
+        response = client.patch(API_PREFIX + f"/resources/{resource.id}/broken")
+        assert response.status_code == 200
+        assert resource.broken == 1
+
     def test_resource_not_found(self, client: TestClient):
         response = client.get(API_PREFIX + "/resources/69")
         assert response.status_code == 404
