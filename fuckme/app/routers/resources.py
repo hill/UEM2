@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
@@ -49,8 +49,15 @@ def read_resources(
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
+    search: Optional[str] = None,
 ):
-    resources = session.exec(select(Resource).offset(offset).limit(limit)).all()
+    query = select(Resource)
+
+    if search:
+        query = query.where(Resource.name.contains(search))
+
+    query = query.offset(offset).limit(limit)
+    resources = session.exec(query).all()
     return resources
 
 

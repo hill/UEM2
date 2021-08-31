@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -59,6 +60,26 @@ def resource_fixture(user: User, topic: Topic, session: Session) -> Resource:
     session.add(resource)
     session.commit()
     yield resource
+
+
+@pytest.fixture(name="many_resources")
+def many_resources_fixture(
+    user: User, topic: Topic, session: Session
+) -> List[Resource]:
+    resources = [
+        Resource(name="Google", url="google.com", user_id=user.id, topics=[topic]),
+        Resource(name="UNSW", url="unsw.edu.au", user_id=user.id, topics=[]),
+        Resource(
+            name="Introduction To Deep Learning",
+            url="https://sebastianraschka.com/blog/2021/dl-course.html",
+            user_id=user.id,
+            topics=[topic],
+        ),
+    ]
+    for resource in resources:
+        session.add(resource)
+    session.commit()
+    yield resources
 
 
 @pytest.fixture(name="course")
@@ -196,6 +217,23 @@ class TestResource:
         assert data[0]["url"] == resource.url
         assert data[0]["user_id"] == resource.user_id
         assert len(data) == 1
+
+    def test_search_resources(self, many_resources: List[Resource], client: TestClient):
+        response = client.get(API_PREFIX + "/resources/?search=goog")
+        data = response.json()
+        assert response.status_code == 200
+        assert many_resources[0].name == "Google"
+        assert data[0]["name"] == many_resources[0].name
+        assert data[0]["url"] == many_resources[0].url
+        assert data[0]["user_id"] == many_resources[0].user_id
+        assert len(data) == 1
+
+        # check multiple matches but not all results will return
+        response = client.get(API_PREFIX + "/resources/?search=o")
+        data = response.json()
+        assert response.status_code == 200
+        for item in data:
+            assert "o" in item["name"]
 
     def test_update_resource(self, resource: Resource, client: TestClient):
         response = client.patch(
