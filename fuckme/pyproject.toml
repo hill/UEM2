@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "uem-backend"
+version = "0.1.0"
+description = "Backend API for UEM"
+authors = ["Tom Hill <tomhill98@me.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+sqlmodel = "^0.0.4"
+fastapi = "^0.68.1"
+uvicorn = "^0.15.0"
+pytest = "^6.2.4"
+requests = "^2.26.0"
+coverage = "^5.5"
+black = "^21.8b0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
