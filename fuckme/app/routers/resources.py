@@ -16,6 +16,7 @@ from app.models import (
     ResourceUpdate,
     ResourceReadWithDetails,
     Topic,
+    ResourceTopicLink,
 )
 
 router = APIRouter(prefix="/resources", tags=["resources"])
@@ -50,13 +51,22 @@ def read_resources(
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
     search: Optional[str] = None,
+    topics: Optional[str] = None,
 ):
     query = select(Resource)
+
+    if topics:
+        topics = topics.split(",")
+        query = (
+            query.join(ResourceTopicLink, Resource.id == ResourceTopicLink.resource_id)
+            .join(Topic, Topic.id == ResourceTopicLink.topic_id)
+            .where(Topic.name.in_(topics) | Topic.id.in_(topics))
+        )
 
     if search:
         query = query.where(Resource.name.contains(search))
 
-    query = query.offset(offset).limit(limit)
+    query = query.order_by(Resource.votes.desc()).offset(offset).limit(limit)
     resources = session.exec(query).all()
     return resources
 

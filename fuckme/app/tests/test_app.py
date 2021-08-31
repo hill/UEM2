@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import Callable, List
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -23,7 +23,7 @@ def session_fixture():
 
 
 @pytest.fixture(name="client")
-def client_fixture(session: Session):
+def client_fixture(session: Session) -> TestClient:
     def get_session_override():
         return session
 
@@ -32,6 +32,16 @@ def client_fixture(session: Session):
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(name="get_request")
+def get_request_fixture(client: TestClient) -> Callable[[str], dict]:
+    def get_request(url: str):
+        response = client.get(API_PREFIX + url)
+        assert response.status_code == 200
+        return response.json()
+
+    return get_request
 
 
 @pytest.fixture(name="user")
@@ -209,19 +219,24 @@ class TestResource:
         assert len(data["topics"]) == 1
         assert data["topics"][0]["name"] == topic.name
 
-    def test_read_resources(self, resource: Resource, client: TestClient):
-        response = client.get(API_PREFIX + "/resources/")
-        data = response.json()
-        assert response.status_code == 200
+    def test_read_resources(
+        self,
+        resource: Resource,
+        get_request: Callable[[str], dict],
+    ):
+        data = get_request("/resources/")
         assert data[0]["name"] == resource.name
         assert data[0]["url"] == resource.url
         assert data[0]["user_id"] == resource.user_id
         assert len(data) == 1
 
-    def test_search_resources(self, many_resources: List[Resource], client: TestClient):
-        response = client.get(API_PREFIX + "/resources/?search=goog")
-        data = response.json()
-        assert response.status_code == 200
+    def test_search_resources(
+        self,
+        many_resources: List[Resource],
+        topic: Topic,
+        get_request: Callable[[str], dict],
+    ):
+        data = get_request("/resources/?search=goog")
         assert many_resources[0].name == "Google"
         assert data[0]["name"] == many_resources[0].name
         assert data[0]["url"] == many_resources[0].url
@@ -229,11 +244,23 @@ class TestResource:
         assert len(data) == 1
 
         # check multiple matches but not all results will return
-        response = client.get(API_PREFIX + "/resources/?search=o")
-        data = response.json()
-        assert response.status_code == 200
+        data = get_request("/resources/?search=o")
         for item in data:
             assert "o" in item["name"]
+
+        # TODO(TOM): search by multiple topics
+        # search by topic name
+        data = get_request(f"/resources/?topics={topic.name}")
+        assert len(data) == 2
+
+        # search by topic id
+        data = get_request(f"/resources/?topics={topic.id}")
+        assert len(data) == 2
+
+        # search by topic id and search term
+        data = get_request(f"/resources/?search=goog&topics={topic.id}")
+        assert len(data) == 1
+        assert data[0]["name"] == "Google"
 
     def test_update_resource(self, resource: Resource, client: TestClient):
         response = client.patch(
