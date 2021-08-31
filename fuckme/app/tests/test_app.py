@@ -7,7 +7,7 @@ from sqlmodel.pool import StaticPool
 from app.main import app
 from app.core.config import API_PREFIX
 from app.database import get_session
-from app.models import Course, Resource, User
+from app.models import Course, Resource, User, Topic
 
 
 @pytest.fixture(name="session")
@@ -34,7 +34,7 @@ def client_fixture(session: Session):
 
 
 @pytest.fixture(name="user")
-def user_fixture(session: Session):
+def user_fixture(session: Session) -> User:
     user = User(
         name="Harry Potter",
         email="harry.potter@hogwarts.magic",
@@ -45,16 +45,24 @@ def user_fixture(session: Session):
     yield user
 
 
+@pytest.fixture(name="topic")
+def topic_fixture(session: Session) -> Topic:
+    topic = Topic(name="Mathematics")
+    session.add(topic)
+    session.commit()
+    yield topic
+
+
 @pytest.fixture(name="resource")
-def resource_fixture(user: User, session: Session):
-    resource = Resource(name="UNSW", url="unsw.edu.au", user_id=user.id)
+def resource_fixture(user: User, topic: Topic, session: Session) -> Resource:
+    resource = Resource(name="UNSW", url="unsw.edu.au", user_id=user.id, topics=[topic])
     session.add(resource)
     session.commit()
     yield resource
 
 
 @pytest.fixture(name="course")
-def course_fixture(user: User, session: Session):
+def course_fixture(user: User, session: Session) -> Course:
     course = Course(
         name="Discrete Maths",
         description="Hello world",
@@ -68,6 +76,7 @@ def course_fixture(user: User, session: Session):
     yield course
 
 
+# TODO(TOM): abstract common CRUD tests?
 class TestUsers:
     def test_create_user(self, client: TestClient):
         new_user = {
@@ -162,13 +171,22 @@ class TestUsers:
 
 
 class TestResource:
-    def test_create_resource(self, user: User, client: TestClient):
-        new_resource = {"name": "google", "url": "google.com", "user_id": user.id}
+    def test_create_resource(self, user: User, topic: Topic, client: TestClient):
+        new_resource = {
+            "name": "google",
+            "url": "google.com",
+            "user_id": user.id,
+            "topics": [topic.id],
+        }
         response = client.post(API_PREFIX + "/resources/", json=new_resource)
         data = response.json()
         assert response.status_code == 200
-        # check resource is a subset of the response
-        assert all(item in data.items() for item in new_resource.items())
+
+        assert data["name"] == new_resource["name"]
+        assert data["url"] == new_resource["url"]
+        assert data["user_id"] == new_resource["user_id"]
+        assert len(data["topics"]) == 1
+        assert data["topics"][0]["name"] == topic.name
 
     def test_read_resources(self, resource: Resource, client: TestClient):
         response = client.get(API_PREFIX + "/resources/")
@@ -229,6 +247,33 @@ class TestResource:
 
     def test_resource_not_found(self, client: TestClient):
         response = client.get(API_PREFIX + "/resources/69")
+        assert response.status_code == 404
+
+
+class TestTopic:
+    def test_create_topic(self, user: User, client: TestClient):
+        new_topic = {"name": "Algebra"}
+        response = client.post(API_PREFIX + "/topics/", json=new_topic)
+        data = response.json()
+        assert response.status_code == 200
+        # check topic is a subset of the response
+        assert all(item in data.items() for item in new_topic.items())
+
+    def test_read_topics(self, topic: Topic, client: TestClient):
+        response = client.get(API_PREFIX + "/topics/")
+        data = response.json()
+        assert response.status_code == 200
+        assert data[0]["name"] == topic.name
+        assert len(data) == 1
+
+    def test_read_topic(self, topic: Topic, client: TestClient):
+        response = client.get(API_PREFIX + f"/topics/{topic.id}")
+        data = response.json()
+        assert response.status_code == 200
+        assert data["name"] == topic.name
+
+    def test_read_topic_not_found(self, client: TestClient):
+        response = client.get(API_PREFIX + "/topics/69")
         assert response.status_code == 404
 
 

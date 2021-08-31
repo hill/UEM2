@@ -42,5 +42,5 @@ def read_topics(
 
 
 @router.get("/{topic_id}", response_model=TopicRead)
-def read_resource(*, session: Session = Depends(get_session), topic_id: int):
+def read_topic(*, session: Session = Depends(get_session), topic_id: int):
     return get_topic(session, topic_id)
