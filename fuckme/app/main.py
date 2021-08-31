@@ -1,8 +1,8 @@
 from fastapi import FastAPI, APIRouter
 
 from app.core import config
-from app.database import create_db_and_tables, get_session
-from app.routers import users, courses, resources
+from app.database import create_db_and_tables
+from app.routers import users, courses, resources, topics
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
@@ -16,5 +16,6 @@ api_router = APIRouter(prefix=config.API_PREFIX)
 api_router.include_router(users.router)
 api_router.include_router(courses.router)
 api_router.include_router(resources.router)
+api_router.include_router(topics.router)
 
 app.include_router(api_router)

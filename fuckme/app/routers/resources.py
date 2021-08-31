@@ -14,7 +14,8 @@ from app.models import (
     ResourceCreate,
     ResourceRead,
     ResourceUpdate,
-    ResourceReadWithUser,
+    ResourceReadWithDetails,
+    Topic,
 )
 
 router = APIRouter(prefix="/resources", tags=["resources"])
@@ -27,18 +28,22 @@ def get_resource(session: Session, resource_id: int) -> Resource:
     return resource
 
 
-@router.post("/", response_model=ResourceRead)
+@router.post("/", response_model=ResourceReadWithDetails)
 def create_resource(
     *, session: Session = Depends(get_session), resource: ResourceCreate
 ):
     db_resource = Resource.from_orm(resource)
+
+    # TODO(TOM): make this get or create topic
+    db_resource.topics = [session.get(Topic, topic_id) for topic_id in resource.topics]
+
     session.add(db_resource)
     session.commit()
     session.refresh(db_resource)
     return db_resource
 
 
-@router.get("/", response_model=List[ResourceRead])
+@router.get("/", response_model=List[ResourceReadWithDetails])
 def read_resources(
     *,
     session: Session = Depends(get_session),
@@ -49,7 +54,7 @@ def read_resources(
     return resources
 
 
-@router.get("/{resource_id}", response_model=ResourceReadWithUser)
+@router.get("/{resource_id}", response_model=ResourceReadWithDetails)
 def read_resource(*, session: Session = Depends(get_session), resource_id: int):
     return get_resource(session, resource_id)
 

@@ -9,6 +9,10 @@ from sqlmodel import (
     JSON,
 )
 
+# ===== #
+# Users #
+# ===== #
+
 
 class UserBase(SQLModel):
     name: str
@@ -36,6 +40,40 @@ class UserUpdate(SQLModel):
     email: Optional[str] = None
 
 
+# ==================== #
+# Resources and Topics #
+# ==================== #
+
+
+class ResourceTopicLink(SQLModel, table=True):
+    resource_id: Optional[int] = Field(
+        default=None, foreign_key="resource.id", primary_key=True
+    )
+    topic_id: Optional[int] = Field(
+        default=None, foreign_key="topic.id", primary_key=True
+    )
+
+
+class TopicBase(SQLModel):
+    name: str
+
+
+class Topic(TopicBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    resources: List["Resource"] = Relationship(
+        back_populates="topics", link_model=ResourceTopicLink
+    )
+
+
+class TopicCreate(TopicBase):
+    pass
+
+
+class TopicRead(TopicBase):
+    id: int
+
+
 class ResourceBase(SQLModel):
     name: str
     url: str
@@ -46,11 +84,15 @@ class Resource(ResourceBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     votes: Optional[int] = Field(default=0)
     broken: Optional[int] = Field(default=0)
+
     user: User = Relationship(back_populates="resources")
+    topics: List[Topic] = Relationship(
+        back_populates="resources", link_model=ResourceTopicLink
+    )
 
 
 class ResourceCreate(ResourceBase):
-    pass
+    topics: Optional[List[int]] = []
 
 
 class ResourceRead(ResourceBase):
@@ -64,6 +106,12 @@ class ResourceUpdate(SQLModel):
     name: Optional[str] = None
     url: Optional[str] = None
     user_id: Optional[int] = None
+    topics: Optional[List[int]] = None
+
+
+# ======= #
+# Courses #
+# ======= #
 
 
 class CourseBase(SQLModel):
@@ -97,8 +145,9 @@ class CourseUpdate(SQLModel):
     syllabus: Optional[List[Dict]]
 
 
-class ResourceReadWithUser(ResourceRead):
+class ResourceReadWithDetails(ResourceRead):
     user: Optional[UserRead] = None
+    topics: List[TopicRead] = []
 
 
 class UserReadWithDetails(UserRead):
