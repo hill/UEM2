@@ -253,6 +253,10 @@ class TestResource:
         data = get_request(f"/resources/?topics={topic.name}")
         assert len(data) == 2
 
+        # check search is case insensitive
+        data = get_request(f"/resources/?topics={topic.name.upper()}")
+        assert len(data) == 2
+
         # search by topic id
         data = get_request(f"/resources/?topics={topic.id}")
         assert len(data) == 2

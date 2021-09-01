@@ -7,6 +7,7 @@ from sqlmodel import (
     Session,
     select,
 )
+from sqlalchemy import func
 
 from app.database import get_session
 from app.models import (
@@ -56,11 +57,11 @@ def read_resources(
     query = select(Resource)
 
     if topics:
-        topics = topics.split(",")
+        topics = topics.lower().split(",")
         query = (
             query.join(ResourceTopicLink, Resource.id == ResourceTopicLink.resource_id)
             .join(Topic, Topic.id == ResourceTopicLink.topic_id)
-            .where(Topic.name.in_(topics) | Topic.id.in_(topics))
+            .where(func.lower(Topic.name).in_(topics) | Topic.id.in_(topics))
         )
 
     if search:
