@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "questgen"
+version = "0.1.0"
+description = "Question Generation"
+authors = ["Tom Hill <tomhill98@me.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+transformers = "^4.10.0"
+black = "^21.8b0"
+torch = "^1.9.0"
+torchvision = "^0.10.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
