@@ -105,3 +105,20 @@ def course_fixture(user: User, session: Session) -> Course:
     session.add(course)
     session.commit()
     yield course
+
+
+@pytest.fixture(name="assignment")
+def assignment_fixture(course: Course, session: Session) -> Assignment:
+    assignment = Assignment(
+        name="Big Exam",
+        description="Huge Exam",
+        status="completed",
+        due=datetime.date(2021, 12, 12),
+        course_id=course.id,
+        weight=50,
+        mark=100,
+        outcome="pass",
+    )
+    session.add(assignment)
+    session.commit()
+    yield assignment

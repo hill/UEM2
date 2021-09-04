@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter
 
 from app.core import config
+from app.core.logger import log
 from app.database import create_db_and_tables, get_session
 from app.routers import users, courses, resources, topics
 from app.util.data import generate_demo_data
@@ -10,8 +11,13 @@ app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERS
 
 @app.on_event("startup")
 def on_startup():  # pragma: no cover
+    log.info(
+        f"[yellow]App running in [bold]{config.ENVIRONMENT}[/bold] mode[/]",
+        extra={"markup": True},
+    )
     create_db_and_tables()
-    generate_demo_data(next(get_session()))
+    if config.ENVIRONMENT != "production":
+        generate_demo_data(next(get_session()))
 
 
 api_router = APIRouter(prefix=config.API_PREFIX)

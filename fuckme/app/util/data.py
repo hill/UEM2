@@ -1,7 +1,6 @@
 from sqlmodel import Session
 from app import models
-from app.core.config import logger
-from app.database import get_session
+from app.core.logger import log
 
 
 def generate_demo_data(session: Session):
@@ -9,9 +8,9 @@ def generate_demo_data(session: Session):
 
     # check that the db is empty
     if session.query(models.User).first():
-        logger.info("Data already exists, skipping data generation.")
+        log.info("Data already exists, skipping data generation.")
         return
-    logger.info("Generating demo data.")
+    log.info("Generating demo data.")
 
     user = models.User(
         name="Tom Hill", email="tomhill98@me.com", password_hash="pwhash"

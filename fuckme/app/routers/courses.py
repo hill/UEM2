@@ -14,6 +14,9 @@ from app.models import (
     CourseCreate,
     CourseRead,
     CourseUpdate,
+    AssignmentRead,
+    Assignment,
+    AssignmentCreate,
 )
 
 router = APIRouter(prefix="/courses", tags=["courses"])
@@ -74,3 +77,47 @@ def delete_course(*, session: Session = Depends(get_session), course_id: int):
     session.delete(course)
     session.commit()
     return {"ok": True}
+
+
+def get_assignment(session: Session, assignment_id: int) -> Assignment:
+    assignment = session.get(Assignment, assignment_id)
+    if not assignment:
+        raise HTTPException(status_code=404, detail="assignment not found")
+    return assignment
+
+
+@router.get("/{course_id}/assignments/{assignment_id}", response_model=AssignmentRead)
+def read_assignment(*, session: Session = Depends(get_session), assignment_id: int):
+    return get_assignment(session, assignment_id)
+
+
+@router.get("/{course_id}/assignments", response_model=List[AssignmentRead])
+def read_assignments(
+    *,
+    session: Session = Depends(get_session),
+    course_id: int,
+    offset: int = 0,
+    limit: int = Query(default=100, lte=100),
+):
+    assignments = session.exec(
+        select(Assignment)
+        .where(Assignment.course_id == course_id)
+        .offset(offset)
+        .limit(limit)
+    ).all()
+    return assignments
+
+
+@router.post("/{course_id}/assignments", response_model=AssignmentRead)
+def create_assignment(
+    *,
+    session: Session = Depends(get_session),
+    course_id: int,
+    assignment: AssignmentCreate,
+):
+    assignment_db = Assignment.from_orm(assignment)
+    assignment_db.course_id = course_id  # assign to this course
+    session.add(assignment_db)
+    session.commit()
+    session.refresh(assignment_db)
+    return assignment_db
