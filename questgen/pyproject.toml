@@ -5,11 +5,14 @@ description = "Question Generation"
 authors = ["Tom Hill <tomhill98@me.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 transformers = "^4.10.0"
 black = "^21.8b0"
 torch = "^1.9.0"
 torchvision = "^0.10.0"
+datasets = "^1.11.0"
+rich = "^10.9.0"
+numpy = "^1.21.2"
 
 [tool.poetry.dev-dependencies]
 
