@@ -20,12 +20,12 @@ class TestUtil:
     def test_generate_demo_data(self, session: Session, model: SQLModel):
 
         # data does not exist before
-        assert session.query(model).count() is 0
+        assert session.query(model).count() == 0
 
         data.generate_demo_data(session)
 
         # data exists after
-        assert session.query(model).count() is not 0
+        assert session.query(model).count() != 0
 
     @pytest.mark.parametrize(
         "model, count",
