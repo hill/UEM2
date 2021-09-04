@@ -1,4 +1,4 @@
-.PHONY: start test
+.PHONY: start test clean
 
 start:
 	sh scripts/start.sh

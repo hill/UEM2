@@ -1,6 +1,7 @@
 from sqlmodel import Session
 from app import models
 from app.core.logger import log
+from app.core import security
 
 
 def generate_demo_data(session: Session):
@@ -13,7 +14,9 @@ def generate_demo_data(session: Session):
     log.info("Generating demo data.")
 
     user = models.User(
-        name="Tom Hill", email="tomhill98@me.com", password_hash="pwhash"
+        name="Tom Hill",
+        email="tomhill98@me.com",
+        password_hash=security.get_password_hash("password"),
     )
 
     session.add(user)

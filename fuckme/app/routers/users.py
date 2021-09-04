@@ -8,6 +8,8 @@ from sqlmodel import (
     select,
 )
 
+from app import deps
+from app.core import security
 from app.database import get_session
 from app.models import User, UserCreate, UserRead, UserUpdate, UserReadWithDetails
 
@@ -21,9 +23,21 @@ def get_user(session: Session, user_id: int) -> User:
     return user
 
 
+@router.get("/me", response_model=UserRead)
+def read_user_me(
+    *,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(deps.get_current_active_user),
+):
+    """Get the current user"""
+    return current_user
+
+
 @router.post("/", response_model=UserRead)
 def create_user(*, session: Session = Depends(get_session), user: UserCreate):
-    db_user = User.from_orm(user, {"password_hash": user.password + "_hash"})
+    db_user = User.from_orm(
+        user, {"password_hash": security.get_password_hash(user.password)}
+    )
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
@@ -48,7 +62,10 @@ def read_user(*, session: Session = Depends(get_session), user_id: int):
 
 @router.patch("/{user_id}", response_model=UserRead)
 def update_user(
-    *, session: Session = Depends(get_session), user_id: int, user: UserUpdate
+    *,
+    session: Session = Depends(get_session),
+    user_id: int,
+    user: UserUpdate,
 ):
     db_user = get_user(session, user_id)
     user_data = user.dict(exclude_unset=True)

@@ -21,6 +21,8 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    is_active: bool = True
+    is_superuser: bool = False
     password_hash: str
 
     resources: List["Resource"] = Relationship(back_populates="user")
