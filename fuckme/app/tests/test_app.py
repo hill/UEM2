@@ -1,31 +1,39 @@
+import pytest
+from sqlmodel import SQLModel
+
 from app.tests.conftest import (
-    API_PREFIX,
     Session,
-    TestClient,
     User,
     Course,
     Topic,
     Resource,
+    Assignment,
 )
 from app.util import data
 
 
 class TestUtil:
-    def test_generate_demo_data(self, session: Session):
+    @pytest.mark.parametrize(
+        "model",
+        [User, Course, Topic, Resource, Assignment],
+    )
+    def test_generate_demo_data(self, session: Session, model: SQLModel):
 
-        assert session.query(User).first() is None
-        assert session.query(Course).first() is None
-        assert session.query(Topic).first() is None
-        assert session.query(Resource).first() is None
+        # data does not exist before
+        assert session.query(model).count() is 0
 
         data.generate_demo_data(session)
 
-        assert session.query(User).first() is not None
-        assert session.query(Course).first() is not None
-        assert session.query(Topic).first() is not None
-        assert session.query(Resource).first() is not None
+        # data exists after
+        assert session.query(model).count() is not 0
 
-    def test_generate_demo_data_preexisting_data(self, session: Session):
+    @pytest.mark.parametrize(
+        "model, count",
+        [(User, 1), (Course, 0), (Topic, 0), (Resource, 0), (Assignment, 0)],
+    )
+    def test_generate_demo_data_preexisting_data(
+        self, session: Session, model: SQLModel, count: int
+    ):
         user = User(
             name="pre-exisitng user",
             email="yeet@mcskeet.com",
@@ -34,15 +42,9 @@ class TestUtil:
         session.add(user)
         session.commit()
 
-        assert session.query(User).count() == 1
-        assert session.query(Course).first() is None
-        assert session.query(Topic).first() is None
-        assert session.query(Resource).first() is None
+        assert session.query(model).count() == count
 
         data.generate_demo_data(session)
 
         # check it did not generate additional data
-        assert session.query(User).count() == 1
-        assert session.query(Course).first() is None
-        assert session.query(Topic).first() is None
-        assert session.query(Resource).first() is None
+        assert session.query(model).count() == count

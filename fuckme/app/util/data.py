@@ -45,5 +45,13 @@ def generate_demo_data(session: Session):
         topics=[maths, algebra],
     )
 
-    session.add(linear_algebra)
+    big_exam = models.Assignment(
+        name="Big Exam",
+        due="2021-12,12",
+        course_id=discrete_maths.id,
+        status="in_progress",
+        weight=50,
+    )
+
+    session.add_all([linear_algebra, big_exam])
     session.commit()

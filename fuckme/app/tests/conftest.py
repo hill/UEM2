@@ -8,7 +8,7 @@ from sqlmodel.pool import StaticPool
 from app.main import app
 from app.core.config import API_PREFIX
 from app.database import get_session
-from app.models import Course, Resource, User, Topic
+from app.models import Course, Resource, User, Topic, Assignment
 
 
 @pytest.fixture(name="session")

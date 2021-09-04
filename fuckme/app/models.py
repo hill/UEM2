@@ -126,6 +126,7 @@ class CourseBase(SQLModel):
 class Course(CourseBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user: User = Relationship(back_populates="courses")
+    assignments: List["Assignment"] = Relationship(back_populates="course")
 
 
 class CourseCreate(CourseBase):
@@ -143,6 +144,30 @@ class CourseUpdate(SQLModel):
     status: Optional[str]
     due: Optional[datetime.date]
     syllabus: Optional[List[Dict]]
+
+
+class AssignmentBase(SQLModel):
+    name: str
+    status: str  # completed / in_progress
+    description: Optional[str]
+    due: Optional[datetime.date]
+    mark: Optional[float]
+    outcome: Optional[str]  # pass/fail
+    weight: Optional[float]
+    course_id: Optional[int] = Field(default=None, foreign_key="course.id")
+
+
+class Assignment(AssignmentBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    course: Course = Relationship(back_populates="assignments")
+
+
+class AssignmentCreate(AssignmentBase):
+    pass
+
+
+class AssignmentRead(AssignmentBase):
+    id: int
 
 
 class ResourceReadWithDetails(ResourceRead):
