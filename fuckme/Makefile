@@ -5,6 +5,7 @@ start:
 
 test:
 	sh scripts/test.sh
+	make clean
 
 clean:
 	find . -type f -name "*.DS_Store" -ls -delete
