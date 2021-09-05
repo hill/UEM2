@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, APIRouter
 
 from app.core import config
@@ -18,6 +19,13 @@ def on_startup():  # pragma: no cover
     create_db_and_tables()
     if config.ENVIRONMENT != "production":
         generate_demo_data(next(get_session()))
+
+
+@app.on_event("shutdown")
+def on_shutdown():
+    if config.ENVIRONMENT != "production" and not config.PERSIST_DB:
+        log.warn("Removing database. (PERSIST_DB is false).")
+        os.remove("database.db")
 
 
 api_router = APIRouter(prefix=config.API_PREFIX)
