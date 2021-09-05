@@ -41,7 +41,7 @@ def create_course(
     course: CourseCreate,
     current_user: User = Depends(deps.get_current_user)
 ):
-    db_course = Course.from_orm(course)
+    db_course = Course.from_orm(course, {"user_id": current_user.id})
     session.add(db_course)
     session.commit()
     session.refresh(db_course)
