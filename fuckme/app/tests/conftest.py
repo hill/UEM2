@@ -14,6 +14,8 @@ from app.tests import util
 
 TEST_USER_EMAIL = "harry.potter@hogwarts.magic"
 TEST_USER_PASSWORD = "password"
+TEST_SUPERUSER_EMAIL = "albus.dumbledore@hogwarts.magic"
+TEST_SUPERUSER_PASSWORD = "password"
 
 
 @pytest.fixture(name="session")
@@ -33,6 +35,19 @@ def user_fixture(session: Session) -> User:
         name="Harry Potter",
         email=TEST_USER_EMAIL,
         password_hash=security.get_password_hash(TEST_USER_PASSWORD),
+    )
+    session.add(user)
+    session.commit()
+    yield user
+
+
+@pytest.fixture(name="superuser")
+def superuser_fixture(session: Session) -> User:
+    user = User(
+        name="Albus Dumbledore",
+        email=TEST_SUPERUSER_EMAIL,
+        password_hash=security.get_password_hash(TEST_SUPERUSER_PASSWORD),
+        is_superuser=True,
     )
     session.add(user)
     session.commit()

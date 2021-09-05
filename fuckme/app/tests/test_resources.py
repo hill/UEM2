@@ -1,16 +1,29 @@
 from typing import Callable, List
-from app.tests.conftest import API_PREFIX, Session, TestClient, User, Topic, Resource
+from app.tests.conftest import (
+    API_PREFIX,
+    Session,
+    TestClient,
+    User,
+    Topic,
+    Resource,
+    TEST_SUPERUSER_PASSWORD,
+)
+from app.tests import util
 
 
 class TestResource:
-    def test_create_resource(self, user: User, topic: Topic, client: TestClient):
+    def test_create_resource(
+        self, user: User, topic: Topic, authenticated_client: TestClient
+    ):
         new_resource = {
             "name": "google",
             "url": "google.com",
             "user_id": user.id,
             "topics": [topic.id],
         }
-        response = client.post(API_PREFIX + "/resources/", json=new_resource)
+        response = authenticated_client.post(
+            API_PREFIX + "/resources/", json=new_resource
+        )
         data = response.json()
         assert response.status_code == 200
 
@@ -67,8 +80,10 @@ class TestResource:
         assert len(data) == 1
         assert data[0]["name"] == "Google"
 
-    def test_update_resource(self, resource: Resource, client: TestClient):
-        response = client.patch(
+    def test_update_resource(
+        self, resource: Resource, authenticated_client: TestClient
+    ):
+        response = authenticated_client.patch(
             API_PREFIX + f"/resources/{resource.id}", json={"name": "Xoogle"}
         )
         data = response.json()
@@ -80,9 +95,9 @@ class TestResource:
         assert data["votes"] == resource.votes
 
     def test_delete_resource(
-        self, resource: Resource, session: Session, client: TestClient
+        self, resource: Resource, session: Session, authenticated_client: TestClient
     ):
-        response = client.delete(API_PREFIX + f"/resources/{resource.id}")
+        response = authenticated_client.delete(API_PREFIX + f"/resources/{resource.id}")
         assert response.status_code == 200
         resource_in_db = session.get(Resource, resource.id)
         assert resource_in_db is None
@@ -118,3 +133,29 @@ class TestResource:
     def test_resource_not_found(self, client: TestClient):
         response = client.get(API_PREFIX + "/resources/69")
         assert response.status_code == 404
+
+    def test_superuser_modify_resources(
+        self, resource: Resource, superuser: User, client: TestClient
+    ):
+        # modify a resource as a superuser
+        newURL = "http://new_url.com"
+        assert resource.user.id != superuser.id
+        r = client.patch(
+            API_PREFIX + f"/resources/{resource.id}",
+            json={"url": newURL},
+            headers=util.user_authentication_headers(
+                client=client, email=superuser.email, password=TEST_SUPERUSER_PASSWORD
+            ),
+        )
+        assert r.status_code == 200
+        data = r.json()
+        assert data["url"] == newURL
+
+        # delete a resource as a superuser
+        r = client.delete(
+            API_PREFIX + f"/resources/{resource.id}",
+            headers=util.user_authentication_headers(
+                client=client, email=superuser.email, password=TEST_SUPERUSER_PASSWORD
+            ),
+        )
+        assert r.status_code == 200
