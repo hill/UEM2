@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends, Query
 from sqlmodel import (
@@ -25,10 +25,12 @@ from app.models import (
 router = APIRouter(prefix="/courses", tags=["courses"])
 
 
-def get_course(session: Session, course_id: int) -> Course:
+def get_course(session: Session, course_id: int, current_user: User) -> Course:
     course = session.get(Course, course_id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
+    if course.user.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     return course
 
 
@@ -54,7 +56,12 @@ def read_courses(
     limit: int = Query(default=100, lte=100),
     current_user: User = Depends(deps.get_current_user)
 ):
-    courses = session.exec(select(Course).offset(offset).limit(limit)).all()
+    courses = session.exec(
+        select(Course)
+        .filter(Course.user_id == current_user.id)
+        .offset(offset)
+        .limit(limit)
+    ).all()
     return courses
 
 
@@ -65,7 +72,7 @@ def read_course(
     course_id: int,
     current_user: User = Depends(deps.get_current_user)
 ):
-    return get_course(session, course_id)
+    return get_course(session, course_id, current_user)
 
 
 @router.patch("/{course_id}", response_model=CourseRead)
@@ -76,7 +83,7 @@ def update_course(
     course: CourseUpdate,
     current_user: User = Depends(deps.get_current_user)
 ):
-    db_course = get_course(session, course_id)
+    db_course = get_course(session, course_id, current_user)
     course_data = course.dict(exclude_unset=True)
     for key, value in course_data.items():
         setattr(db_course, key, value)
@@ -93,7 +100,7 @@ def delete_course(
     course_id: int,
     current_user: User = Depends(deps.get_current_user)
 ):
-    course = get_course(session, course_id)
+    course = get_course(session, course_id, current_user)
     session.delete(course)
     session.commit()
     return {"ok": True}
@@ -142,6 +149,9 @@ def create_assignment(
     assignment: AssignmentCreate,
     current_user: User = Depends(deps.get_current_user)
 ):
+    # check that the user is authorized to get this course
+    get_course(session, course_id, current_user)
+    # create the assignment
     assignment_db = Assignment.from_orm(assignment)
     assignment_db.course_id = course_id  # assign to this course
     session.add(assignment_db)
