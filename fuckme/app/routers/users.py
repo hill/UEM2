@@ -26,7 +26,6 @@ def get_user(session: Session, user_id: int) -> User:
 @router.get("/me", response_model=UserRead)
 def read_user_me(
     *,
-    session: Session = Depends(get_session),
     current_user: User = Depends(deps.get_current_active_user),
 ):
     """Get the current user"""

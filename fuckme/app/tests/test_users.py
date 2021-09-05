@@ -31,6 +31,13 @@ class TestUsers:
         )
         assert response.status_code == 422
 
+    def test_read_user_me(self, authenticated_client: TestClient, user: User):
+        response = authenticated_client.get(API_PREFIX + "/users/me")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["email"] == user.email
+        assert data["name"] == user.name
+
     def test_read_users(self, session: Session, client: TestClient):
         user_1 = User(
             name="Harry Potter",

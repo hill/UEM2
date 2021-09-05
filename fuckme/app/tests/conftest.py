@@ -27,6 +27,18 @@ def session_fixture() -> Generator:
         yield session
 
 
+@pytest.fixture(name="user")
+def user_fixture(session: Session) -> User:
+    user = User(
+        name="Harry Potter",
+        email=TEST_USER_EMAIL,
+        password_hash=security.get_password_hash(TEST_USER_PASSWORD),
+    )
+    session.add(user)
+    session.commit()
+    yield user
+
+
 @pytest.fixture(name="client")
 def client_fixture(session: Session) -> TestClient:
     def get_session_override() -> Generator:
@@ -49,16 +61,17 @@ def normal_user_token_headers_fixture(
 
 
 @pytest.fixture(name="authenticated_client")
-def authenticated_client_fixture(
-    session: Session, normal_user_token_headers: Dict[str, str]
-) -> TestClient:
+def authenticated_client_fixture(session: Session, user: User) -> TestClient:
     def get_session_override() -> Generator:
         return session
 
     app.dependency_overrides[get_session] = get_session_override
 
     client = TestClient(app)
-    client.headers.update(normal_user_token_headers)
+    token_headers = util.user_authentication_headers(
+        client=client, email=user.email, password=TEST_USER_PASSWORD
+    )
+    client.headers.update(token_headers)
     yield client
     app.dependency_overrides.clear()
 
@@ -71,18 +84,6 @@ def get_request_fixture(client: TestClient) -> Callable[[str], dict]:
         return response.json()
 
     return get_request
-
-
-@pytest.fixture(name="user")
-def user_fixture(session: Session) -> User:
-    user = User(
-        name="Harry Potter",
-        email=TEST_USER_EMAIL,
-        password_hash=security.get_password_hash(TEST_USER_PASSWORD),
-    )
-    session.add(user)
-    session.commit()
-    yield user
 
 
 @pytest.fixture(name="topic")
