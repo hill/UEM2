@@ -14,6 +14,7 @@ from app.models import (
     Course,
     CourseCreate,
     CourseRead,
+    CourseReadWithDetails,
     CourseUpdate,
     AssignmentRead,
     Assignment,
@@ -57,7 +58,7 @@ def read_courses(
     return courses
 
 
-@router.get("/{course_id}", response_model=CourseRead)
+@router.get("/{course_id}", response_model=CourseReadWithDetails)
 def read_course(
     *,
     session: Session = Depends(get_session),

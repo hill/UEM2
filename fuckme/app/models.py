@@ -180,3 +180,7 @@ class ResourceReadWithDetails(ResourceRead):
 class UserReadWithDetails(UserRead):
     resources: List[ResourceRead] = []
     courses: List[CourseRead] = []
+
+
+class CourseReadWithDetails(CourseRead):
+    assignments: List[AssignmentRead] = []
