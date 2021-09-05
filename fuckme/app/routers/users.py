@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends, Query
 from sqlmodel import (
@@ -65,8 +65,11 @@ def update_user(
     session: Session = Depends(get_session),
     user_id: int,
     user: UserUpdate,
+    current_user: User = Depends(deps.get_current_active_user),
 ):
     db_user = get_user(session, user_id)
+    if db_user.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     user_data = user.dict(exclude_unset=True)
     for key, value in user_data.items():
         setattr(db_user, key, value)
@@ -77,8 +80,10 @@ def update_user(
 
 
 @router.delete("/{user_id}")
-def delete_user(*, session: Session = Depends(get_session), user_id: int):
+def delete_user(*, session: Session = Depends(get_session), user_id: int, current_user: User = Depends(deps.get_current_active_user),):
     user = get_user(session, user_id)
+    if user.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     session.delete(user)
     session.commit()
     return {"ok": True}

@@ -75,8 +75,8 @@ class TestUsers:
         assert "password" not in data
         assert "password_hash" not in data
 
-    def test_update_user(self, user: User, client: TestClient):
-        response = client.patch(
+    def test_update_user(self, user: User, authenticated_client: TestClient):
+        response = authenticated_client.patch(
             API_PREFIX + f"/users/{user.id}", json={"name": "Harry Granger"}
         )
         data = response.json()
@@ -87,9 +87,10 @@ class TestUsers:
         assert "password" not in data
         assert "password_hash" not in data
 
-    def test_delete_user(self, user: User, session: Session, client: TestClient):
-
-        response = client.delete(API_PREFIX + f"/users/{user.id}")
+    def test_delete_user(
+        self, user: User, session: Session, authenticated_client: TestClient
+    ):
+        response = authenticated_client.delete(API_PREFIX + f"/users/{user.id}")
 
         user_in_db = session.get(User, user.id)
 
