@@ -103,6 +103,7 @@ export default {
       this.loading = true
 
       this.$store.dispatch('login', {email: this.email, password: this.password}).then(() => {
+        console.log("logged in!")
         if (this.$route.query.next) {
           this.$router.push(this.$route.query.next)
         } else {

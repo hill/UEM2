@@ -88,7 +88,7 @@ export default {
   },
   mounted() {
     ResourceService.list().then(({data}) => {
-      this.resources = data.resources;
+      this.resources = data;
     })
 
     TopicService.list().then(({data}) => {
@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     search() {
-      ResourceService.find(this.searchTerm).then(({data}) => this.resources = data.resources)
+      ResourceService.find(this.searchTerm).then(({data}) => this.resources = data)
     },
     getFilteredTopics(text) {
       this.filteredTopics = this.topics.filter((topic) => {

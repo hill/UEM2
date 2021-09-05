@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, APIRouter
+from starlette.middleware.cors import CORSMiddleware
 
 from app.core import config
 from app.core.logger import log
@@ -8,6 +9,16 @@ from app.routers import auth, users, courses, resources, topics
 from app.util.data import generate_demo_data
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
+
+if config.BACKEND_CORS_ORIGINS:
+    log.warning(f"CORS enabled for {config.BACKEND_CORS_ORIGINS}")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in config.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.on_event("startup")

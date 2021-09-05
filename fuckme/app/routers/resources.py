@@ -39,7 +39,7 @@ def create_resource(
     resource: ResourceCreate,
     current_user: User = Depends(deps.get_current_user),
 ):
-    db_resource = Resource.from_orm(resource, {"user": current_user})
+    db_resource = Resource.from_orm(resource, {"user_id": current_user.id})
 
     # TODO(TOM): make this get or create topic
     db_resource.topics = [session.get(Topic, topic_id) for topic_id in resource.topics]
