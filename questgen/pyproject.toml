@@ -13,6 +13,9 @@ torchvision = "^0.10.0"
 datasets = "^1.11.0"
 rich = "^10.9.0"
 numpy = "^1.21.2"
+requests = "^2.26.0"
+bs4 = "^0.0.1"
+html5lib = "^1.1"
 
 [tool.poetry.dev-dependencies]
 

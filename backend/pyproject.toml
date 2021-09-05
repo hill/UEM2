@@ -25,6 +25,7 @@ emails = "^0.6"
 [tool.pytest.ini_options]
 testpaths = ["app/tests"]
 python_files = "test_*.py"
+norecursedirs = ["docs","*.egg-info",".git","appdir",".tox"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
