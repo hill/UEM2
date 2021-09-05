@@ -8,6 +8,7 @@ from sqlmodel import (
     select,
 )
 
+from app import deps
 from app.database import get_session
 from app.models import (
     Course,
@@ -17,6 +18,7 @@ from app.models import (
     AssignmentRead,
     Assignment,
     AssignmentCreate,
+    User,
 )
 
 router = APIRouter(prefix="/courses", tags=["courses"])
@@ -30,7 +32,12 @@ def get_course(session: Session, course_id: int) -> Course:
 
 
 @router.post("/", response_model=CourseRead)
-def create_course(*, session: Session = Depends(get_session), course: CourseCreate):
+def create_course(
+    *,
+    session: Session = Depends(get_session),
+    course: CourseCreate,
+    current_user: User = Depends(deps.get_current_user)
+):
     db_course = Course.from_orm(course)
     session.add(db_course)
     session.commit()
@@ -44,13 +51,19 @@ def read_courses(
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
+    current_user: User = Depends(deps.get_current_user)
 ):
     courses = session.exec(select(Course).offset(offset).limit(limit)).all()
     return courses
 
 
 @router.get("/{course_id}", response_model=CourseRead)
-def read_course(*, session: Session = Depends(get_session), course_id: int):
+def read_course(
+    *,
+    session: Session = Depends(get_session),
+    course_id: int,
+    current_user: User = Depends(deps.get_current_user)
+):
     return get_course(session, course_id)
 
 
@@ -60,6 +73,7 @@ def update_course(
     session: Session = Depends(get_session),
     course_id: int,
     course: CourseUpdate,
+    current_user: User = Depends(deps.get_current_user)
 ):
     db_course = get_course(session, course_id)
     course_data = course.dict(exclude_unset=True)
@@ -72,7 +86,12 @@ def update_course(
 
 
 @router.delete("/{course_id}")
-def delete_course(*, session: Session = Depends(get_session), course_id: int):
+def delete_course(
+    *,
+    session: Session = Depends(get_session),
+    course_id: int,
+    current_user: User = Depends(deps.get_current_user)
+):
     course = get_course(session, course_id)
     session.delete(course)
     session.commit()
@@ -87,7 +106,12 @@ def get_assignment(session: Session, assignment_id: int) -> Assignment:
 
 
 @router.get("/{course_id}/assignments/{assignment_id}", response_model=AssignmentRead)
-def read_assignment(*, session: Session = Depends(get_session), assignment_id: int):
+def read_assignment(
+    *,
+    session: Session = Depends(get_session),
+    assignment_id: int,
+    current_user: User = Depends(deps.get_current_user)
+):
     return get_assignment(session, assignment_id)
 
 
@@ -98,6 +122,7 @@ def read_assignments(
     course_id: int,
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
+    current_user: User = Depends(deps.get_current_user)
 ):
     assignments = session.exec(
         select(Assignment)
@@ -114,6 +139,7 @@ def create_assignment(
     session: Session = Depends(get_session),
     course_id: int,
     assignment: AssignmentCreate,
+    current_user: User = Depends(deps.get_current_user)
 ):
     assignment_db = Assignment.from_orm(assignment)
     assignment_db.course_id = course_id  # assign to this course

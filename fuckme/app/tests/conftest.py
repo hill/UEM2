@@ -1,5 +1,5 @@
 import datetime
-from typing import Callable, List
+from typing import Callable, Generator, List, Dict
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -7,12 +7,17 @@ from sqlmodel.pool import StaticPool
 
 from app.main import app
 from app.core.config import API_PREFIX
+from app.core import security
 from app.database import get_session
 from app.models import Course, Resource, User, Topic, Assignment
+from app.tests import util
+
+TEST_USER_EMAIL = "harry.potter@hogwarts.magic"
+TEST_USER_PASSWORD = "password"
 
 
 @pytest.fixture(name="session")
-def session_fixture():
+def session_fixture() -> Generator:
     # use an in-memory database for testing
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
@@ -24,12 +29,36 @@ def session_fixture():
 
 @pytest.fixture(name="client")
 def client_fixture(session: Session) -> TestClient:
-    def get_session_override():
+    def get_session_override() -> Generator:
         return session
 
     app.dependency_overrides[get_session] = get_session_override
 
     client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture(name="normal_user_token_headers")
+def normal_user_token_headers_fixture(
+    client: TestClient, session: Session
+) -> Dict[str, str]:
+    return util.authentication_token_from_email(
+        client=client, email="demo@email.com", db=session
+    )
+
+
+@pytest.fixture(name="authenticated_client")
+def authenticated_client_fixture(
+    session: Session, normal_user_token_headers: Dict[str, str]
+) -> TestClient:
+    def get_session_override() -> Generator:
+        return session
+
+    app.dependency_overrides[get_session] = get_session_override
+
+    client = TestClient(app)
+    client.headers.update(normal_user_token_headers)
     yield client
     app.dependency_overrides.clear()
 
@@ -48,8 +77,8 @@ def get_request_fixture(client: TestClient) -> Callable[[str], dict]:
 def user_fixture(session: Session) -> User:
     user = User(
         name="Harry Potter",
-        email="harry.potter@hogwarts.magic",
-        password_hash="magic_hashed",
+        email=TEST_USER_EMAIL,
+        password_hash=security.get_password_hash(TEST_USER_PASSWORD),
     )
     session.add(user)
     session.commit()
