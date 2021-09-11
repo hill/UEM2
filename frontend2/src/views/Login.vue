@@ -1,44 +1,22 @@
-<script setup>
-  import { ref } from "@vue/reactivity";
-  import { useStore } from "vuex";
-  import { useRouter, useRoute } from "vue-router";
-
-  const store = useStore();
-  const router = useRouter();
-  const route = useRoute();
-
-  const email = ref("");
-  const password = ref("");
-  const loading = ref(false);
-  const error = ref({});
-
-  function login() {
-    loading.value = true;
-
-    store
-      .dispatch("login", { email: email.value, password: password.value })
-      .then(() => {
-        if (route.query.next) {
-          router.push(route.query.next);
-        } else {
-          router.push("/transcript");
-        }
-      })
-      .catch((err) => {
-        error.value.login = "Email or password is incorrect";
-      });
-
-    loading.value = false;
-  }
+<script>
+  import AuthForm from "../components/AuthForm.vue";
+  export default {
+    components: { AuthForm },
+    setup() {},
+  };
 </script>
 <template>
-  <div class="auth-container">
-    <h1>Login</h1>
-    <label>Email</label>
-    <input type="text" v-model="email" />
-    <label>Password</label>
-    <input type="password" v-model="password" />
-    <button @click="login">Login</button>
-    <p class="text-red-400" v-if="error.login">{{ error.login }}</p>
+  <div class="flex justify-center items-center h-screen auth-container">
+    <AuthForm class="w-3/4 sm:w-1/3 lg:w-1/5" />
   </div>
 </template>
+
+<style scoped>
+  .auth-container {
+    /* position: relative;
+  min-height: 100vh; */
+    background-image: url("/bg_pattern.png");
+    background-repeat: no-repeat;
+    background-position: 60vw 100px;
+  }
+</style>
