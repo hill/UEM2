@@ -123,6 +123,11 @@
     "@vue/compiler-dom" "3.2.11"
     "@vue/shared" "3.2.11"
 
+"@vue/devtools-api@^6.0.0-beta.11":
+  version "6.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.0.0-beta.15.tgz#ad7cb384e062f165bcf9c83732125bffbc2ad83d"
+  integrity sha512-quBx4Jjpexo6KDiNUGFr/zF/2A4srKM9S9v2uHgMXSU//hjgq1eGzqkIFql8T9gfX5ZaVOUzYBP3jIdIR3PKIA==
+
 "@vue/reactivity@3.2.11":
   version "3.2.11"
   resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.2.11.tgz#ec04d33acaf2b92cca2960535bec81b26cc5772b"
@@ -220,6 +225,13 @@ autoprefixer@^10.3.4:
     fraction.js "^4.1.1"
     normalize-range "^0.1.2"
     postcss-value-parser "^4.1.0"
+
+axios@^0.21.4:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
+  dependencies:
+    follow-redirects "^1.14.0"
 
 balanced-match@^1.0.0:
   version "1.0.2"
@@ -497,6 +509,11 @@ fill-range@^7.0.1:
   integrity sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==
   dependencies:
     to-regex-range "^5.0.1"
+
+follow-redirects@^1.14.0:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.3.tgz#6ada78118d8d24caee595595accdc0ac6abd022e"
+  integrity sha512-3MkHxknWMUtb23apkgz/83fDoe+y+qr0TdgacGIA7bew+QLBo3vdgEN2xEsuXNivpFy4CyDhBBZnNZOtalmenw==
 
 fraction.js@^4.1.1:
   version "4.1.1"
@@ -785,6 +802,11 @@ merge-source-map@^1.1.0:
   integrity sha512-Qkcp7P2ygktpMPh2mCQZaf3jhN6D3Z/qVZHSdWvQ+2Ef5HgRAPBO57A77+ENm0CPx2+1Ce/MYKi3ymqdfuqibw==
   dependencies:
     source-map "^0.6.1"
+
+merge-stream@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/merge-stream/-/merge-stream-2.0.0.tgz#52823629a14dd00c9770fb6ad47dc6310f2c1f60"
+  integrity sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==
 
 merge2@^1.3.0:
   version "1.4.1"
@@ -1199,6 +1221,13 @@ vite@^2.5.4:
   optionalDependencies:
     fsevents "~2.3.2"
 
+vue-axios@^3.3.6:
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-3.3.6.tgz#ebd5eaa079c798308904b5550c6bdab6c6bc62cc"
+  integrity sha512-CnAnbyVqD4b1/IBz9lJQDOnBFX+AZLi0ZsPGy7i9Vo5z4QnquiN2FhCX1HDFGd5RNVwAhZrNY+PycRa6jrUmFw==
+  dependencies:
+    merge-stream "^2.0.0"
+
 vue@^3.2.6:
   version "3.2.11"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.11.tgz#6b92295048df705ddac558fd3e3ed553e55e57c8"
@@ -1207,6 +1236,13 @@ vue@^3.2.6:
     "@vue/compiler-dom" "3.2.11"
     "@vue/runtime-dom" "3.2.11"
     "@vue/shared" "3.2.11"
+
+vuex@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-4.0.2.tgz#f896dbd5bf2a0e963f00c67e9b610de749ccacc9"
+  integrity sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==
+  dependencies:
+    "@vue/devtools-api" "^6.0.0-beta.11"
 
 wrappy@1:
   version "1.0.2"
