@@ -62,7 +62,6 @@ export const router = createRouter({
 });
 
 router.beforeResolve((to, from, next) => {
-  console.log("ran", to, from);
   const token = jwtService.getToken();
   if (token) {
     API.setHeader();

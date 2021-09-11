@@ -18,7 +18,6 @@
     store
       .dispatch("login", { email: email.value, password: password.value })
       .then(() => {
-        console.log("logged in!");
         if (route.query.next) {
           router.push(route.query.next);
         } else {
