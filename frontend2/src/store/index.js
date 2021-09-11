@@ -1,13 +1,10 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { createStore } from "vuex";
 import JwtService from "../services/jwt.service";
 import API, { AuthService } from "../services/api.service";
 
-Vue.use(Vuex);
-
 // TODO(TOM): refactor
 
-export const store = new Vuex.Store({
+export const store = createStore({
   state: {
     user: null,
     token: "",

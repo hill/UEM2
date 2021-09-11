@@ -1,6 +1,4 @@
-import Vue from "vue";
 import axios from "axios";
-import VueAxios from "vue-axios";
 import JwtService from "./jwt.service";
 
 const API_URL = "http://localhost:8000/api/v1";
@@ -8,29 +6,25 @@ const API_URL = "http://localhost:8000/api/v1";
 const instance = axios.create({ baseURL: API_URL });
 
 const API = {
-  init: () => {
-    Vue.use(VueAxios, axios);
-    Vue.axios.defaults.baseURL = API_URL;
-  },
   setHeader: () => {
-    Vue.axios.defaults.headers.common[
+    instance.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${JwtService.getToken()}`;
   },
   get: (url, params) => {
-    return Vue.axios.get(url, params);
+    return instance.get(url, params);
   },
   post: (url, params) => {
-    return Vue.axios.post(url, params);
+    return instance.post(url, params);
   },
   put: (url, params) => {
-    return Vue.axios.put(url, params);
+    return instance.put(url, params);
   },
   patch: (url, params) => {
-    return Vue.axios.patch(url, params);
+    return instance.patch(url, params);
   },
   delete: (url, params) => {
-    return Vue.axios.delete(url, params);
+    return instance.delete(url, params);
   },
 };
 
