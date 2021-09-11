@@ -5,16 +5,6 @@ import jwtService from "../services/jwt.service";
 import { store } from "../store";
 
 import ExampleTodo from "../ExampleTodo.vue";
-// import Home from "../views/Home.vue";
-// import About from "../views/About.vue";
-// import Transcript from "../views/Transcript.vue";
-// import Resources from "../views/Resources.vue";
-// import Login from "../views/Login.vue";
-// import NewCourse from "../views/NewCourse.vue";
-// import Course from "../views/Course.vue";
-// import Student from "../views/Student.vue";
-
-// Vue.use(VueRouter);
 
 const routes = [
   {
@@ -71,6 +61,7 @@ export const router = createRouter({
 });
 
 router.beforeResolve((to, from, next) => {
+  console.log("ran", to, from);
   const token = jwtService.getToken();
   if (token) {
     API.setHeader();

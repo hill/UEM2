@@ -1,5 +1,11 @@
 <script></script>
 
-<template></template>
+<template>
+  <router-view></router-view>
+</template>
 
-<style></style>
+<style>
+  html {
+    background-color: rgb(218, 235, 238);
+  }
+</style>

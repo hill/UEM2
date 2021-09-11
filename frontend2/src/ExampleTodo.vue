@@ -87,8 +87,4 @@
   </div>
 </template>
 
-<style>
-  html {
-    background-color: rgb(218, 235, 238);
-  }
-</style>
+<style scoped></style>
