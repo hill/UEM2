@@ -5,6 +5,7 @@ import jwtService from "../services/jwt.service";
 import { store } from "../store";
 
 import ExampleTodo from "../ExampleTodo.vue";
+import Login from "../views/Login.vue";
 
 const routes = [
   {
@@ -15,7 +16,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: ExampleTodo,
+    component: Login,
   },
   {
     path: "/resources",
