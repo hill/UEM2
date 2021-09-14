@@ -16,7 +16,6 @@
 
   function login() {
     loading.value = true;
-
     store
       .dispatch("login", { email: email.value, password: password.value })
       .then(() => {
@@ -29,7 +28,6 @@
       .catch((err) => {
         error.value.login = "Email or password is incorrect";
       });
-
     loading.value = false;
   }
 
@@ -55,40 +53,31 @@
   }
 </script>
 <template>
-  <div class="auth-container flex flex-col rounded-md shadow-md p-4 bg-white">
-    <form v-if="state == 'login'">
+  <div class="auth-container flex flex-col rounded-md shadow-lg p-4 bg-white">
+    <img src="/logo.png" class="w-1/2 self-center" />
+    <div v-if="state == 'login'">
       <h1 class="text-xl font-bold">Login</h1>
       <Field class="my-2" v-model="email" label="email" type="email" />
       <Field class="my-2" v-model="password" label="password" type="password" />
-      <button
-        @click="login"
-        class="p-2 bg-red-600 hover:bg-red-800 text-white rounded-md"
-      >
-        Login
-      </button>
+      <Button @click="login" label="Log In" />
       <p class="text-red-400" v-if="error.login">{{ error.login }}</p>
-      <p>
+      <p class="text-sm mt-3">
         Don't have an account?
         <a class="cursor-pointer underline" @click="state = 'signup'"
           >sign up</a
         >
       </p>
-    </form>
-    <form v-if="state == 'signup'">
+    </div>
+    <div v-if="state == 'signup'">
       <h1 class="text-xl font-bold">Signup</h1>
       <Field class="my-2" v-model="name" label="name" type="name" />
       <Field class="my-2" v-model="email" label="email" type="email" />
       <Field class="my-2" v-model="password" label="password" type="password" />
-      <button
-        @click="signup"
-        class="p-2 bg-red-600 hover:bg-red-800 text-white rounded-md"
-      >
-        Signup
-      </button>
-      <p>
+      <Button @click="signup" label="Sign Up" />
+      <p class="text-sm mt-3">
         Already have an account?
         <a class="cursor-pointer underline" @click="state = 'login'">log in</a>
       </p>
-    </form>
+    </div>
   </div>
 </template>

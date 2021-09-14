@@ -1,11 +1,11 @@
 <script>
   import { ref } from "@vue/reactivity";
   export default {
-    props: ["label", "type", "value"],
-    emits: ["input"],
+    props: ["label", "type", "modelValue"],
+    emits: ["update:modelValue"],
     methods: {
       updateValue() {
-        this.$emit("input", this.$refs.inputField.value);
+        this.$emit("update:modelValue", this.$refs.inputField.value);
       },
     },
   };
@@ -18,8 +18,8 @@
       class="p-2 rounded-md bg-gray-200"
       :name="label"
       :type="type"
+      :value="modelValue"
       @input="updateValue()"
-      :value="value"
       ref="inputField"
     />
   </div>

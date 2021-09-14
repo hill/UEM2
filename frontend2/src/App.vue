@@ -4,4 +4,8 @@
   <router-view></router-view>
 </template>
 
-<style></style>
+<style>
+  body {
+    @apply bg-gray-50;
+  }
+</style>

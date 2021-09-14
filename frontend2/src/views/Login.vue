@@ -6,7 +6,9 @@
   };
 </script>
 <template>
-  <div class="flex justify-center items-center h-screen auth-container">
+  <div
+    class="flex justify-center items-center h-screen auth-container bg-gray-50"
+  >
     <AuthForm class="w-3/4 sm:w-1/3 lg:w-1/5" />
   </div>
 </template>

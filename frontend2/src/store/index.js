@@ -42,11 +42,12 @@ export const store = createStore({
       return new Promise((resolve, reject) => {
         AuthService.login(authCreds.email, authCreds.password)
           .then(({ data }) => {
+            console.log("authservice returned");
             JwtService.saveToken(data.access_token);
             API.setHeader();
             AuthService.getMe()
-              .then(({ data }) => {
-                commit("authUser", data);
+              .then((res) => {
+                commit("authUser", res.data);
               })
               .catch((err) => {
                 console.log("reject getMe with ", err);

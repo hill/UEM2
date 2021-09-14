@@ -5,6 +5,7 @@ import "./index.css";
 
 import App from "./App.vue";
 import Field from "./components/ui/Field.vue";
+import Button from "./components/ui/Button.vue";
 
 const app = createApp(App);
 
@@ -13,5 +14,6 @@ app.use(store);
 
 // Global Components
 app.component("Field", Field);
+app.component("Button", Button);
 
 app.mount("#app");

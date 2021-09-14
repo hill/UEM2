@@ -9,10 +9,13 @@ export default {
 
 const Template = (args) => ({
   components: { Field },
-  setup() {},
+  setup() {
+    return { args };
+  },
+  template: '<Field v-bind="args" />',
 });
 
-export const Text = () => ({
-  components: { Field },
-  template: '<Field type="text" label="name" />',
-});
+export const Text = Template.bind({});
+Text.args = { type: "text", label: "name" };
+export const Password = Template.bind({});
+Password.args = { type: "password", label: "password" };

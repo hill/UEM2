@@ -6,6 +6,7 @@ import { store } from "../store";
 
 import ExampleTodo from "../ExampleTodo.vue";
 import Login from "../views/Login.vue";
+import Transcript from "../views/Transcript.vue";
 
 const routes = [
   {
@@ -27,7 +28,7 @@ const routes = [
   {
     path: "/transcript",
     name: "Transcript",
-    component: ExampleTodo,
+    component: Transcript,
     meta: { requiresAuth: true },
   },
   {
@@ -95,6 +96,7 @@ router.beforeResolve((to, from, next) => {
   }
 
   if (token) {
+    console.log("TOKEN:", token);
     // Token refresh
     const expiry = JSON.parse(window.atob(token.split(".")[1]))["exp"] * 1000;
     const expiresIn = expiry - new Date().getTime();
