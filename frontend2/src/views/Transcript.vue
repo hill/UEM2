@@ -20,8 +20,13 @@
       class="transcript sm:w-4/5 p-5 my-10 sm:m-10 justify-self-center min-h-screen"
     >
       <div class="watermark"></div>
+      <h1 class="light-text text-lg font-serif italic mt-3 mb-8 text-center">
+        Official Academic Transcript of Tom Hill
+      </h1>
       <h1 class="text-3xl font-bold my-3">Current Semester</h1>
-      <div class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div
+        class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+      >
         <CourseCard
           v-for="course in courses"
           :code="course.code"
@@ -54,6 +59,10 @@
       transform
       hover:shadow-lg
       duration-150;
+  }
+
+  .light-text {
+    color: rgba(0, 0, 0, 0.2);
   }
 
   .transcript {
