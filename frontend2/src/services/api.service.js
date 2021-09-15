@@ -48,9 +48,15 @@ export const AuthService = {
 export const CourseService = {
   list: () => API.get("/courses/"),
   get: (id) => API.get(`/courses/${id}`),
-  create: (name, description, due, syllabus) => {
-    console.log({ name, description, due, syllabus });
-    return API.post(`/courses/`, { name, description, due, syllabus });
+  create: (name, code, description, due, syllabus, status) => {
+    return API.post(`/courses/`, {
+      name,
+      code,
+      description,
+      due,
+      syllabus,
+      status,
+    });
   },
   update: (id, name, description, due, syllabus) =>
     API.patch(`/courses/${id}`, { name, description, due, syllabus }), // TODO(TOM): wrap args in obj?

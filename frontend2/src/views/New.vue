@@ -1,5 +1,6 @@
 <script>
   import CourseCard from "../components/CourseCard.vue";
+  import { CourseService } from "../services/api.service";
   const blacklist = [
     "to",
     "the",
@@ -15,7 +16,7 @@
     components: { CourseCard },
     data() {
       return {
-        courseCode: null,
+        courseNumber: null,
         courseName: null,
         due: null,
         primaryResource: null,
@@ -26,7 +27,25 @@
     },
     methods: {
       generateCourseNumber() {
-        this.courseCode = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+        this.courseNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+      },
+      save() {
+        const courseCode = this.initials + String(this.courseNumber);
+        console.log(this.courseName, courseCode, "", this.due, []);
+        CourseService.create(
+          this.courseName,
+          courseCode,
+          "",
+          this.due,
+          [],
+          "completing"
+        )
+          .then((res) => {
+            this.$router.push("/transcript");
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
       },
     },
     computed: {
@@ -67,13 +86,13 @@
       </div>
       <h1 class="text-xl font-extrabold">Assessment</h1>
       <h1 class="text-xl font-extrabold">Motivators</h1>
-      <Button label="Create" />
+      <Button @click="save()" label="Create" />
     </div>
     <div class="cover flex-1 relative">
       <div class="sm:w-1/2 sm:fixed p-10">
         <CourseCard
           class="mx-auto w-3/4 md:1/2 lg:w-2/5 xl:w-1/3"
-          :code="initials + courseCode"
+          :code="initials + courseNumber"
           :name="courseName"
         />
         <div class="mt-5 mx-auto text-center">
