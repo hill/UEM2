@@ -7,8 +7,11 @@
 
 <template>
   <div class="flex justify-center">
-    <div class="transcript sm:w-4/5 p-5 m-10 justify-self-center min-h-screen">
-      <h1 class="text-xl font-bold">Current Semester</h1>
+    <div
+      class="transcript sm:w-4/5 p-5 my-10 sm:m-10 justify-self-center min-h-screen"
+    >
+      <div class="watermark"></div>
+      <h1 class="text-3xl font-bold my-3">Current Semester</h1>
       <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         <CourseCard
           code="STAT101"
@@ -26,21 +29,37 @@
           name="The Feynman Lectures in Physics"
           status="in progress"
         />
-        <div
-          class="flex p-3 border-dashed border-2 border-gray-300 rounded-lg h-72 cursor-pointer transform hover:shadow-lg duration-150"
-        >
-          <p class="text-gray-300 self-center">New Course</p>
-        </div>
+        <router-link to="/new" class="new-item">
+          <p class="text-gray-300 self-center">+ New Course</p>
+        </router-link>
       </div>
-      <div class="watermark"></div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+  $paper-color: #f3f3f3;
+
+  .new-item {
+    &:hover {
+      background: $paper-color;
+    }
+    @apply flex
+      p-3 
+      border-dashed
+      border-2
+      border-gray-300
+      rounded-lg
+      h-72
+      cursor-pointer
+      transform
+      hover:shadow-lg
+      duration-150;
+  }
+
   .transcript {
     position: relative;
-    background: #f3f3f3;
+    background: $paper-color;
     box-shadow:
     /* The top layer shadow */ 0 1px 2px rgba(0, 0, 0, 0.5),
       /* The second layer */ 0 10px 0 -5px #eee,

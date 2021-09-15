@@ -13,6 +13,8 @@ app.use(router);
 app.use(store);
 
 // Global Components
+
+// UI
 app.component("Field", Field);
 app.component("Button", Button);
 

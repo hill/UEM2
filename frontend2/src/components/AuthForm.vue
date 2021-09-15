@@ -55,26 +55,26 @@
 <template>
   <div class="auth-container flex flex-col rounded-md shadow-lg p-4 bg-white">
     <img src="/logo.png" class="w-1/2 self-center" />
-    <div v-if="state == 'login'">
+    <div class="space-y-2" v-if="state == 'login'">
       <h1 class="text-xl font-bold">Login</h1>
-      <Field class="my-2" v-model="email" label="email" type="email" />
-      <Field class="my-2" v-model="password" label="password" type="password" />
+      <Field v-model="email" label="email" type="email" />
+      <Field v-model="password" label="password" type="password" />
       <Button @click="login" label="Log In" />
       <p class="text-red-400" v-if="error.login">{{ error.login }}</p>
-      <p class="text-sm mt-3">
+      <p class="text-sm">
         Don't have an account?
         <a class="cursor-pointer underline" @click="state = 'signup'"
           >sign up</a
         >
       </p>
     </div>
-    <div v-if="state == 'signup'">
+    <div class="space-y-2" v-if="state == 'signup'">
       <h1 class="text-xl font-bold">Signup</h1>
-      <Field class="my-2" v-model="name" label="name" type="name" />
-      <Field class="my-2" v-model="email" label="email" type="email" />
-      <Field class="my-2" v-model="password" label="password" type="password" />
+      <Field v-model="name" label="name" type="name" />
+      <Field v-model="email" label="email" type="email" />
+      <Field v-model="password" label="password" type="password" />
       <Button @click="signup" label="Sign Up" />
-      <p class="text-sm mt-3">
+      <p class="text-sm">
         Already have an account?
         <a class="cursor-pointer underline" @click="state = 'login'">log in</a>
       </p>

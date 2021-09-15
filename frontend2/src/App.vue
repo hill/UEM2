@@ -1,6 +1,12 @@
-<script></script>
+<script>
+  import SmallHeader from "./components/SmallHeader.vue";
+  export default {
+    components: { SmallHeader },
+  };
+</script>
 
 <template>
+  <SmallHeader></SmallHeader>
   <router-view></router-view>
 </template>
 
