@@ -115,6 +115,6 @@
 
 <style scoped>
   .page {
-    background-color: #b2b2b2;
+    background-color: #b2b2b2; /* TODO(TOM): add to pallette */
   }
 </style>
