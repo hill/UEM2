@@ -25,6 +25,7 @@ def generate_demo_data(session: Session):
 
     discrete_maths = models.Course(
         name="Discrete Mathematics",
+        code="MATH1081",
         description="description",
         status="completing",
         due="2021-12-12",

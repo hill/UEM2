@@ -118,6 +118,7 @@ class ResourceUpdate(SQLModel):
 
 class CourseBase(SQLModel):
     name: str
+    code: str
     description: str
     status: str
     due: datetime.date

@@ -1,7 +1,16 @@
 <script>
   import CourseCard from "../components/CourseCard.vue";
+  import API, { CourseService } from "../services/api.service";
   export default {
     components: { CourseCard },
+    data() {
+      return { courses: [] };
+    },
+    mounted() {
+      CourseService.list().then(({ data }) => {
+        this.courses = data;
+      });
+    },
   };
 </script>
 
@@ -12,22 +21,12 @@
     >
       <div class="watermark"></div>
       <h1 class="text-3xl font-bold my-3">Current Semester</h1>
-      <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         <CourseCard
-          code="STAT101"
-          name="Intro to Statistics"
-          status="in progress"
-        />
-        <CourseCard
-          code="RL179"
-          name="Reinforcement Learning Fundementals"
-          status="in progress"
-        />
-        <CourseCard code="NN222" name="Neural Networks" status="in progress" />
-        <CourseCard
-          code="FLP243"
-          name="The Feynman Lectures in Physics"
-          status="in progress"
+          v-for="course in courses"
+          :code="course.code"
+          :name="course.name"
+          :status="course.status"
         />
         <router-link to="/new" class="new-item">
           <p class="text-gray-300 self-center">+ New Course</p>
