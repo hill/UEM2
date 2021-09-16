@@ -17,7 +17,7 @@
       };
 
       const base =
-        "border border-gray-300 rounded-lg font-regular bg-white hover:bg-gray-300 hover:text-gray-800 " +
+        "button border border-gray-300 rounded-lg font-regular bg-white hover:bg-gray-300 hover:text-gray-800 " +
         (props.size in btnSize ? btnSize[props.size] : btnSize.sm);
 
       const styles = {
@@ -39,3 +39,15 @@
     {{ label }}
   </button>
 </template>
+
+<style lang="scss" scoped>
+  .button {
+    transition: all 0.125s ease 0s;
+    &:hover {
+      transform: scale(1.05);
+    }
+    &:active {
+      transform: scale(0.975);
+    }
+  }
+</style>

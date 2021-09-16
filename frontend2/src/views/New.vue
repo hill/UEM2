@@ -20,6 +20,9 @@
         courseName: null,
         due: null,
         primaryResource: null,
+        syllabus: [
+          //   { id: 1, name: "Introduction to Physics", complete: false },
+        ],
       };
     },
     mounted() {
@@ -31,13 +34,12 @@
       },
       save() {
         const courseCode = this.initials + String(this.courseNumber);
-        console.log(this.courseName, courseCode, "", this.due, []);
         CourseService.create(
           this.courseName,
           courseCode,
           "",
           this.due,
-          [],
+          this.syllabus,
           "completing"
         )
           .then((res) => {
@@ -101,7 +103,7 @@
         </div>
         <h1 class="text-xl font-extrabold">Syllabus</h1>
         <div class="p-4">
-          <Field label="Example Syllabus" />
+          <EditableList v-model="syllabus" />
         </div>
         <h1 class="text-xl font-extrabold">Assessment</h1>
         <h1 class="text-xl font-extrabold">Motivators</h1>

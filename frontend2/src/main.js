@@ -6,6 +6,7 @@ import "./index.css";
 import App from "./App.vue";
 import Field from "./components/ui/Field.vue";
 import Button from "./components/ui/Button.vue";
+import EditableList from "./components/ui/EditableList.vue";
 
 const app = createApp(App);
 
@@ -17,5 +18,6 @@ app.use(store);
 // UI
 app.component("Field", Field);
 app.component("Button", Button);
+app.component("EditableList", EditableList);
 
 app.mount("#app");
