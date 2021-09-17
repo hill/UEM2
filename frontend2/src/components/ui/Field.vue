@@ -1,7 +1,7 @@
 <script>
   import { ref } from "@vue/reactivity";
   export default {
-    props: ["label", "type", "modelValue"],
+    props: ["label", "type", "autocomplete", "modelValue"],
     emits: ["update:modelValue"],
     methods: {
       updateValue() {
@@ -18,6 +18,7 @@
       class="p-2 rounded-md bg-gray-200"
       :name="label"
       :type="type"
+      :autocomplete="autocomplete ? autocomplete : 'on'"
       :value="modelValue"
       @input="updateValue()"
       ref="inputField"
