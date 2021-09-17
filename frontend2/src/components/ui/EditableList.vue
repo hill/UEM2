@@ -41,6 +41,7 @@
         return {
           animation: 200,
           ghostClass: "ghost",
+          dragClass: "drag",
           handle: ".handle",
         };
       },
@@ -59,7 +60,7 @@
       <template #item="{ element }">
         <div class="group p-1 flex align-middle">
           <MenuAlt4Icon
-            class="handle cursor-move h-4 w-4 mr-2 mt-1 text-gray-400"
+            class="handle cursor-grab h-4 w-4 mr-2 mt-1 text-gray-400"
           />
           <p>{{ element[displayProperty] }}</p>
           <XIcon
@@ -88,8 +89,19 @@
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
   .ghost {
     opacity: 0;
+  }
+
+  .drag {
+    z-index: 1000;
+  }
+
+  .cursor-grab {
+    cursor: grab;
+    &:active {
+      cursor: grabbing;
+    }
   }
 </style>

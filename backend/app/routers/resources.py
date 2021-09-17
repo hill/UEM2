@@ -112,7 +112,6 @@ def vote_on_resource(
     Any user (including unauthorized users) may PATCH to this route.
     """
     if vote not in {1, -1}:
-        print("wrong vote!")
         raise HTTPException(
             status_code=400, detail="Vote may only upvote (1) or downvote (-1) once"
         )
