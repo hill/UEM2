@@ -93,12 +93,13 @@
       <div class="form flex-1">
         <h1 class="text-xl font-extrabold">New Course</h1>
         <div class="space-y-8 p-4">
-          <Field label="Course Name" v-model="courseName" />
-          <Field label="Due" type="date" v-model="due" />
+          <Field label="Course Name" v-model="courseName" autocomplete="off" />
+          <Field label="Due" type="date" v-model="due" autocomplete="off" />
           <Field
             label="Primary Resource"
             type="text"
             v-model="primaryResource"
+            autocomplete="off"
           />
         </div>
         <h1 class="text-xl font-extrabold">Syllabus</h1>
