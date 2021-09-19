@@ -78,6 +78,7 @@ class QGPipeline:
         return output
 
     def _generate_questions(self, inputs):
+
         inputs = self._tokenize(inputs, padding=True, truncation=True)
 
         outs = self.model.generate(
@@ -153,12 +154,18 @@ class QGPipeline:
             if len(answer) == 0:
                 continue
             for answer_text in answer:
-                sent = sents[i]
+                sent = sents[i].lower()
                 sents_copy = sents[:]
 
-                answer_text = answer_text.strip()
+                # here we could try to remove the '<pad>' from the text?
+                # alternatively try get rid of it earlier upstream
+                answer_text = answer_text.replace("<pad>", "")
+                answer_text = answer_text.strip().lower()
 
-                ans_start_idx = sent.index(answer_text)
+                try:
+                    ans_start_idx = sent.index(answer_text)
+                except (ValueError, AssertionError):
+                    continue
 
                 sent = f"{sent[:ans_start_idx]} <hl> {answer_text} <hl> {sent[ans_start_idx + len(answer_text): ]}"
                 sents_copy[i] = sent
