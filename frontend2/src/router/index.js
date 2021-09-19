@@ -8,6 +8,7 @@ import ExampleTodo from "../ExampleTodo.vue";
 import Login from "../views/Login.vue";
 import Transcript from "../views/Transcript.vue";
 import New from "../views/New.vue";
+import Course from "../views/Course.vue";
 
 const routes = [
   {
@@ -42,7 +43,7 @@ const routes = [
   {
     path: "/course/:id",
     name: "Course",
-    component: ExampleTodo,
+    component: Course,
     meta: { requiresAuth: true },
   },
   {

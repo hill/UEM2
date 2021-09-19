@@ -27,12 +27,13 @@
       <div
         class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
       >
-        <CourseCard
-          v-for="course in courses"
-          :code="course.code"
-          :name="course.name"
-          :status="course.status"
-        />
+        <router-link v-for="course in courses" :to="'/course/' + course.id">
+          <CourseCard
+            :code="course.code"
+            :name="course.name"
+            :status="course.status"
+          />
+        </router-link>
         <router-link to="/new" class="new-item">
           <p class="text-gray-300 self-center">+ New Course</p>
         </router-link>
