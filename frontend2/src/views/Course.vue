@@ -56,7 +56,6 @@
         <label :for="point.name">&nbsp;{{ point.name }}</label>
       </li>
     </ul>
-    <Background class="w-1/2 h-64" />
   </div>
   <div v-else>
     <p>Loading...</p>
