@@ -1,7 +1,9 @@
 <script>
   import { CourseService } from "../services/api.service";
+  import Background from "../components/Background.vue";
 
   export default {
+    components: { Background },
     data() {
       return {
         course: null,
@@ -54,6 +56,7 @@
         <label :for="point.name">&nbsp;{{ point.name }}</label>
       </li>
     </ul>
+    <Background class="w-1/2 h-64" />
   </div>
   <div v-else>
     <p>Loading...</p>
