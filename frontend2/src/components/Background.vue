@@ -3,15 +3,11 @@
   import { PaletteService } from "../services/palette.service";
   export default {
     components: { VueP5 },
+    props: ["color"],
     data() {
       return {
         canvas: null,
-        color: "#ff0000",
       };
-    },
-    mounted() {
-      this.color = PaletteService.chooseRandomColor();
-      console.log(this.color);
     },
     methods: {
       setup(sk) {
