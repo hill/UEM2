@@ -42,10 +42,23 @@ def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
-    token = security.create_access_token(user.id, expires_delta=access_token_expires)
+    token = security.create_access_token(
+        user.id, expires_delta=timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     return {
         "access_token": token,
+        "token_type": "bearer",
+    }
+
+
+@router.post("/login/refresh-token", response_model=deps.Token)
+def refresh_access_token(current_user: User = Depends(deps.get_current_user)):
+    refresh_token = security.create_access_token(
+        current_user.id,
+        expires_delta=timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    return {
+        "access_token": refresh_token,
         "token_type": "bearer",
     }
 
