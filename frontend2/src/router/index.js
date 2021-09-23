@@ -103,8 +103,8 @@ router.beforeResolve((to, from, next) => {
     // Token refresh
     const expiry = JSON.parse(window.atob(token.split(".")[1]))["exp"] * 1000;
     const expiresIn = expiry - new Date().getTime();
-    if (expiresIn < 100000 && expiresIn > 0) {
-      // request a new token
+    if (expiresIn < 2 * 60 * 1000 && expiresIn > 0) {
+      // request a new token when it is < 2 minutes away from expiring
       AuthService.refresh()
         .then(({ data }) => {
           jwtService.saveToken(data.access_token);

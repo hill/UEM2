@@ -42,7 +42,7 @@ export const AuthService = {
   },
   verify: () => API.post("/auth/login/test-token"),
   getMe: () => API.get("/users/me"),
-  refresh: () => API.post("/auth/refresh"),
+  refresh: () => API.post("/auth/login/refresh-token"),
 };
 
 export const CourseService = {

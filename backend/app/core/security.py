@@ -6,7 +6,7 @@ from jose import jwt
 
 SECRET_KEY = "Fuck Yeah TommyH looking gooooooooooodddd"  # probs move this hey
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 2
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
