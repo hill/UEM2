@@ -1,9 +1,9 @@
 <script>
   import { CourseService } from "../services/api.service";
-  import Background from "../components/Background.vue";
+  import CourseCard from "../components/CourseCard.vue";
 
   export default {
-    components: { Background },
+    components: { CourseCard },
     data() {
       return {
         course: null,
@@ -43,19 +43,37 @@
 
 <template>
   <div v-if="course">
-    <h1>{{ course.name }}</h1>
-    <h3>Syllabus ({{ syllabusComplete }}% complete)</h3>
-    <ul>
-      <li v-for="point in course.syllabus">
-        <input
-          type="checkbox"
-          :id="point.name"
-          :name="point.name"
-          v-model="point.completed"
+    <header class="bg-gray-300">
+      <div class="grid grid-cols-4 lg:grid-cols-5 container mx-auto p-3">
+        <CourseCard
+          :code="course.code"
+          :name="course.name"
+          :status="course.status"
         />
-        <label :for="point.name">&nbsp;{{ point.name }}</label>
-      </li>
-    </ul>
+        <div class="p-4 col-span-3">
+          <h1 class="text-3xl font-bold">{{ course.name }}</h1>
+          <p
+            class="px-2 py-1 text-sm inline-block border border-gray-600 rounded-lg"
+          >
+            {{ course.due }}
+          </p>
+        </div>
+      </div>
+    </header>
+    <main class="container mx-auto mt-4 p-3">
+      <h3 class="text-lg font-bold">Syllabus ({{ syllabusComplete }}%)</h3>
+      <ul>
+        <li v-for="point in course.syllabus">
+          <input
+            type="checkbox"
+            :id="point.name"
+            :name="point.name"
+            v-model="point.completed"
+          />
+          <label :for="point.name">&nbsp;{{ point.name }}</label>
+        </li>
+      </ul>
+    </main>
   </div>
   <div v-else>
     <p>Loading...</p>

@@ -99,7 +99,6 @@ router.beforeResolve((to, from, next) => {
   }
 
   if (token) {
-    console.log("TOKEN:", token);
     // Token refresh
     const expiry = JSON.parse(window.atob(token.split(".")[1]))["exp"] * 1000;
     const expiresIn = expiry - new Date().getTime();
