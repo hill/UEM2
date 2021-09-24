@@ -43,7 +43,7 @@
 
 <template>
   <div v-if="course">
-    <header class="bg-gray-300">
+    <header class="bg-gray-300 py-3">
       <div class="grid grid-cols-4 lg:grid-cols-5 container mx-auto p-3">
         <CourseCard
           :code="course.code"
@@ -52,11 +52,13 @@
         />
         <div class="p-4 col-span-3">
           <h1 class="text-3xl font-bold">{{ course.name }}</h1>
-          <p
-            class="px-2 py-1 text-sm inline-block border border-gray-600 rounded-lg"
-          >
-            {{ course.due }}
-          </p>
+          <div class="my-2">
+            <p
+              class="px-2 py-1 text-sm inline-block border border-gray-600 rounded-lg"
+            >
+              {{ course.due }}
+            </p>
+          </div>
         </div>
       </div>
     </header>
