@@ -10,6 +10,7 @@ class TestCourse:
             "status": "completing",
             "due": "2021-08-29",
             "syllabus": [{"item": 123}],
+            "cover": {"color": "#222"},
             "user_id": user.id,
         }
         response = authenticated_client.post(API_PREFIX + "/courses/", json=new_course)

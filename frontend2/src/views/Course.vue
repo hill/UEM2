@@ -51,6 +51,7 @@
           :code="course.code"
           :name="course.name"
           :status="course.status"
+          :color="course.cover.color"
         />
         <div class="p-4 col-span-3">
           <h1 class="text-3xl font-bold">{{ course.name }}</h1>

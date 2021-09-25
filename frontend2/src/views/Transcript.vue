@@ -32,6 +32,7 @@
             :code="course.code"
             :name="course.name"
             :status="course.status"
+            :color="course.cover.color ?? '#222222'"
           />
         </router-link>
         <router-link to="/new" class="new-item">

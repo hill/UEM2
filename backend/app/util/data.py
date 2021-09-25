@@ -24,12 +24,39 @@ def generate_demo_data(session: Session):
     session.refresh(user)
 
     discrete_maths = models.Course(
-        name="Discrete Mathematics",
-        code="MATH1081",
+        name="Introduction to Reinforcement Learning",
+        code="RL479",
         description="description",
         status="completing",
         due="2021-12-12",
-        syllabus=[{"yeet": "cowboy"}],
+        syllabus=[
+            {
+                "id": 1,
+                "name": "Introduction to Reinforcement Learning",
+                "completed": False,
+            },
+            {"id": 2, "name": "Exploration and Control", "completed": False},
+            {"id": 3, "name": "MDPs and Dynamic Programming", "completed": False},
+            {
+                "id": 4,
+                "name": "Fundementals of Dynamic Programming Algorithms",
+                "completed": False,
+            },
+            {"id": 5, "name": "Model-Free Prediction", "completed": False},
+            {"id": 6, "name": "Model-Free Control", "completed": False},
+            {"id": 7, "name": "Function Approximation", "completed": False},
+            {"id": 8, "name": "Planning & Models", "completed": False},
+            {
+                "id": 9,
+                "name": "Policy-Gradient and Actor-Critic Methods",
+                "completed": False,
+            },
+            {"id": 10, "name": "Approximate Dynamic Programming", "completed": False},
+            {"id": 11, "name": "Multi-Step & Off Policy", "completed": False},
+            {"id": 12, "name": "Deep RL 1", "completed": False},
+            {"id": 13, "name": "Deep RL 2", "completed": False},
+        ],
+        cover={"color": "#8bbeb2"},
         user_id=user.id,
     )
 

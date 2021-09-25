@@ -7,15 +7,14 @@
       code: String,
       name: String,
       status: String,
+      color: String,
     },
     data() {
       return {
-        color: "#ffffff",
         textColor: "#000000",
       };
     },
     mounted() {
-      this.color = PaletteService.chooseRandomColor();
       this.textColor = PaletteService.getContrastYIQ(this.color);
     },
   };

@@ -122,6 +122,7 @@ class CourseBase(SQLModel):
     description: str
     status: str
     due: datetime.date
+    cover: Dict = Field(sa_column=Column(JSON))
     syllabus: List[Dict] = Field(sa_column=Column(JSON))
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
@@ -147,6 +148,7 @@ class CourseUpdate(SQLModel):
     status: Optional[str]
     due: Optional[datetime.date]
     syllabus: Optional[List[Dict]]
+    cover: Optional[Dict]
 
 
 class AssignmentBase(SQLModel):

@@ -1,6 +1,7 @@
 <script>
   import CourseCard from "../components/CourseCard.vue";
   import { CourseService } from "../services/api.service";
+  import { PaletteService } from "../services/palette.service";
   const blacklist = [
     "to",
     "the",
@@ -23,31 +24,33 @@
         syllabus: [
           //   { id: 1, name: "Introduction to Physics", complete: false },
         ],
+        courseColor: "#222222",
       };
     },
     mounted() {
-      this.generateCourseNumber();
+      this.rollCourse();
     },
     methods: {
-      generateCourseNumber() {
+      rollCourse() {
         this.courseNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+        this.courseColor = PaletteService.chooseRandomColor();
       },
-      save() {
+      async save() {
         const courseCode = this.initials + String(this.courseNumber);
-        CourseService.create(
-          this.courseName,
-          courseCode,
-          "",
-          this.due,
-          this.syllabus,
-          "completing"
-        )
-          .then((res) => {
-            this.$router.push("/transcript");
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+        try {
+          const response = await CourseService.create(
+            this.courseName,
+            courseCode,
+            "",
+            this.due,
+            this.syllabus,
+            "completing",
+            this.courseColor
+          );
+          this.$router.push("/transcript");
+        } catch (err) {
+          console.log(err);
+        }
       },
     },
     computed: {
@@ -84,9 +87,10 @@
             class="mx-auto w-3/4 md:1/2 lg:w-2/5 xl:w-1/3"
             :code="initials + courseNumber"
             :name="courseName"
+            :color="courseColor"
           />
           <div class="mt-5 mx-auto text-center">
-            <Button label="Roll" @click="generateCourseNumber()" />
+            <Button label="Roll" @click="rollCourse()" />
           </div>
         </div>
       </div>

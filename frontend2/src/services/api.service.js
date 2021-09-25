@@ -48,13 +48,14 @@ export const AuthService = {
 export const CourseService = {
   list: () => API.get("/courses/"),
   get: (id) => API.get(`/courses/${id}`),
-  create: (name, code, description, due, syllabus, status) => {
+  create: (name, code, description, due, syllabus, status, cover_color) => {
     return API.post(`/courses/`, {
       name,
       code,
       description,
       due,
       syllabus,
+      cover: { color: cover_color },
       status,
     });
   },
