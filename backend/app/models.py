@@ -122,7 +122,7 @@ class CourseBase(SQLModel):
     description: str
     status: str
     due: datetime.date
-    cover: Dict = Field(sa_column=Column(JSON))
+    cover: Dict = Field(sa_column=Column(JSON), default={"color": "#222222"})
     syllabus: List[Dict] = Field(sa_column=Column(JSON))
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 

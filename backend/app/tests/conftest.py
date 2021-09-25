@@ -141,6 +141,7 @@ def many_resources_fixture(
 def course_fixture(user: User, session: Session) -> Course:
     course = Course(
         name="Discrete Maths",
+        code="MATH1081",
         description="Hello world",
         status="completing",
         due=datetime.date(2021, 8, 29),

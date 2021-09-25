@@ -6,6 +6,7 @@ class TestCourse:
     def test_create_course(self, user: User, authenticated_client: TestClient):
         new_course = {
             "name": "Discrete Maths",
+            "code": "MATH1081",
             "description": "hello world",
             "status": "completing",
             "due": "2021-08-29",
