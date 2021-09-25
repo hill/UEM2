@@ -44,7 +44,9 @@
 <template>
   <div v-if="course">
     <header class="bg-gray-300 py-3">
-      <div class="grid grid-cols-4 lg:grid-cols-5 container mx-auto p-3">
+      <div
+        class="grid grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 container mx-auto p-3"
+      >
         <CourseCard
           :code="course.code"
           :name="course.name"
@@ -62,19 +64,22 @@
         </div>
       </div>
     </header>
-    <main class="container mx-auto mt-4 p-3">
-      <h3 class="text-lg font-bold">Syllabus ({{ syllabusComplete }}%)</h3>
-      <ul>
-        <li v-for="point in course.syllabus">
-          <input
-            type="checkbox"
-            :id="point.name"
-            :name="point.name"
-            v-model="point.completed"
-          />
-          <label :for="point.name">&nbsp;{{ point.name }}</label>
-        </li>
-      </ul>
+    <main class="container mx-auto mt-4 p-3 md:grid md:grid-cols-3">
+      <div class="col-span-2">
+        <h3 class="text-lg font-bold">Syllabus ({{ syllabusComplete }}%)</h3>
+        <ul>
+          <li v-for="point in course.syllabus">
+            <Checkbox
+              class="mb-1"
+              :label="point.name"
+              v-model="point.completed"
+            />
+          </li>
+        </ul>
+      </div>
+      <div class="mt-8 md:mt-0">
+        <h3 class="text-lg font-bold">Assessment</h3>
+      </div>
     </main>
   </div>
   <div v-else>
