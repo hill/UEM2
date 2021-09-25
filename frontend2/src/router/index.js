@@ -65,36 +65,33 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeResolve((to, from, next) => {
+router.beforeResolve(async (to, from, next) => {
   const token = jwtService.getToken();
   if (token) {
     API.setHeader();
   }
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  let loggedIn = false;
 
-  // TODO(TOM): refactor this. Try to log in (for the case we go to a page that does not require auth but we could use the user)
-  AuthService.verify()
-    .then(({ data }) => {
+  try {
+    const { data } = await AuthService.verify();
+    if (data) {
       store.commit("setUser", data);
-    })
-    .catch();
-
-  if (!requiresAuth) {
-    next();
-    return;
-  }
-  // redirect if going to login, already logged in
-  if (to.path === "/login") {
-    if (token) {
-      AuthService.verify()
-        .then(() => {
-          next("/transcript");
-        })
-        .catch(() => {
-          next();
-        });
+      loggedIn = true;
+    }
+  } catch (err) {
+    if (requiresAuth) {
+      next("/login");
     } else {
       next();
+    }
+  }
+
+  // redirect if going to login, already logged in
+  if (to.path === "/login") {
+    if (token && loggedIn) {
+      next("/transcript");
+      return;
     }
   }
 
@@ -104,30 +101,21 @@ router.beforeResolve((to, from, next) => {
     const expiresIn = expiry - new Date().getTime();
     if (expiresIn < 2 * 60 * 1000 && expiresIn > 0) {
       // request a new token when it is < 2 minutes away from expiring
-      AuthService.refresh()
-        .then(({ data }) => {
-          jwtService.saveToken(data.access_token);
-          API.setHeader();
-          next();
-        })
-        .catch((err) => {
-          console.error(err);
-          next("/login");
-        });
+      try {
+        const { data } = await AuthService.refresh();
+        jwtService.saveToken(data.access_token);
+        API.setHeader();
+        next();
+      } catch (err) {
+        next("/login");
+      }
     }
   }
 
-  if (requiresAuth && token) {
-    // verify the token is valid
-    AuthService.verify()
-      .then(({ data }) => {
-        store.commit("setUser", data);
-        next();
-      })
-      .catch(() => {
-        console.log("TOKEN INVALID!");
-        next("/login");
-      });
+  if (!requiresAuth) {
+    next();
+  } else if (requiresAuth && loggedIn) {
+    next();
   } else {
     // you don't have a token!
     next("/login");
