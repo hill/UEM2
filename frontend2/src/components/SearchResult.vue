@@ -49,17 +49,17 @@
       <a
         @click="upvote()"
         class="cursor-pointer hover:text-gray-500"
-        :class="{ 'text-gray-300': vote == 1 }"
+        :class="{ 'text-gray-300 hover:text-gray-300': vote == 1 }"
       >
-        <ChevronUpIcon class="h-6 hover:scale-125" />
+        <ChevronUpIcon class="chevron h-6" />
       </a>
       <p class="text-xl font-serif -mt-1">{{ currVotes }}</p>
       <a
         @click="downvote()"
-        class="cursor-pointer hover:text-gray-500 hover:scale-105"
-        :class="{ 'text-gray-300': vote == -1 }"
+        class="cursor-pointer hover:text-gray-500"
+        :class="{ 'text-gray-300 hover:text-gray-300': vote == -1 }"
       >
-        <ChevronDownIcon class="h-6" />
+        <ChevronDownIcon class="chevron h-6" />
       </a>
     </div>
     <div class="content mt-3">
@@ -107,7 +107,12 @@
     text-align: center;
   }
 
-  .disabled {
-    color: gray;
+  .chevron {
+    &:hover {
+      transform: scale(1.025);
+    }
+    &:active {
+      transform: scale(0.975);
+    }
   }
 </style>

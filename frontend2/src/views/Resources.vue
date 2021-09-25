@@ -1,6 +1,7 @@
 <script>
   import { ResourceService, TopicService } from "../services/api.service";
   import SearchResult from "../components/SearchResult.vue";
+  import Field from "../components/ui/Field.vue";
 
   export default {
     components: { SearchResult },
@@ -67,10 +68,19 @@
   };
 </script>
 <template>
-  <header class="h-32 bg-red-800 p-5">
-    <h1 class="text-3xl text-white font-serif text-center">Resources</h1>
+  <header class="h-32 bg-red-800">
+    <h1 class="text-4xl pt-9 text-white font-serif text-center">Resources</h1>
+    <div class="mt-8 w-3/4 sm:w-1/2 xl:w-1/3 mx-auto">
+      <input
+        placeholder="Search Learning Resources"
+        class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
+      />
+      <div class="text-right mt-2">
+        <p class="font-serif text-sm text-gray-500">+ Add Resource</p>
+      </div>
+    </div>
   </header>
-  <div class="container mx-auto">
+  <div class="mt-6 container mx-auto">
     <SearchResult
       v-for="resource in resources"
       :name="resource.name"
