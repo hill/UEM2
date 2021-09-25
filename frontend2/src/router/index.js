@@ -7,6 +7,7 @@ import { store } from "../store";
 import ExampleTodo from "../ExampleTodo.vue";
 import Login from "../views/Login.vue";
 import Transcript from "../views/Transcript.vue";
+import Resources from "../views/Resources.vue";
 import New from "../views/New.vue";
 import Course from "../views/Course.vue";
 
@@ -25,7 +26,7 @@ const routes = [
   {
     path: "/resources",
     name: "Resources",
-    component: ExampleTodo,
+    component: Resources,
     meta: { requiresAuth: false },
   },
   {
