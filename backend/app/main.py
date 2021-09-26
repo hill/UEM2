@@ -51,29 +51,22 @@ api_router.include_router(topics.router)
 
 app.include_router(api_router)
 
-
-# TODO(TOM): this should probably be done by nginx or traefik in the future
-FRONTEND_LOC = "../frontend2/dist"
-
 # mount static website
-app.mount("/static", StaticFiles(directory=FRONTEND_LOC, html=True), name="static")
-
-
+# TODO(TOM): this should probably be done by nginx or traefik with a loadbalancer in the future
 @app.get("/", include_in_schema=False, response_class=FileResponse)
 def root():
-    return FileResponse(FRONTEND_LOC + "/index.html")
+    return FileResponse(config.FRONTEND_LOC + "/index.html")
 
 
-@app.get("/{catchall:path}", response_class=FileResponse)
+@app.get("/{catchall:path}", include_in_schema=False, response_class=FileResponse)
 def read_index(request: Request):
     # check first if requested file exists
     path = request.path_params["catchall"]
-    file = FRONTEND_LOC + "/" + path
+    file = config.FRONTEND_LOC + "/" + path
 
-    print("look for: ", file)
     if os.path.exists(file):
         return FileResponse(file)
 
     # otherwise return index files
-    index = FRONTEND_LOC + "/index.html"
+    index = config.FRONTEND_LOC + "/index.html"
     return FileResponse(index)

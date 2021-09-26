@@ -6,6 +6,7 @@ ECHO_DATABASE = False
 VERSION = "0.1.1"
 API_PREFIX = "/api/v1"
 BACKEND_CORS_ORIGINS = ["*"]
+FRONTEND_LOC = "../frontend2/dist"
 
 # Email stuff
 EMAILS_ENABLED = False
