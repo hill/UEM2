@@ -52,7 +52,7 @@ api_router.include_router(topics.router)
 app.include_router(api_router)
 
 # mount static website
-# TODO(TOM): this should probably be done by nginx or traefik with a loadbalancer in the future
+# TODO(TOM): this should probably be done by nginx or traefik with a loadbalancer in the future -> https://www.youtube.com/watch?v=C6IL8tjwC5E
 @app.get("/", include_in_schema=False, response_class=FileResponse)
 def root():
     return FileResponse(config.FRONTEND_LOC + "/index.html")
