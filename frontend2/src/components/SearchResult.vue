@@ -4,11 +4,17 @@
     ChevronUpIcon,
     ChevronDownIcon,
     EmojiSadIcon,
+    ExternalLinkIcon,
   } from "@heroicons/vue/outline";
 
   export default {
     props: ["name", "url", "topics", "votes", "id"],
-    components: { ChevronUpIcon, ChevronDownIcon, EmojiSadIcon },
+    components: {
+      ChevronUpIcon,
+      ChevronDownIcon,
+      EmojiSadIcon,
+      ExternalLinkIcon,
+    },
     data() {
       return {
         currVotes: this.votes,
@@ -64,7 +70,9 @@
     </div>
     <div class="content mt-3">
       <a :href="url" target="_blank">
-        <h3 class="text-xl font-serif cursor-pointer">{{ name }}</h3>
+        <h3 class="text-xl font-serif cursor-pointer">
+          {{ name }}<ExternalLinkIcon class="ml-1 h-4 inline-block" />
+        </h3>
       </a>
       <div class="tags">
         <span
