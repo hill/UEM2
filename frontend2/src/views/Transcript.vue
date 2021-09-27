@@ -1,6 +1,9 @@
 <script>
+  import { computed } from "vue";
+  import { useStore } from "vuex";
   import CourseCard from "../components/CourseCard.vue";
   import API, { CourseService } from "../services/api.service";
+
   export default {
     components: { CourseCard },
     data() {
@@ -10,6 +13,12 @@
       CourseService.list().then(({ data }) => {
         this.courses = data;
       });
+    },
+    setup() {
+      const store = useStore();
+      return {
+        user: computed(() => store.state.user),
+      };
     },
   };
 </script>
@@ -21,7 +30,7 @@
     >
       <div class="watermark"></div>
       <h1 class="light-text text-lg font-serif italic mt-3 mb-8 text-center">
-        Official Academic Transcript of Tom Hill
+        Official Academic Transcript of {{ user.name }}
       </h1>
       <h1 class="text-3xl font-bold my-3">Current Semester</h1>
       <div

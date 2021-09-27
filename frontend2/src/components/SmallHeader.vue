@@ -1,10 +1,16 @@
-<script></script>
+<script setup>
+  import { computed } from "vue";
+  import { useStore } from "vuex";
+
+  const store = useStore();
+  const user = computed(() => store.state.user);
+</script>
 <template>
   <div
     class="small-header-color w-full p-0.5 px-3 text-white h-8 font-mono flex justify-between"
   >
     <router-link to="/transcript">Motivation University</router-link>
-    <p>Tom Hill</p>
+    <p v-if="user">{{ user.name }}</p>
   </div>
 </template>
 
