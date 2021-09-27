@@ -45,14 +45,25 @@ export const AuthService = {
   refresh: () => API.post("/auth/login/refresh-token"),
 };
 
+// TODO(TOM): typescript?
 export const CourseService = {
   list: () => API.get("/courses/"),
   get: (id) => API.get(`/courses/${id}`),
-  create: (name, code, description, due, syllabus, status, cover_color) => {
+  create: (
+    name,
+    code,
+    description,
+    primary_resource,
+    due,
+    syllabus,
+    status,
+    cover_color
+  ) => {
     return API.post(`/courses/`, {
       name,
       code,
       description,
+      primary_resource,
       due,
       syllabus,
       cover: { color: cover_color },

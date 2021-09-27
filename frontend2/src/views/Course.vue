@@ -1,9 +1,10 @@
 <script>
   import { CourseService } from "../services/api.service";
   import CourseCard from "../components/CourseCard.vue";
+  import { ExternalLinkIcon } from "@heroicons/vue/outline";
 
   export default {
-    components: { CourseCard },
+    components: { CourseCard, ExternalLinkIcon },
     data() {
       return {
         course: null,
@@ -55,12 +56,18 @@
         />
         <div class="p-4 col-span-3">
           <h1 class="text-3xl font-bold">{{ course.name }}</h1>
-          <div class="my-2">
-            <p
-              class="px-2 py-1 text-sm inline-block border border-gray-600 rounded-lg"
-            >
+          <div class="my-2 space-x-2">
+            <span class="tag">
               {{ course.due }}
-            </p>
+            </span>
+            <a
+              v-if="course.primary_resource"
+              :href="course.primary_resource"
+              class="tag hover:bg-black hover:text-white"
+              target="_blank"
+            >
+              Primary Resource <ExternalLinkIcon class="h-4 inline-block" />
+            </a>
           </div>
         </div>
       </div>
@@ -87,3 +94,9 @@
     <p>Loading...</p>
   </div>
 </template>
+
+<style scoped>
+  .tag {
+    @apply px-2 py-1 text-sm inline-block border border-gray-600 rounded-lg;
+  }
+</style>

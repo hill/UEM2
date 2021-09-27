@@ -119,7 +119,8 @@ class ResourceUpdate(SQLModel):
 class CourseBase(SQLModel):
     name: str
     code: str
-    description: str
+    description: Optional[str]
+    primary_resource: Optional[str]
     status: str
     due: datetime.date
     cover: Dict = Field(sa_column=Column(JSON), default={"color": "#222222"})

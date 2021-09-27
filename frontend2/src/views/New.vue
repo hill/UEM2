@@ -41,7 +41,8 @@
           const response = await CourseService.create(
             this.courseName,
             courseCode,
-            "",
+            null,
+            this.primaryResource,
             this.due,
             this.syllabus,
             "completing",
