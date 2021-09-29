@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import JwtService from "../services/jwt.service";
 import API, { AuthService } from "../services/api.service";
 
-// TODO(TOM): refactor
+// TODO(TOM): refactor - use async/await instead.
 
 export const store = createStore({
   state: {
@@ -42,7 +42,6 @@ export const store = createStore({
       return new Promise((resolve, reject) => {
         AuthService.login(authCreds.email, authCreds.password)
           .then(({ data }) => {
-            console.log("authservice returned");
             JwtService.saveToken(data.access_token);
             API.setHeader();
             AuthService.getMe()

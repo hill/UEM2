@@ -1,7 +1,6 @@
 <script>
   import { ResourceService, TopicService } from "../services/api.service";
   import SearchResult from "../components/SearchResult.vue";
-  import Field from "../components/ui/Field.vue";
 
   export default {
     components: { SearchResult },
@@ -21,10 +20,9 @@
       this.topics = topics.data;
     },
     methods: {
-      search() {
-        ResourceService.find(this.searchTerm).then(
-          ({ data }) => (this.resources = data)
-        );
+      async search() {
+        const resources = await ResourceService.find(this.searchTerm);
+        this.resources = resources.data;
       },
       getFilteredTopics(text) {
         this.filteredTopics = this.topics.filter((topic) => {
@@ -74,7 +72,9 @@
       <input
         placeholder="Search Learning Resources"
         class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
+        v-model="searchTerm"
       />
+      <button @click="search()">Search</button>
       <div class="text-right mt-2">
         <p class="font-serif text-sm text-gray-500">+ Add Resource</p>
       </div>
