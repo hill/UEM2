@@ -11,6 +11,7 @@
         filteredTopics: [],
         resources: [],
         searchTerm: "",
+        showNewResourceModal: true,
       };
     },
     async mounted() {
@@ -76,7 +77,12 @@
       />
       <button @click="search()">Search</button>
       <div class="text-right mt-2">
-        <p class="font-serif text-sm text-gray-500">+ Add Resource</p>
+        <p
+          class="font-serif text-sm text-gray-500"
+          @click="showNewResourceModal = true"
+        >
+          + Add Resource
+        </p>
       </div>
     </div>
   </header>
@@ -90,4 +96,9 @@
       :id="resource.id"
     />
   </div>
+  <Modal v-model="showNewResourceModal">
+    <div class="bg-white rounded-lg w-80">
+      <p>Stuff goes here</p>
+    </div>
+  </Modal>
 </template>
