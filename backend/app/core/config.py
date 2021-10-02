@@ -9,10 +9,12 @@ BACKEND_CORS_ORIGINS = ["*"]
 FRONTEND_LOC = "../frontend2/dist"
 
 # Email stuff
-EMAILS_ENABLED = False
+EMAILS_ENABLED = True
 EMAILS_FROM_NAME = "Extrinsic University"
 EMAILS_FROM_EMAIL = "hello@motivation.university"
-SMTP_TLS = True
+SMTP_HOST = "localhost"
+SMTP_PORT = 1025
+SMTP_TLS = False
 SMTP_USER = "hello"
 SMTP_PASSWORD = "password123"
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 24

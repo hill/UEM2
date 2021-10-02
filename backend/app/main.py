@@ -10,6 +10,7 @@ from app.core.logger import log
 from app.database import create_db_and_tables, get_session
 from app.routers import auth, users, courses, resources, topics
 from app.util.data import generate_demo_data
+from app.util.email import send_plaintext_email, send_template_email
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
@@ -50,6 +51,17 @@ api_router.include_router(resources.router)
 api_router.include_router(topics.router)
 
 app.include_router(api_router)
+
+
+@app.get("/send-email")
+async def test_send_email():
+    await send_plaintext_email(
+        email_to="tomhill98@me.com",
+        subject="Hello World",
+        raw_text="<h1>Welcome :)</h1>",
+    )
+    return {"message": "email has been sent"}
+
 
 # mount static website
 # TODO(TOM): this should probably be done by nginx or traefik with a loadbalancer in the future -> https://www.youtube.com/watch?v=C6IL8tjwC5E

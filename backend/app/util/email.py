@@ -1,35 +1,62 @@
 import logging
+from pathlib import Path
 from typing import Any, Dict, Optional
 from datetime import datetime, timedelta
 
 from jose import jwt
 import emails
 from emails.template import JinjaTemplate
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 from app.core import config, security
 
 
-def send_email(
+conf = ConnectionConfig(
+    MAIL_USERNAME=config.SMTP_USER,
+    MAIL_PASSWORD=config.SMTP_PASSWORD,
+    MAIL_FROM=config.EMAILS_FROM_EMAIL,
+    MAIL_PORT=1025,
+    MAIL_SERVER="localhost",
+    MAIL_FROM_NAME=config.EMAILS_FROM_NAME,
+    MAIL_TLS=False,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=False,
+    VALIDATE_CERTS=False,
+    TEMPLATE_FOLDER=Path(__file__).parent.parent / "email_templates" / "build",
+)
+
+
+async def send_plaintext_email(
     email_to: str,
-    subject_template: str = "",
-    html_template: str = "",
+    subject: str = "",
+    raw_text: str = "",
     environment: Dict[str, Any] = {},
-) -> None:
-    assert config.EMAILS_ENABLED, "no provided configuration for email variables"
-    message = emails.Message(
-        subject=JinjaTemplate(subject_template),
-        html=JinjaTemplate(html_template),
-        mail_from=(config.EMAILS_FROM_NAME, config.EMAILS_FROM_EMAIL),
+):
+    message = MessageSchema(
+        subject=subject,
+        recipients=[email_to],
+        body=raw_text,
+        subtype="html",
     )
-    smtp_options = {"host": config.SMTP_HOST, "port": config.SMTP_PORT}
-    if config.SMTP_TLS:
-        smtp_options["tls"] = True
-    if config.SMTP_USER:
-        smtp_options["user"] = config.SMTP_USER
-    if config.SMTP_PASSWORD:
-        smtp_options["password"] = config.SMTP_PASSWORD
-    response = message.send(to=email_to, render=environment, smtp=smtp_options)
-    logging.info(f"send email result: {response}")
+    fm = FastMail(conf)
+    await fm.send_message(message)
+    logging.info(f"sent email {message} to {email_to}")
+
+
+async def send_template_email(
+    email_to: str,
+    subject: str = "",
+    template_file: str = "",
+    environment: Dict[str, Any] = {},
+):
+    message = MessageSchema(
+        subject=subject,
+        recipients=[email_to],
+        template_body=environment,
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message, template_name=template_file)
+    logging.info(f"sent email {message} to {email_to}")
 
 
 def generate_password_reset_token(email: str) -> str:

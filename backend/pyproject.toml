@@ -20,6 +20,8 @@ python-multipart = "^0.0.5"
 python-jose = "^3.3.0"
 emails = "^0.6"
 aiofiles = "^0.7.0"
+Jinja2 = "^3.0.1"
+fastapi-mail = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 
