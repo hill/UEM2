@@ -265,6 +265,14 @@ curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
 
 [[package]]
+name = "docopt"
+version = "0.6.2"
+description = "Pythonic argument parser, that will make you smile"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "ecdsa"
 version = "0.17.0"
 description = "ECDSA cryptographic signature library (pure python)"
@@ -484,6 +492,22 @@ description = "Safely add untrusted strings to HTML/XML markup."
 category = "main"
 optional = false
 python-versions = ">=3.6"
+
+[[package]]
+name = "mjml"
+version = "0.6.2"
+description = "Python implementation for MJML - a framework that makes responsive-email easy"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+docopt = "*"
+jinja2 = "*"
+lxml = "*"
+
+[package.extras]
+testing = ["ddt", "fakefshelpers", "HTMLCompare (>=0.3.0)", "pythonictestcase"]
 
 [[package]]
 name = "mypy-extensions"
@@ -935,7 +959,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e413a2f91bbb1df4e81965830facc95a2b8247c2800ca73d4db7ed64813c48f7"
+content-hash = "9d96bef7e0639c3770781fa4ca3031afbb33173d524fcb878cd300fc4db9215d"
 
 [metadata.files]
 aiofiles = [
@@ -1126,6 +1150,9 @@ cssutils = [
 dnspython = [
     {file = "dnspython-2.1.0-py3-none-any.whl", hash = "sha256:95d12f6ef0317118d2a1a6fc49aac65ffec7eb8087474158f42f26a639135216"},
     {file = "dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4"},
+]
+docopt = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
 ]
 ecdsa = [
     {file = "ecdsa-0.17.0-py2.py3-none-any.whl", hash = "sha256:5cf31d5b33743abe0dfc28999036c849a69d548f994b535e527ee3cb7f3ef676"},
@@ -1336,6 +1363,10 @@ markupsafe = [
     {file = "MarkupSafe-2.0.1-cp39-cp39-win32.whl", hash = "sha256:10f82115e21dc0dfec9ab5c0223652f7197feb168c940f3ef61563fc2d6beb74"},
     {file = "MarkupSafe-2.0.1-cp39-cp39-win_amd64.whl", hash = "sha256:693ce3f9e70a6cf7d2fb9e6c9d8b204b6b39897a2c4a1aa65728d5ac97dcc1d8"},
     {file = "MarkupSafe-2.0.1.tar.gz", hash = "sha256:594c67807fb16238b30c44bdf74f36c02cdf22d1c8cda91ef8a0ed8dabf5620a"},
+]
+mjml = [
+    {file = "mjml-0.6.2-py3-none-any.whl", hash = "sha256:c1891f3151023c8edc59d60e574c94a1845836f3408b0ef8b8f68e84ec7d8048"},
+    {file = "mjml-0.6.2.tar.gz", hash = "sha256:f9e40e6d060c6aeceb0019e806199e99becc84e4fb4af2391456db8d97554d95"},
 ]
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},

@@ -22,6 +22,7 @@ emails = "^0.6"
 aiofiles = "^0.7.0"
 Jinja2 = "^3.0.1"
 fastapi-mail = "^1.0.1"
+mjml = "^0.6.2"
 
 [tool.poetry.dev-dependencies]
 

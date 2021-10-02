@@ -1,15 +1,18 @@
+import os
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 from datetime import datetime, timedelta
 
 from jose import jwt
-import emails
-from emails.template import JinjaTemplate
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from mjml import mjml_to_html
 
 from app.core import config, security
 
+EMAIL_TEMPLATES = Path(__file__).parent.parent / "email_templates"
+SRC_TEMPATE_LOC = EMAIL_TEMPLATES / "src"
+BUILD_TEMPLATE_LOC = EMAIL_TEMPLATES / "build"
 
 conf = ConnectionConfig(
     MAIL_USERNAME=config.SMTP_USER,
@@ -22,8 +25,18 @@ conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=False,
     VALIDATE_CERTS=False,
-    TEMPLATE_FOLDER=Path(__file__).parent.parent / "email_templates" / "build",
+    TEMPLATE_FOLDER=BUILD_TEMPLATE_LOC,
 )
+
+
+def build_email_templates():
+    for template_filename in os.listdir(SRC_TEMPATE_LOC):
+        logging.info(f"Building email template {template_filename}...")
+        template_name = template_filename.split(".")[0]
+        with (SRC_TEMPATE_LOC / template_filename).open("rb") as fp:
+            html_output = mjml_to_html(fp)
+        with (BUILD_TEMPLATE_LOC / (template_name + ".html")).open("w+") as fp:
+            fp.write(html_output["html"])
 
 
 async def send_plaintext_email(

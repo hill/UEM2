@@ -10,7 +10,11 @@ from app.core.logger import log
 from app.database import create_db_and_tables, get_session
 from app.routers import auth, users, courses, resources, topics
 from app.util.data import generate_demo_data
-from app.util.email import send_plaintext_email, send_template_email
+from app.util.email import (
+    send_plaintext_email,
+    send_template_email,
+    build_email_templates,
+)
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
@@ -31,6 +35,9 @@ def on_startup():  # pragma: no cover
         f"[yellow]App running in [bold]{config.ENVIRONMENT}[/bold] mode[/]",
         extra={"markup": True},
     )
+    # build email templates
+    build_email_templates()
+    # startup database
     create_db_and_tables()
     if config.ENVIRONMENT != "production":
         generate_demo_data(next(get_session()))
