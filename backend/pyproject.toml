@@ -25,6 +25,7 @@ fastapi-mail = "^1.0.1"
 mjml = "^0.6.2"
 
 [tool.poetry.dev-dependencies]
+maildump = "^1.0"
 
 [tool.pytest.ini_options]
 testpaths = ["app/tests"]

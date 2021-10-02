@@ -39,6 +39,7 @@ def build_email_templates():
             fp.write(html_output["html"])
 
 
+# TODO(TOM): make these background tasks: https://sabuhish.github.io/fastapi-mail/example/#email-as-background-task
 async def send_plaintext_email(
     email_to: str,
     subject: str = "",
