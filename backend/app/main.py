@@ -1,6 +1,6 @@
 import os
+import uvicorn
 from fastapi import FastAPI, APIRouter
-from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import FileResponse
@@ -70,3 +70,7 @@ def read_index(request: Request):
     # otherwise return index files
     index = config.FRONTEND_LOC + "/index.html"
     return FileResponse(index)
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)

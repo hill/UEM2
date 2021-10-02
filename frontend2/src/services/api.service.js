@@ -11,21 +11,11 @@ const API = {
       "Authorization"
     ] = `Bearer ${JwtService.getToken()}`;
   },
-  get: (url, params) => {
-    return instance.get(url, params);
-  },
-  post: (url, params) => {
-    return instance.post(url, params);
-  },
-  put: (url, params) => {
-    return instance.put(url, params);
-  },
-  patch: (url, params) => {
-    return instance.patch(url, params);
-  },
-  delete: (url, params) => {
-    return instance.delete(url, params);
-  },
+  get: (url, params) => instance.get(url, params),
+  post: (url, params) => instance.post(url, params),
+  put: (url, params) => instance.put(url, params),
+  patch: (url, params) => instance.patch(url, params),
+  delete: (url, params) => instance.delete(url, params),
 };
 
 export default API;
