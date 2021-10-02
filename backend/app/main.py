@@ -62,10 +62,20 @@ app.include_router(api_router)
 
 @app.get("/send-email")
 async def test_send_email():
-    await send_plaintext_email(
+    # await send_plaintext_email(
+    #     email_to="tomhill98@me.com",
+    #     subject="Hello World",
+    #     raw_text="<h1>Welcome :)</h1>",
+    # )
+    await send_template_email(
         email_to="tomhill98@me.com",
-        subject="Hello World",
-        raw_text="<h1>Welcome :)</h1>",
+        subject="Welcome!",
+        template_file="welcome.html",
+        environment={
+            "project_name": "demo",
+            "username": "tomhill",
+            "password": "hunter4",
+        },
     )
     return {"message": "email has been sent"}
 

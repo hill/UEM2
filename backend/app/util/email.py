@@ -53,7 +53,7 @@ async def send_plaintext_email(
     )
     fm = FastMail(conf)
     await fm.send_message(message)
-    logging.info(f"sent email {message} to {email_to}")
+    logging.info(f"sent email to {email_to}")
 
 
 async def send_template_email(
@@ -69,7 +69,7 @@ async def send_template_email(
     )
     fm = FastMail(conf)
     await fm.send_message(message, template_name=template_file)
-    logging.info(f"sent email {message} to {email_to}")
+    logging.info(f"sent email to {email_to}")
 
 
 def generate_password_reset_token(email: str) -> str:
