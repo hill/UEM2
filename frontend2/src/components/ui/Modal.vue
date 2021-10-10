@@ -19,7 +19,9 @@
 <style lang="scss" scoped>
   .modal-content {
     z-index: 150;
-    // width: 75%;
+    width: 40%;
+    position: absolute;
+    top: 10vh;
   }
 
   .modal {

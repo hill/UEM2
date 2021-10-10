@@ -2,6 +2,12 @@
   import { ResourceService, TopicService } from "../services/api.service";
   import SearchResult from "../components/SearchResult.vue";
 
+  const defaultNewResource = {
+    title: "",
+    url: "",
+    topics: [],
+  };
+
   export default {
     components: { SearchResult },
     data() {
@@ -11,7 +17,12 @@
         filteredTopics: [],
         resources: [],
         searchTerm: "",
-        showNewResourceModal: true,
+        showNewResourceModal: false,
+        newResource: {
+          title: "",
+          url: "",
+          topics: [],
+        },
       };
     },
     async mounted() {
@@ -34,12 +45,12 @@
       },
       submitResource() {
         ResourceService.create(
-          this.newResource.name,
+          this.newResource.title,
           this.newResource.url,
           this.newResource.topics.map((t) => t.name)
         )
           .then(({ data }) => {
-            this.newResourceModal = false;
+            this.showNewResourceModal = false;
             this.resources.push(data);
             this.newResource = JSON.parse(JSON.stringify(defaultNewResource));
           })
@@ -74,15 +85,15 @@
         placeholder="Search Learning Resources"
         class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
         v-model="searchTerm"
+        @keyup.enter="search()"
       />
-      <button @click="search()">Search</button>
       <div class="text-right mt-2">
-        <p
-          class="font-serif text-sm text-gray-500"
+        <a
+          class="font-serif text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
           @click="showNewResourceModal = true"
         >
           + Add Resource
-        </p>
+        </a>
       </div>
     </div>
   </header>
@@ -97,8 +108,11 @@
     />
   </div>
   <Modal v-model="showNewResourceModal">
-    <div class="bg-white rounded-lg w-80">
-      <p>Stuff goes here</p>
+    <div class="bg-white rounded-lg p-2 space-y-3">
+      <h1>Add Resource</h1>
+      <Field label="Title" v-model="newResource.title" />
+      <Field label="URL" v-model="newResource.url" />
+      <Button label="add" @click="submitResource()" />
     </div>
   </Modal>
 </template>
