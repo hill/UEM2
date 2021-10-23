@@ -94,7 +94,7 @@ class Resource(ResourceBase, table=True):
 
 
 class ResourceCreate(ResourceBase):
-    topics: Optional[List[int]] = []
+    topics: Optional[List[str]] = []
 
 
 class ResourceRead(ResourceBase):

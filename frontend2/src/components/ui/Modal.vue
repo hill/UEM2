@@ -12,14 +12,13 @@
 <template lang="pug">
 .modal.is-active(v-if='modelValue')
   .modal-background(@click='toggleShow()')
-  .modal-content
+  .modal-content(class="w-3/4 sm:w-1/2")
     slot
 </template>
 
 <style lang="scss" scoped>
   .modal-content {
     z-index: 150;
-    width: 40%;
     position: absolute;
     top: 10vh;
   }

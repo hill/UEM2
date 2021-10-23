@@ -41,8 +41,23 @@ def create_resource(
 ):
     db_resource = Resource.from_orm(resource, {"user_id": current_user.id})
 
-    # TODO(TOM): make this get or create topic
-    db_resource.topics = [session.get(Topic, topic_id) for topic_id in resource.topics]
+    # get or create the topic
+    topic_ids = []
+    new_topics = []
+    for topic in resource.topics:
+        if t := session.exec(
+            select(Topic).where(Topic.name == topic.lower())
+        ).one_or_none():
+            print(t)
+            topic_ids.append(t)
+        else:
+            new = Topic(name=topic.lower())
+            new_topics.append(new)
+
+    session.add_all(new_topics)
+    topic_ids.extend([new for new in new_topics])
+
+    db_resource.topics = topic_ids
 
     session.add(db_resource)
     session.commit()

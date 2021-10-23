@@ -1,5 +1,4 @@
 <script>
-  import { ref } from "@vue/reactivity";
   export default {
     props: ["label", "type", "autocomplete", "modelValue"],
     emits: ["update:modelValue"],

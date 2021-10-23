@@ -1,6 +1,7 @@
 <script>
   import { ResourceService, TopicService } from "../services/api.service";
   import SearchResult from "../components/SearchResult.vue";
+  import TagField from "../components/ui/TagField.vue";
 
   const defaultNewResource = {
     title: "",
@@ -9,7 +10,7 @@
   };
 
   export default {
-    components: { SearchResult },
+    components: { SearchResult, TagField },
     data() {
       return {
         name: "",
@@ -47,7 +48,7 @@
         ResourceService.create(
           this.newResource.title,
           this.newResource.url,
-          this.newResource.topics.map((t) => t.name)
+          this.newResource.topics
         )
           .then(({ data }) => {
             this.showNewResourceModal = false;
@@ -109,9 +110,10 @@
   </div>
   <Modal v-model="showNewResourceModal">
     <div class="bg-white rounded-lg p-2 space-y-3">
-      <h1>Add Resource</h1>
+      <h1 class="text-xl font-serif">Add Resource</h1>
       <Field label="Title" v-model="newResource.title" />
-      <Field label="URL" v-model="newResource.url" />
+      <Field label="URL" type="url" v-model="newResource.url" />
+      <TagField label="Topics" v-model="newResource.topics" />
       <Button label="add" @click="submitResource()" />
     </div>
   </Modal>
