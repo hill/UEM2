@@ -56,6 +56,7 @@
             this.primaryResource,
             this.due,
             this.syllabus,
+            this.assessments,
             "completing",
             this.courseColor
           );

@@ -60,21 +60,6 @@
             this.newResourceErrors = err.response.data.errors;
           });
       },
-      // showNewTopic() {
-      //   this.$buefy.dialog.prompt({
-      //     message: `Create New Topic`,
-      //     inputAttrs: {
-      //       placeholder: 'e.g. Mathematics',
-      //       value: this.$refs.autocomplete.newTag,
-      //     },
-      //     confirmText: 'Add',
-      //     onConfirm: async (value) => {
-      //       const response = await TopicService.create(value)
-      //       this.topics.push(response.data)
-      //       this.newResource.topics.push(response.data)
-      //       this.$refs.autocomplete.newTag = null;
-      //     }
-      //   })
     },
   };
 </script>

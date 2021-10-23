@@ -60,8 +60,8 @@ def generate_demo_data(session: Session):
         user_id=user.id,
     )
 
-    maths = models.Topic(name="Mathematics")
-    algebra = models.Topic(name="Algebra")
+    maths = models.Topic(name="mathematics")
+    algebra = models.Topic(name="algebra")
 
     session.add_all([discrete_maths, maths, algebra])
     session.commit()

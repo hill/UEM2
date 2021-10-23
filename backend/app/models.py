@@ -9,9 +9,7 @@ from sqlmodel import (
     JSON,
 )
 
-# ===== #
-# Users #
-# ===== #
+# ==== Users ==== #
 
 
 class UserBase(SQLModel):
@@ -42,9 +40,7 @@ class UserUpdate(SQLModel):
     email: Optional[str] = None
 
 
-# ==================== #
-# Resources and Topics #
-# ==================== #
+# ==== Resources and Topics ==== #
 
 
 class ResourceTopicLink(SQLModel, table=True):
@@ -111,9 +107,7 @@ class ResourceUpdate(SQLModel):
     topics: Optional[List[int]] = None
 
 
-# ======= #
-# Courses #
-# ======= #
+# ==== Courses ==== #
 
 
 class CourseBase(SQLModel):
@@ -135,11 +129,15 @@ class Course(CourseBase, table=True):
 
 
 class CourseCreate(CourseBase):
-    pass
+    assignments: List["AssignmentCreate"] = []
 
 
 class CourseRead(CourseBase):
     id: int
+
+
+class CourseReadWithDetails(CourseRead):
+    assignments: List["AssignmentRead"] = []
 
 
 class CourseUpdate(SQLModel):
@@ -152,9 +150,12 @@ class CourseUpdate(SQLModel):
     cover: Optional[Dict]
 
 
+# ==== Assignments ==== #
+
+
 class AssignmentBase(SQLModel):
     name: str
-    status: str  # completed / in_progress
+    complete: bool = False
     description: Optional[str]
     due: Optional[datetime.date]
     mark: Optional[float]
@@ -186,5 +187,6 @@ class UserReadWithDetails(UserRead):
     courses: List[CourseRead] = []
 
 
-class CourseReadWithDetails(CourseRead):
-    assignments: List[AssignmentRead] = []
+# Update forward refs
+CourseCreate.update_forward_refs()
+CourseReadWithDetails.update_forward_refs()

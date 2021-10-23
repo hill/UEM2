@@ -87,6 +87,18 @@
       </div>
       <div class="mt-8 md:mt-0">
         <h3 class="text-lg font-bold">Assessment</h3>
+        <div class="space-y-2">
+          <div
+            v-for="assessment in course.assignments"
+            class="rounded-md shadow-md p-2 border-2"
+          >
+            <h3>{{ assessment.name }}</h3>
+            <p>{{ assessment.due }}</p>
+            <p>{{ assessment.complete }}</p>
+            <p>{{ assessment.weight }}%</p>
+            <Button label="Submit" />
+          </div>
+        </div>
       </div>
     </main>
   </div>

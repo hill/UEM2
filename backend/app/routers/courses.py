@@ -42,7 +42,19 @@ def create_course(
     current_user: User = Depends(deps.get_current_user)
 ):
     db_course = Course.from_orm(course, {"user_id": current_user.id})
+
     session.add(db_course)
+    session.commit()
+    session.refresh(db_course)
+
+    new_assignments = []
+    for assignment in course.assignments:
+        print(assignment)
+        new_assignment = Assignment.from_orm(assignment, {"course_id": db_course.id})
+        new_assignments.append(new_assignment)
+
+    session.add_all(new_assignments)
+    db_course.assignments = new_assignments
     session.commit()
     session.refresh(db_course)
     return db_course

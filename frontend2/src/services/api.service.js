@@ -46,6 +46,7 @@ export const CourseService = {
     primary_resource,
     due,
     syllabus,
+    assessments,
     status,
     cover_color
   ) => {
@@ -56,6 +57,7 @@ export const CourseService = {
       primary_resource,
       due,
       syllabus,
+      assignments: assessments,
       cover: { color: cover_color },
       status,
     });
