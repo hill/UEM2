@@ -14,7 +14,7 @@
   <div class="flex flex-col">
     <label class="text-gray-700 text-sm" :for="label">{{ label }}</label>
     <input
-      class="p-2 rounded-md bg-gray-200"
+      class="p-2 rounded-md bg-gray-200 border-0"
       :name="label"
       :type="type"
       :autocomplete="autocomplete ? autocomplete : 'on'"

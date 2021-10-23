@@ -20,7 +20,7 @@ export const PaletteService = {
     return "#" + chooseRandomFromArray(palette);
   },
   getContrastYIQ(hexcolor) {
-    // see https://24ways.org/2010/calculating-color-contrast
+    // see https://www.w3.org/TR/AERT/#color-contrast
     hexcolor = hexcolor.replace("#", "");
     const r = parseInt(hexcolor.substr(0, 2), 16);
     const g = parseInt(hexcolor.substr(2, 2), 16);

@@ -25,12 +25,23 @@
           //   { id: 1, name: "Introduction to Physics", complete: false },
         ],
         courseColor: "#222222",
+        assessments: [
+          // {name: "Demo", due: "some date", weight: 50.0, complete: false},
+        ],
       };
     },
     mounted() {
       this.rollCourse();
     },
     methods: {
+      addAssessment() {
+        this.assessments.push({
+          name: "",
+          due: null,
+          weight: 0,
+          complete: false,
+        });
+      },
       rollCourse() {
         this.courseNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
         this.courseColor = PaletteService.chooseRandomColor();
@@ -95,27 +106,63 @@
           </div>
         </div>
       </div>
-      <div class="form flex-1">
-        <h1 class="text-xl font-extrabold">New Course</h1>
-        <div class="space-y-8 p-4">
-          <Field label="Course Name" v-model="courseName" autocomplete="off" />
-          <Field label="Due" type="date" v-model="due" autocomplete="off" />
-          <Field
-            label="Primary Resource"
-            type="text"
-            v-model="primaryResource"
-            autocomplete="off"
-          />
-        </div>
-        <h1 class="text-xl font-extrabold">Syllabus</h1>
-        <div class="p-4">
-          <EditableList v-model="syllabus" />
-        </div>
-        <h1 class="text-xl font-extrabold">Assessment</h1>
-        <h1 class="text-xl font-extrabold">Motivators</h1>
-        <div class="text-center">
-          <Button @click="save()" label="Create" />
-        </div>
+      <div class="form flex-1 space-y-8">
+        <section>
+          <h1 class="text-xl font-extrabold">New Course</h1>
+          <div class="space-y-8 p-4">
+            <Field
+              label="Course Name"
+              v-model="courseName"
+              autocomplete="off"
+            />
+            <Field label="Due" type="date" v-model="due" autocomplete="off" />
+            <Field
+              label="Primary Resource"
+              type="text"
+              v-model="primaryResource"
+              autocomplete="off"
+            />
+          </div>
+        </section>
+        <section>
+          <h1 class="text-xl font-extrabold">Syllabus</h1>
+          <div class="p-4">
+            <EditableList v-model="syllabus" />
+          </div>
+        </section>
+        <section>
+          <h1 class="text-xl font-extrabold">Assessment</h1>
+          <div class="p-4">
+            <div
+              v-for="assessment in assessments"
+              class="rounded-lg p-2 my-3 border-2 border-gray-400 shadow-lg space-y-4"
+            >
+              <Field label="Name" v-model="assessment.name" />
+              <div class="flex">
+                <Field
+                  class="flex-1"
+                  label="Due"
+                  type="date"
+                  v-model="assessment.due"
+                  autocomplete="off"
+                />
+                <Field
+                  class="flex-1 ml-4"
+                  label="Weight"
+                  type="number"
+                  v-model="assessment.weight"
+                />
+              </div>
+            </div>
+            <Button @click="addAssessment()" label="Add Assessment" />
+          </div>
+        </section>
+        <section>
+          <h1 class="text-xl font-extrabold">Motivators</h1>
+          <div class="text-center">
+            <Button @click="save()" label="Create" />
+          </div>
+        </section>
       </div>
     </div>
   </div>

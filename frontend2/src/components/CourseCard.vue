@@ -14,8 +14,10 @@
         textColor: "#000000",
       };
     },
-    mounted() {
-      this.textColor = PaletteService.getContrastYIQ(this.color);
+    computed: {
+      textColor() {
+        return PaletteService.getContrastYIQ(this.color);
+      },
     },
   };
 </script>
