@@ -103,7 +103,7 @@ def get_request_fixture(client: TestClient) -> Callable[[str], dict]:
 
 @pytest.fixture(name="topic")
 def topic_fixture(session: Session) -> Topic:
-    topic = Topic(name="Mathematics")
+    topic = Topic(name="mathematics")
     session.add(topic)
     session.commit()
     yield topic

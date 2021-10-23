@@ -19,7 +19,7 @@ class TestResource:
             "name": "google",
             "url": "google.com",
             "user_id": user.id,
-            "topics": [topic.id],
+            "topics": [topic.name, "new resource"],
         }
         response = authenticated_client.post(
             API_PREFIX + "/resources/", json=new_resource
@@ -30,8 +30,9 @@ class TestResource:
         assert data["name"] == new_resource["name"]
         assert data["url"] == new_resource["url"]
         assert data["user_id"] == new_resource["user_id"]
-        assert len(data["topics"]) == 1
+        assert len(data["topics"]) == 2
         assert data["topics"][0]["name"] == topic.name
+        assert data["topics"][1]["name"] == "new resource"
 
     def test_read_resources(
         self,
