@@ -5,10 +5,12 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import FileResponse
 
+import stripe
+
 from app.core import config
 from app.core.logger import log
 from app.database import create_db_and_tables, get_session
-from app.routers import auth, users, courses, resources, topics
+from app.routers import auth, users, courses, resources, topics, util
 from app.util.data import generate_demo_data
 from app.util.email import (
     send_plaintext_email,
@@ -31,6 +33,9 @@ if config.BACKEND_CORS_ORIGINS:
 
 @app.on_event("startup")
 def on_startup():  # pragma: no cover
+    # configure stripe
+    stripe.api_key = config.env["STRIPE_SECRET_KEY"]
+
     log.info(
         f"[yellow]App running in [bold]{config.ENVIRONMENT}[/bold] mode[/]",
         extra={"markup": True},
@@ -56,28 +61,9 @@ api_router.include_router(users.router)
 api_router.include_router(courses.router)
 api_router.include_router(resources.router)
 api_router.include_router(topics.router)
+api_router.include_router(util.router)
 
 app.include_router(api_router)
-
-
-@app.get("/send-email")
-async def test_send_email():
-    # await send_plaintext_email(
-    #     email_to="tomhill98@me.com",
-    #     subject="Hello World",
-    #     raw_text="<h1>Welcome :)</h1>",
-    # )
-    await send_template_email(
-        email_to="tomhill98@me.com",
-        subject="Welcome!",
-        template_file="welcome.html",
-        environment={
-            "project_name": "demo",
-            "username": "tomhill",
-            "password": "hunter4",
-        },
-    )
-    return {"message": "email has been sent"}
 
 
 # mount static website

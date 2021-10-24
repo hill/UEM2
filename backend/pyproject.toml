@@ -23,6 +23,8 @@ aiofiles = "^0.7.0"
 Jinja2 = "^3.0.1"
 fastapi-mail = "^1.0.1"
 mjml = "^0.6.2"
+stripe = "^2.61.0"
+python-dotenv = "^0.19.1"
 
 [tool.poetry.dev-dependencies]
 maildump = "^1.0"

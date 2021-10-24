@@ -1,4 +1,6 @@
 from sqlmodel import Session
+import stripe
+
 from app import models
 from app.core.logger import log
 from app.core import security
@@ -17,6 +19,7 @@ def generate_demo_data(session: Session):
         name="Tom Hill",
         email="tomhill98@me.com",
         password_hash=security.get_password_hash("password"),
+        stripe_customer_id=stripe.Customer.create()["id"],
     )
 
     session.add(user)

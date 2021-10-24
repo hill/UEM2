@@ -1,3 +1,7 @@
+from dotenv import dotenv_values
+
+env = dotenv_values(".env")
+
 PROJECT_NAME = "The University of Extrinsic Motivation API"
 ENVIRONMENT = "development"
 DEBUG = True

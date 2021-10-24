@@ -49,7 +49,6 @@ def create_course(
 
     new_assignments = []
     for assignment in course.assignments:
-        print(assignment)
         new_assignment = Assignment.from_orm(assignment, {"course_id": db_course.id})
         new_assignments.append(new_assignment)
 

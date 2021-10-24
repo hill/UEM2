@@ -8,6 +8,8 @@ from sqlmodel import (
     select,
 )
 
+import stripe
+
 from app import deps
 from app.core import security
 from app.database import get_session
@@ -34,8 +36,16 @@ def read_user_me(
 
 @router.post("/", response_model=UserRead)
 def create_user(*, session: Session = Depends(get_session), user: UserCreate):
+
+    # create the stripe customer
+    customer = stripe.Customer.create(email=user.email, name=user.name)
+
     db_user = User.from_orm(
-        user, {"password_hash": security.get_password_hash(user.password)}
+        user,
+        {
+            "password_hash": security.get_password_hash(user.password),
+            "stripe_customer_id": customer["id"],
+        },
     )
     session.add(db_user)
     session.commit()
@@ -80,7 +90,12 @@ def update_user(
 
 
 @router.delete("/{user_id}")
-def delete_user(*, session: Session = Depends(get_session), user_id: int, current_user: User = Depends(deps.get_current_active_user),):
+def delete_user(
+    *,
+    session: Session = Depends(get_session),
+    user_id: int,
+    current_user: User = Depends(deps.get_current_active_user),
+):
     user = get_user(session, user_id)
     if user.id != current_user.id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

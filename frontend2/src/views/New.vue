@@ -1,7 +1,9 @@
 <script>
   import CourseCard from "../components/CourseCard.vue";
-  import { CourseService } from "../services/api.service";
+  import { AuthService, CourseService } from "../services/api.service";
   import { PaletteService } from "../services/palette.service";
+  import { STRIPE_PUBLIC_KEY } from "../config";
+
   const blacklist = [
     "to",
     "the",
@@ -13,6 +15,8 @@
     "introduction",
     "intro",
   ];
+  const stripe = Stripe(STRIPE_PUBLIC_KEY);
+
   export default {
     components: { CourseCard },
     data() {
@@ -28,6 +32,18 @@
         assessments: [
           // {name: "Demo", due: "some date", weight: 50.0, complete: false},
         ],
+        motivators: {
+          payOnFail: {
+            active: false,
+            price: 0,
+          },
+          refundOnSuccess: false,
+          tweet: false,
+          tweetFromAccount: false,
+          exposeSecret: false,
+        },
+        showPaymentModal: false,
+        elements: null,
       };
     },
     mounted() {
@@ -65,6 +81,40 @@
           console.log(err);
         }
       },
+      async setupPayment() {
+        this.showPaymentModal = true;
+        try {
+          const response = await AuthService.getSetupIntentSecret();
+          const { client_secret: clientSecret } = response.data;
+          const options = {
+            clientSecret,
+          };
+          this.elements = stripe.elements(options);
+
+          const paymentElement = this.elements.create("payment");
+          paymentElement.mount("#payment-element");
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      async submitPaymentDetails(event) {
+        event.preventDefault();
+
+        const { error, setupIntent } = await stripe.confirmSetup({
+          elements: this.elements,
+          confirmParams: {
+            return_url: "http://localhost:3000/setup-complete",
+          },
+          redirect: "if_required",
+        });
+
+        if (error) {
+          // TODO: display stripe errors nicely
+        } else {
+          console.log(setupIntent);
+          this.showPaymentModal = false;
+        }
+      },
     },
     computed: {
       initials() {
@@ -92,7 +142,7 @@
 <template>
   <div class="page px-2 md:px-10 lg:px-20 py-10 min-h-screen">
     <div
-      class="bg-gray-50 block sm:flex flex-row-reverse p-5 rounded-2xl min-h-screen"
+      class="bg-gray-50 block shadow-xl sm:flex flex-row-reverse p-5 rounded-2xl min-h-screen"
     >
       <div class="cover flex-1 relative">
         <div class="sm:w-1/2 sm:fixed p-10">
@@ -161,11 +211,64 @@
         <section>
           <h1 class="text-xl font-extrabold">Motivators</h1>
           <div class="p-4 space-y-2">
-            <Checkbox label="Pay now; Refund on success" />
-            <Checkbox label="Pay on failure" />
-            <Checkbox label="Tweet failure" />
-            <Checkbox label="Tweet failure from my account" />
-            <Checkbox label="Expose deep secret" />
+            <Checkbox
+              v-model="motivators.payOnFail.active"
+              label="Pay on failure"
+            />
+            <div
+              v-if="motivators.payOnFail.active"
+              class="rounded-md p-3 bg-gray-200 space-y-3"
+            >
+              <h3 class="text-md">Pay On Failure</h3>
+              <p class="text-sm">
+                If a mark > 50% is not achieved by the due date {{ due }}, we
+                will charge your card ${{ motivators.payOnFail.price }}.00
+              </p>
+              <input
+                class="w-3/4"
+                id="price"
+                type="range"
+                min="0"
+                max="1000"
+                step="5"
+                v-model="motivators.payOnFail.price"
+              />
+              <label class="ml-1" for="price"
+                >${{ motivators.payOnFail.price }}.00</label
+              >
+              <Button
+                class="block"
+                label="Set Up Payment"
+                @click="setupPayment()"
+              />
+              <Modal v-model="showPaymentModal">
+                <div class="bg-white rounded-lg p-2 space-y-3">
+                  <form id="payment-form">
+                    <div id="payment-element">
+                      <!-- Elements will create form elements here -->
+                      Loading...
+                    </div>
+                    <Button label="submit" @click="submitPaymentDetails" />
+                    <div id="error-message">
+                      <!-- Display error message to your customers here -->
+                    </div>
+                  </form>
+                </div>
+              </Modal>
+            </div>
+            <Checkbox
+              v-model="motivators.refundOnSuccess"
+              label="Pay now; Refund on success"
+            />
+            <Checkbox v-model="motivators.tweet" label="Tweet failure" />
+            <Checkbox
+              v-model="motivators.tweetFromAccount"
+              label="Tweet failure from my account"
+            />
+            <Checkbox
+              v-model="motivators.exposeSecret"
+              label="Expose deep secret"
+            />
           </div>
         </section>
         <div class="text-center">
@@ -178,6 +281,6 @@
 
 <style scoped>
   .page {
-    background-color: #b2b2b2; /* TODO(TOM): add to pallette */
+    background-color: #cdd2d8;
   }
 </style>

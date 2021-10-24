@@ -22,6 +22,7 @@ class User(UserBase, table=True):
     is_active: bool = True
     is_superuser: bool = False
     password_hash: str
+    stripe_customer_id: Optional[str]
 
     resources: List["Resource"] = Relationship(back_populates="user")
     courses: List["Course"] = Relationship(back_populates="user")
