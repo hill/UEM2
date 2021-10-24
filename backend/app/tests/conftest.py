@@ -1,5 +1,6 @@
 import datetime
 from typing import Callable, Generator, List, Dict
+from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -35,6 +36,7 @@ def user_fixture(session: Session) -> User:
         name="Harry Potter",
         email=TEST_USER_EMAIL,
         password_hash=security.get_password_hash(TEST_USER_PASSWORD),
+        stripe_customer_id="TEST_CUSTOMER_ID",
     )
     session.add(user)
     session.commit()
@@ -99,6 +101,16 @@ def get_request_fixture(client: TestClient) -> Callable[[str], dict]:
         return response.json()
 
     return get_request
+
+
+@pytest.fixture(name="patch_stripe")
+def patch_stripe_fixture(monkeypatch):
+    # don't create stripe customers
+    import stripe
+
+    monkeypatch.setattr(
+        stripe.Customer, "create", MagicMock(return_value={"id": "TEST_STRIPE_ID"})
+    )
 
 
 @pytest.fixture(name="topic")

@@ -23,7 +23,7 @@ class TestUtil:
         "model",
         [User, Course, Topic, Resource, Assignment],
     )
-    def test_generate_demo_data(self, session: Session, model: SQLModel):
+    def test_generate_demo_data(self, session: Session, model: SQLModel, patch_stripe):
 
         # data does not exist before
         assert session.query(model).count() == 0

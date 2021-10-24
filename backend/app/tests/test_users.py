@@ -2,7 +2,7 @@ from app.tests.conftest import API_PREFIX, Session, TestClient, User
 
 
 class TestUsers:
-    def test_create_user(self, client: TestClient):
+    def test_create_user(self, client: TestClient, patch_stripe):
         new_user = {
             "name": "Harry Potter",
             "email": "h.potter@hogwarts.magic",
@@ -20,11 +20,11 @@ class TestUsers:
         assert data["id"] is not None
         assert "password" not in data
 
-    def test_create_user_incomplete(self, client: TestClient):
+    def test_create_user_incomplete(self, client: TestClient, patch_stripe):
         response = client.post(API_PREFIX + "/users/", json={"name": "Harry Potter"})
         assert response.status_code == 422
 
-    def test_create_user_invalid(self, client: TestClient):
+    def test_create_user_invalid(self, client: TestClient, patch_stripe):
         response = client.post(
             API_PREFIX + "/users/",
             json={"name": "Harry Potter", "email": {}, "password": "magics"},

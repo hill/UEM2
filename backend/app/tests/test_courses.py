@@ -65,7 +65,6 @@ class TestAssignment:
         new_assignment = {
             "name": "Huge Exam",
             "description": "Big scary exam",
-            "status": "incomplete",
             "due": "2021-12-12",
             "weight": 50,
         }
