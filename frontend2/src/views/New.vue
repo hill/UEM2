@@ -160,10 +160,17 @@
         </section>
         <section>
           <h1 class="text-xl font-extrabold">Motivators</h1>
-          <div class="text-center">
-            <Button @click="save()" label="Create" />
+          <div class="p-4 space-y-2">
+            <Checkbox label="Pay now; Refund on success" />
+            <Checkbox label="Pay on failure" />
+            <Checkbox label="Tweet failure" />
+            <Checkbox label="Tweet failure from my account" />
+            <Checkbox label="Expose deep secret" />
           </div>
         </section>
+        <div class="text-center">
+          <Button @click="save()" label="Create" />
+        </div>
       </div>
     </div>
   </div>

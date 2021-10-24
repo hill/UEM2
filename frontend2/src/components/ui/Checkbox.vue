@@ -14,6 +14,7 @@
   <div>
     <input
       :name="label"
+      :id="label"
       :checked="modelValue"
       @change="updateValue()"
       type="checkbox"

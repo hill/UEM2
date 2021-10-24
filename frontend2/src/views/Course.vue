@@ -90,13 +90,18 @@
         <div class="space-y-2">
           <div
             v-for="assessment in course.assignments"
-            class="rounded-md shadow-md p-2 border-2"
+            class="rounded-md shadow-md p-2 border-2 space-y-2"
           >
-            <h3>{{ assessment.name }}</h3>
-            <p>{{ assessment.due }}</p>
-            <p>{{ assessment.complete }}</p>
-            <p>{{ assessment.weight }}%</p>
-            <Button label="Submit" />
+            <h3 class="text-lg text-center">{{ assessment.name }}</h3>
+            <p class="text-sm">Due: {{ assessment.due }}</p>
+            <p class="text-sm">Weight: {{ assessment.weight }}%</p>
+            <div class="flex justify-center">
+              <Button
+                v-if="!assessment.complete"
+                label="Submit"
+                style="primary"
+              />
+            </div>
           </div>
         </div>
       </div>
