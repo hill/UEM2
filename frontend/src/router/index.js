@@ -15,8 +15,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    redirect: "/login",
-    // component: ExampleTodo,
+    redirect: "/resources",
   },
   {
     path: "/login",
@@ -91,7 +90,7 @@ router.beforeResolve(async (to, from, next) => {
   // redirect if going to login, already logged in
   if (to.path === "/login") {
     if (token && loggedIn) {
-      next("/transcript");
+      next("/resources");
       return;
     }
   }
