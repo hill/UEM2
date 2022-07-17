@@ -1,92 +1,101 @@
-<template lang='pug'>
-div
-  <SmallHeader />
-  .transcript-container
-    .container
-      .columns.is-centered
-        .transcript.column.is-10
-          h1.subtitle.is-4 Official Academic Transcript – Tom Hill
-          h3.title.is-4 Current Semester
-          .columns.is-multiline.course-columns
-            .column.is-3(v-for='course in courses' :key='course.id')
-              CourseCard(:title='course.name' :id='course.id' :status='course.status')
-          .watermark
-</template>
-
 <script>
+  import { computed } from "vue";
+  import { useStore } from "vuex";
+  import CourseCard from "../components/CourseCard.vue";
+  import API, { CourseService } from "../services/api.service";
 
-import {CourseService} from '../services/api.service'
-
-import SmallHeader from '../components/SmallHeader'
-import CourseCard from '../components/CourseCard'
-
-export default {
-  name: 'Transcript',
-  components: {
-    SmallHeader,
-    CourseCard,
-  },
-  data() {
-    return {
-      
-      courses: []
-    }
-  },
-  async created() {
-    CourseService.list().then(({data}) => {
-      this.courses = data
-    }).catch(err => {
-      console.log(err)
-    })
-  },
-}
+  export default {
+    components: { CourseCard },
+    data() {
+      return { courses: [] };
+    },
+    mounted() {
+      CourseService.list().then(({ data }) => {
+        this.courses = data;
+      });
+    },
+    setup() {
+      const store = useStore();
+      return {
+        user: computed(() => store.state.user),
+      };
+    },
+  };
 </script>
 
-<style lang='scss' scoped>
+<template>
+  <div class="flex justify-center">
+    <div
+      class="transcript sm:w-4/5 p-5 my-10 sm:m-10 justify-self-center min-h-screen"
+    >
+      <div class="watermark"></div>
+      <h1 class="light-text text-lg font-serif italic mt-3 mb-8 text-center">
+        Official Academic Transcript of {{ user.name }}
+      </h1>
+      <h1 class="text-3xl font-bold my-3">Current Semester</h1>
+      <div
+        class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+      >
+        <router-link v-for="course in courses" :to="'/course/' + course.id">
+          <CourseCard
+            :code="course.code"
+            :name="course.name"
+            :status="course.status"
+            :color="course.cover.color ?? '#222222'"
+          />
+        </router-link>
+        <router-link to="/new" class="new-item">
+          <p class="text-gray-300 self-center">+ New Course</p>
+        </router-link>
+      </div>
+    </div>
+  </div>
+</template>
 
-$ripped-height: 20px;
-$paper-color: #f3f3f3;
+<style lang="scss" scoped>
+  $paper-color: #f3f3f3;
 
-.transcript {
+  .new-item {
+    &:hover {
+      background: $paper-color;
+    }
+    @apply flex
+      p-3 
+      border-dashed
+      border-2
+      border-gray-300
+      rounded-lg
+      h-72
+      cursor-pointer
+      transform
+      hover:shadow-lg
+      duration-150;
+  }
+
+  .light-text {
+    color: rgba(0, 0, 0, 0.2);
+  }
+
+  .transcript {
     position: relative;
-    margin-top: 5em;
     background: $paper-color;
     box-shadow:
-    /* The top layer shadow */
-    0 1px 2px rgba(0,0,0,0.50),
-    /* The second layer */
-    0 10px 0 -5px #eee,
-    /* The second layer shadow */
-    0 10px 1px -4px rgba(0,0,0,0.15),
-      /* The third layer */
-    0 20px 0 -10px #eee,
-    /* The third layer shadow */
-    0 20px 1px -9px rgba(0,0,0,0.15);
-    min-height: 75vh;
-}
+    /* The top layer shadow */ 0 1px 2px rgba(0, 0, 0, 0.5),
+      /* The second layer */ 0 10px 0 -5px #eee,
+      /* The second layer shadow */ 0 10px 1px -4px rgba(0, 0, 0, 0.15),
+      /* The third layer */ 0 20px 0 -10px #eee,
+      /* The third layer shadow */ 0 20px 1px -9px rgba(0, 0, 0, 0.15);
+  }
 
-.transcript-container {
-  position: relative;
-  min-height: 100vh;
-  background-image: url("/bg_pattern.png");
-  background-repeat: no-repeat;
-  background-position: -300px 300px;
-}
-
-.watermark {
-  width: 300px;
-  height: 300px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: url('/logo_watermark.png');
-  background-repeat: no-repeat;
-  background-size: 340px;
-  opacity: 0.5;
-}
-
-.course-columns {
-  display: flex;
-  direction: column;
-}
+  .watermark {
+    width: 20rem;
+    height: 20rem;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: url("/logo_watermark.png");
+    background-repeat: no-repeat;
+    background-size: 22rem;
+    opacity: 0.5;
+  }
 </style>

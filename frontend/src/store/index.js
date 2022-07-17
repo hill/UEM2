@@ -1,13 +1,10 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { createStore } from "vuex";
 import JwtService from "../services/jwt.service";
 import API, { AuthService } from "../services/api.service";
 
-Vue.use(Vuex);
+// TODO(TOM): refactor - use async/await instead.
 
-// TODO(TOM): refactor
-
-export default new Vuex.Store({
+export const store = createStore({
   state: {
     user: null,
     token: "",
@@ -48,8 +45,8 @@ export default new Vuex.Store({
             JwtService.saveToken(data.access_token);
             API.setHeader();
             AuthService.getMe()
-              .then(({ data }) => {
-                commit("authUser", data);
+              .then((res) => {
+                commit("authUser", res.data);
               })
               .catch((err) => {
                 console.log("reject getMe with ", err);

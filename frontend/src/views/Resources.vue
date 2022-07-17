@@ -1,179 +1,105 @@
-<template lang='pug'>
-  div
-    <SmallHeader />
-    .header
-      h1 Resource Search
-    .columns.is-centered
-      .column.is-6
-        input.search-bar(v-model='searchTerm' @change='search()' placeholder='search resources...')
-        a(v-if='user' @click='newResourceModal = true') + Add a resource
-        router-link(v-else to='/login?next=/resources') + Add a resource (log in)
-    .container
-      .columns.is-centered
-        .column.is-8
-          SearchResult(
-            v-for='resource in resources'
-            :key='resource.id'
-            :id='resource.id'
-            :name="resource.name",
-            :url="resource.url", 
-            :topics='resource.topics',
-            :votes="resource.votes"
-          )
-          p.has-text-centered(v-if='!resources') No resources found
-    .modal(:class='{"is-active": newResourceModal}')
-      .modal-background(@click='newResourceModal = false')
-      .modal-content
-        .card
-          .card-content
-            .content
-              h3.is-size-3 Add a resource
-              .field
-                label.label Name
-                input.input(v-model='newResource.name' placeholder='name')
-                p.help.is-danger(v-if='newResourceErrors.name') {{newResourceErrors.name.join(',')}}
-              .field
-                label.label URL
-                input.input(v-model='newResource.url' placeholder='url')
-                p.help.is-danger(v-if='newResourceErrors.url') {{newResourceErrors.url.join(',')}}
-              .field
-                b-field(label='Enter some tags')
-                  b-taginput(
-                    v-model='newResource.topics'
-                    :data='filteredTopics'
-                    autocomplete
-                    ref="autocomplete"
-                    :allow-new='false'
-                    icon='label'
-                    placeholder='Add a topic'
-                    field="name"
-                    @typing='getFilteredTopics'
-                  )
-                    <template #header>
-                      <a @click="showNewTopic">
-                        <span> Add new... </span>
-                      </a>
-                    </template>
-              button.button(@click='submitResource()') Add Resource
-      button.modal-close.is-large(aria-label='close' @click='newResourceModal = false')
-</template>
-
 <script>
-import SmallHeader from '../components/SmallHeader'
-import SearchResult from '../components/SearchResult'
+  import { ResourceService, TopicService } from "../services/api.service";
+  import SearchResult from "../components/SearchResult.vue";
+  import TagField from "../components/ui/TagField.vue";
 
-import _ from 'underscore'
-import {mapState} from 'vuex'
-import {ResourceService, TopicService} from '../services/api.service'
+  const defaultNewResource = {
+    title: "",
+    url: "",
+    topics: [],
+  };
 
-const defaultNewResource = {
-  name: "",
-  url: "",
-  topics: []
-}
-
-export default {
-  components: {SmallHeader, SearchResult},
-  data() {
-    return {
-      name: '',
-      topics: [],
-      filteredTopics: [],
-      resources: [],
-      searchTerm: "",
-      newResourceModal: false,
-      newResource: JSON.parse(JSON.stringify(defaultNewResource)),
-      newResourceErrors: {}
-    }
-  },
-  mounted() {
-    ResourceService.list().then(({data}) => {
-      this.resources = data;
-    })
-
-    TopicService.list().then(({data}) => {
-      this.topics = data.topics;
-      this.filteredTopics = data.topics;
-    })
-  },
-  methods: {
-    search() {
-      ResourceService.find(this.searchTerm).then(({data}) => this.resources = data)
-    },
-    getFilteredTopics(text) {
-      this.filteredTopics = this.topics.filter((topic) => {
-          return topic.name
-              .toString()
-              .toLowerCase()
-              .indexOf(text.toLowerCase()) >= 0
-      })
-    },
-    submitResource() {
-      ResourceService.create(
-        this.newResource.name,
-        this.newResource.url,
-        this.newResource.topics.map(t => t.name)
-      ).then(({data}) => {
-        this.newResourceModal = false;
-        this.resources.push(data);
-        this.newResource = JSON.parse(JSON.stringify(defaultNewResource));
-      }).catch(err => {
-        console.log(err.response)
-        this.newResourceErrors = err.response.data.errors;
-      })
-    },
-    showNewTopic() {
-      this.$buefy.dialog.prompt({
-        message: `Create New Topic`,
-        inputAttrs: {
-          placeholder: 'e.g. Mathematics',
-          value: this.$refs.autocomplete.newTag,
+  export default {
+    components: { SearchResult, TagField },
+    data() {
+      return {
+        name: "",
+        topics: [],
+        filteredTopics: [],
+        resources: [],
+        searchTerm: "",
+        showNewResourceModal: false,
+        newResource: {
+          title: "",
+          url: "",
+          topics: [],
         },
-        confirmText: 'Add',
-        onConfirm: async (value) => {
-          const response = await TopicService.create(value)
-          this.topics.push(response.data)
-          this.newResource.topics.push(response.data)
-          this.$refs.autocomplete.newTag = null;
-        }
-      })
-    }
-  },
-  computed: mapState(['user'])
-  
-}
+      };
+    },
+    async mounted() {
+      const resources = await ResourceService.list();
+      this.resources = resources.data;
+      const topics = await TopicService.list();
+      this.topics = topics.data;
+    },
+    methods: {
+      async search() {
+        const resources = await ResourceService.find(this.searchTerm);
+        this.resources = resources.data;
+      },
+      getFilteredTopics(text) {
+        this.filteredTopics = this.topics.filter((topic) => {
+          return (
+            topic.name.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0
+          );
+        });
+      },
+      submitResource() {
+        ResourceService.create(
+          this.newResource.title,
+          this.newResource.url,
+          this.newResource.topics
+        )
+          .then(({ data }) => {
+            this.showNewResourceModal = false;
+            this.resources.push(data);
+            this.newResource = JSON.parse(JSON.stringify(defaultNewResource));
+          })
+          .catch((err) => {
+            console.log(err.response);
+            this.newResourceErrors = err.response.data.errors;
+          });
+      },
+    },
+  };
 </script>
-
-<style lang='scss' scoped>
-  @import '@/assets/theme.scss';
-  .header {
-    background: $red;
-    height: 150px;
-    h1 {
-      text-align: center;
-      font-size: 4em;
-      font-weight: 700;
-      color: white;
-    }
-  }
-
-  .search-bar {
-    transform: translateY(-20px);
-    width: 100%;
-    height: 40px;
-    background: #F6F6F6;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
-    border-radius: 8px;
-    border-color: transparent;
-    outline: none;
-    font-family: $family-monospace;
-    padding: 0 10px;
-  }
-
-  .modal-content {
-    width: 75%;
-    .card {
-      min-height: 80vh;
-    }
-  }
-</style>
+<template>
+  <header class="h-32 bg-red-800">
+    <h1 class="text-4xl pt-9 text-white font-serif text-center">Resources</h1>
+    <div class="mt-8 w-3/4 sm:w-1/2 xl:w-1/3 mx-auto">
+      <input
+        placeholder="Search Learning Resources"
+        class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
+        v-model="searchTerm"
+        @keyup.enter="search()"
+      />
+      <div class="text-right mt-2">
+        <a
+          class="font-serif text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
+          @click="showNewResourceModal = true"
+        >
+          + Add Resource
+        </a>
+      </div>
+    </div>
+  </header>
+  <div class="mt-6 container mx-auto">
+    <SearchResult
+      v-for="resource in resources"
+      :name="resource.name"
+      :url="resource.url"
+      :votes="resource.votes"
+      :topics="resource.topics"
+      :id="resource.id"
+    />
+  </div>
+  <Modal v-model="showNewResourceModal">
+    <div class="bg-white rounded-lg p-2 space-y-3">
+      <h1 class="text-xl font-serif">Add Resource</h1>
+      <Field label="Title" v-model="newResource.title" />
+      <Field label="URL" type="url" v-model="newResource.url" />
+      <TagField label="Topics" v-model="newResource.topics" />
+      <Button label="add" @click="submitResource()" />
+    </div>
+  </Modal>
+</template>

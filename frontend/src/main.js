@@ -1,31 +1,27 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import { createApp } from "vue";
+import { store } from "./store";
+import { router } from "./router";
+import "./index.css";
 
-import Buefy from 'buefy'
+import App from "./App.vue";
+import Field from "./components/ui/Field.vue";
+import Modal from "./components/ui/Modal.vue";
+import Button from "./components/ui/Button.vue";
+import Checkbox from "./components/ui/Checkbox.vue";
+import EditableList from "./components/ui/EditableList.vue";
 
-// import * as Sentry from "@sentry/vue";
-// import { Integrations } from "@sentry/tracing";
+const app = createApp(App);
 
+app.use(router);
+app.use(store);
 
-import API from './services/api.service'
+// Global Components
 
-// Sentry.init({
-//   Vue: Vue,
-//   dsn: "https://9fabfac1a4874239a0c878f65e2d1adc@o454372.ingest.sentry.io/5727387",
-//   integrations: [new Integrations.BrowserTracing()],
-//   tracesSampleRate: 1.0,
-// });
+// UI
+app.component("Field", Field);
+app.component("Button", Button);
+app.component("Checkbox", Checkbox);
+app.component("Modal", Modal);
+app.component("EditableList", EditableList); // TODO(TOM): not global?
 
-Vue.config.productionTip = false
-Vue.config.ignoredElements = [/^ion-/]
-Vue.use(Buefy)
-
-API.init();
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+app.mount("#app");

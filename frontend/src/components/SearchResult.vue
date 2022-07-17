@@ -1,62 +1,100 @@
-<template lang='pug'>
-.result.is-flex
-  .votes
-    a(@click='upvote()' :class='{"disabled": vote == 1}')
-      <ion-icon name="chevron-up-outline"></ion-icon>
-    p {{currVotes}}
-    a(@click='downvote()' :class='{"disabled": vote == -1}')
-      <ion-icon name="chevron-down-outline"></ion-icon>
-  .content
-    a(:href="url" target="_blank")
-      h3.is-size-5 {{name}}
-    .tags
-      span.tag.is-link.is-light(v-for='topic in topics') {{topic.name}}
-      a.tag(data-tooltip="mark link as broken" @click='markBroken()')
-        <b-icon icon="link-variant-off" size="is-small"></b-icon>
-</template>
-
 <script>
-import { ResourceService } from '../services/api.service'
+  import { ResourceService } from "../services/api.service";
+  import {
+    ChevronUpIcon,
+    ChevronDownIcon,
+    EmojiSadIcon,
+    ExternalLinkIcon,
+  } from "@heroicons/vue/outline";
 
-export default {
-  props: ['name', 'url', 'topics', 'votes', 'id'],
-  data() {
-    return {
-      currVotes: this.votes,
-      vote: 0
-    }
-  },
-  methods: {
-    upvote() {
-      if (this.vote <= 0) {
-        ResourceService.upvote(this.id).then(() => {
-          this.currVotes += 1
-        })
-        this.vote = this.vote == 0 ? 1 : 0;
-      }
-      
+  export default {
+    props: ["name", "url", "topics", "votes", "id"],
+    components: {
+      ChevronUpIcon,
+      ChevronDownIcon,
+      EmojiSadIcon,
+      ExternalLinkIcon,
     },
-    downvote() {
-      if (this.vote >= 0) {
-        ResourceService.downvote(this.id).then(() => {
-          this.currVotes -= 1
-        })
-        this.vote = this.vote == 0 ? -1 : 0;
-      }
+    data() {
+      return {
+        currVotes: this.votes,
+        vote: 0,
+      };
     },
-    markBroken() {
-      ResourceService.broken(this.id)
-      this.$buefy.snackbar.open({
-        duration: 3000,
-        message:`Thanks - we've flagged that link and will review it`
-      })
-    }
-  }
-}
+    methods: {
+      upvote() {
+        if (this.vote <= 0) {
+          ResourceService.upvote(this.id).then(() => {
+            this.currVotes += 1;
+          });
+          this.vote = this.vote == 0 ? 1 : 0;
+        }
+      },
+      downvote() {
+        if (this.vote >= 0) {
+          ResourceService.downvote(this.id).then(() => {
+            this.currVotes -= 1;
+          });
+          this.vote = this.vote == 0 ? -1 : 0;
+        }
+      },
+      markBroken() {
+        ResourceService.broken(this.id);
+        this.$buefy.snackbar.open({
+          duration: 3000,
+          message: `Thanks - we've flagged that link and will review it`,
+        });
+      },
+    },
+  };
 </script>
 
-<style lang='scss' scoped>
-  @import '@/assets/theme.scss';
+<template>
+  <div class="result flex">
+    <div class="votes">
+      <a
+        @click="upvote()"
+        class="cursor-pointer hover:text-gray-500"
+        :class="{ 'text-gray-300 hover:text-gray-300': vote == 1 }"
+      >
+        <ChevronUpIcon class="chevron h-6" />
+      </a>
+      <p class="text-xl font-serif -mt-1">{{ currVotes }}</p>
+      <a
+        @click="downvote()"
+        class="cursor-pointer hover:text-gray-500"
+        :class="{ 'text-gray-300 hover:text-gray-300': vote == -1 }"
+      >
+        <ChevronDownIcon class="chevron h-6" />
+      </a>
+    </div>
+    <div class="content mt-3">
+      <a :href="url" target="_blank">
+        <h3 class="text-xl font-serif cursor-pointer">
+          {{ name }}<ExternalLinkIcon class="ml-1 h-4 inline-block" />
+        </h3>
+      </a>
+      <div class="tags">
+        <span
+          class="text-xs mr-2 px-2 py-1 bg-gray-200 rounded-md"
+          v-for="topic in topics"
+          >{{ topic.name }}</span
+        >
+        <a
+          class="cursor-pointer"
+          data-tooltip="mark link as broken"
+          @click="markBroken()"
+        >
+          <EmojiSadIcon
+            class="h-5 text-gray-300 hover:text-gray-500 inline-block pointer"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
   .result {
     padding: 15px 0;
   }
@@ -77,7 +115,12 @@ export default {
     text-align: center;
   }
 
-  .disabled {
-    color: gray;
+  .chevron {
+    &:hover {
+      transform: scale(1.025);
+    }
+    &:active {
+      transform: scale(0.975);
+    }
   }
 </style>

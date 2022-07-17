@@ -1,61 +1,45 @@
-<template lang='pug'>
-  router-link(:to="!newCourse ? '/course/' + id : '/new'").course(:class='{"new" : newCourse, "failed" : status == "failed", "passed" : status == "passed"}')
-    h4 {{title}}
-    .info
-      p.status {{status}}
-      p.price {{price}}
-</template>
-
 <script>
-export default {
-  props: ['title', 'status', 'price', 'newCourse', 'id'],
-    
-}
+  import { PaletteService } from "../services/palette.service";
+  import Background from "./Background.vue";
+  export default {
+    components: { Background },
+    props: {
+      code: String,
+      name: String,
+      status: String,
+      color: String,
+    },
+    data() {
+      return {
+        textColor: "#000000",
+      };
+    },
+    computed: {
+      textColor() {
+        return PaletteService.getContrastYIQ(this.color);
+      },
+    },
+  };
 </script>
 
-<style lang='scss' scoped>
-@import '@/assets/main.scss';
+<template>
+  <div
+    class="shadow-md rounded-lg overflow-hidden h-56 sm:h-72 cursor-pointer transform hover:shadow-xl hover:-translate-y-1 duration-150"
+  >
+    <!-- <Background :color="color" class="bg absolute w-full h-full" /> -->
+    <!-- If its just gonna be simple colors, there are easier ways to do this than canvas! -->
+    <div :style="{ background: color }" class="bg absolute w-full h-full"></div>
+    <div :style="{ color: textColor }" class="flex flex-col-reverse p-3 h-full">
+      <h1 class="text-lg sm:text-xl md:text-2xl mlgd:text-3xl font-bold">
+        {{ code }}
+      </h1>
+      <h4 class="text-xs sm:text-sm">{{ name }}</h4>
+    </div>
+  </div>
+</template>
 
-.course {
-  color: black;
-  height: 100%;
-  background-color: #b8c8ff;
-  border: 1px solid #554eff;
-  border-radius: 4px;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.2s ease;
-
-  p {
-    display: inline-block;
-    font-size: 12px;
+<style lang="scss" scoped>
+  .bg {
+    z-index: -1;
   }
-
-  .info {
-      margin-top: auto;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-  }
-
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.new {
-  background-color: #eee;
-  border: 1px solid #ccc;
-}
-
-.failed {
-  background-color: #ff38429c;
-  border: 1px solid #9e192f;
-}
-
-.passed {
-  background-color: #bae2bf;
-  border: 1px solid #157736;
-}
 </style>

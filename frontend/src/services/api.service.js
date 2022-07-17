@@ -1,6 +1,4 @@
-import Vue from "vue";
 import axios from "axios";
-import VueAxios from "vue-axios";
 import JwtService from "./jwt.service";
 
 const API_URL = "http://localhost:8000/api/v1";
@@ -8,30 +6,16 @@ const API_URL = "http://localhost:8000/api/v1";
 const instance = axios.create({ baseURL: API_URL });
 
 const API = {
-  init: () => {
-    Vue.use(VueAxios, axios);
-    Vue.axios.defaults.baseURL = API_URL;
-  },
   setHeader: () => {
-    Vue.axios.defaults.headers.common[
+    instance.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${JwtService.getToken()}`;
   },
-  get: (url, params) => {
-    return Vue.axios.get(url, params);
-  },
-  post: (url, params) => {
-    return Vue.axios.post(url, params);
-  },
-  put: (url, params) => {
-    return Vue.axios.put(url, params);
-  },
-  patch: (url, params) => {
-    return Vue.axios.patch(url, params);
-  },
-  delete: (url, params) => {
-    return Vue.axios.delete(url, params);
-  },
+  get: (url, params) => instance.get(url, params),
+  post: (url, params) => instance.post(url, params),
+  put: (url, params) => instance.put(url, params),
+  patch: (url, params) => instance.patch(url, params),
+  delete: (url, params) => instance.delete(url, params),
 };
 
 export default API;
@@ -48,15 +32,36 @@ export const AuthService = {
   },
   verify: () => API.post("/auth/login/test-token"),
   getMe: () => API.get("/users/me"),
-  refresh: () => API.post("/auth/refresh"),
+  refresh: () => API.post("/auth/login/refresh-token"),
+  getSetupIntentSecret: () => API.post("/util/create-setup-intent"),
 };
 
+// TODO(TOM): typescript?
 export const CourseService = {
   list: () => API.get("/courses/"),
   get: (id) => API.get(`/courses/${id}`),
-  create: (name, description, due, syllabus) => {
-    console.log({ name, description, due, syllabus });
-    return API.post(`/courses/`, { name, description, due, syllabus });
+  create: (
+    name,
+    code,
+    description,
+    primary_resource,
+    due,
+    syllabus,
+    assessments,
+    status,
+    cover_color
+  ) => {
+    return API.post(`/courses/`, {
+      name,
+      code,
+      description,
+      primary_resource,
+      due,
+      syllabus,
+      assignments: assessments,
+      cover: { color: cover_color },
+      status,
+    });
   },
   update: (id, name, description, due, syllabus) =>
     API.patch(`/courses/${id}`, { name, description, due, syllabus }), // TODO(TOM): wrap args in obj?

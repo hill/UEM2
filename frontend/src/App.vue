@@ -1,23 +1,17 @@
-<template>
-  <div id="app">
-    <router-view/>
-  </div>
-</template>
-
 <script>
-import Header from './components/Header'
-
-export default {
-  components: {Header},
-  data() {
-    return {
-      signedIn: false
-    }
-  },
-}
+  import SmallHeader from "./components/SmallHeader.vue";
+  export default {
+    components: { SmallHeader },
+  };
 </script>
 
-<style lang="scss">
-@import '~buefy/dist/buefy.css';
-@import './assets/main.scss';
+<template>
+  <SmallHeader></SmallHeader>
+  <router-view></router-view>
+</template>
+
+<style>
+  body {
+    @apply bg-gray-50;
+  }
 </style>

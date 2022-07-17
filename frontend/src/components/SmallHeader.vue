@@ -1,70 +1,22 @@
-<template lang='pug'>
-  header
-    nav
-      .container
-        .logo.is-flex
-          img.crest(src='/logo_crest.svg')
-          p
-            router-link(:to='user ? "/transcript" : "/"') The University of Extrinsic Motivation
-        .items(v-if='user')
-          router-link(to='/new') + New Course
-          router-link(to='/resources/') Resources
-          router-link(:to='"/student/" + user.id') {{user.name}}
-          a(@click='signOut') Sign Out
+<script setup>
+  import { computed } from "vue";
+  import { useStore } from "vuex";
+
+  const store = useStore();
+  const user = computed(() => store.state.user);
+</script>
+<template>
+  <div
+    class="small-header-color w-full p-0.5 px-3 text-white h-8 font-mono flex justify-between"
+  >
+    <router-link to="/transcript">Motivation University</router-link>
+    <p v-if="user">{{ user.name }}</p>
+  </div>
 </template>
 
-<script>
-import {mapState} from 'vuex'
-export default {
-  name: 'Header',
-  props: {
-    msg: String
-  },
-  methods: {
-    signOut() {
-      this.$store.dispatch('logout').then(res => {
-        this.$router.push('/')
-      })
-    }
-  },
-  computed: {
-    ...mapState(['user'])
+<style scoped>
+  .small-header-color {
+    background-color: #222; /* TODO(TOM): add to pallette */
+    border-top: #7e0a0c 4px solid;
   }
-}
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-@import '@/assets/theme.scss';
-
-nav {
-  height: 2em;
-  background: $red-tint;
-  .container {
-    padding-top: 0.2em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    a {
-      color: white;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .items {
-      a {
-        font-family: $family-monospace;
-        display: inline-block;
-        padding: 0 0 0 20px;
-      }
-    }
-  }
-  .crest {
-    height: 1.5em;
-    margin-right: 1em;
-  }
-}
-
 </style>
