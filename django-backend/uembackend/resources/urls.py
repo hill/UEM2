@@ -4,7 +4,7 @@ from rest_framework import routers
 
 from . import views
 
-router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'', views.ResourceViewSet)
+router = routers.DefaultRouter(trailing_slash=True)
+router.register(r"", views.ResourceViewSet)
 
 urlpatterns = [] + router.urls

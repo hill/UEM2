@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+djangorestframework-simplejwt = "*"
+black = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

@@ -45,9 +45,7 @@
 <template>
   <div v-if="course">
     <header class="bg-gray-300 py-3">
-      <div
-        class="grid grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 container mx-auto p-3"
-      >
+      <div class="grid grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 container mx-auto p-3">
         <CourseCard
           :code="course.code"
           :name="course.name"
@@ -76,12 +74,8 @@
       <div class="col-span-2">
         <h3 class="text-lg font-bold">Syllabus ({{ syllabusComplete }}%)</h3>
         <ul>
-          <li v-for="point in course.syllabus">
-            <Checkbox
-              class="mb-1"
-              :label="point.name"
-              v-model="point.completed"
-            />
+          <li v-for="point in course.syllabus" :key="point">
+            <Checkbox class="mb-1" :label="point.name" v-model="point.completed" />
           </li>
         </ul>
       </div>
@@ -90,17 +84,14 @@
         <div class="space-y-2">
           <div
             v-for="assessment in course.assignments"
+            :key="assessment.id"
             class="rounded-md shadow-md p-2 border-2 space-y-2"
           >
             <h3 class="text-lg text-center">{{ assessment.name }}</h3>
             <p class="text-sm">Due: {{ assessment.due }}</p>
             <p class="text-sm">Weight: {{ assessment.weight }}%</p>
             <div class="flex justify-center">
-              <Button
-                v-if="!assessment.complete"
-                label="Submit"
-                style="primary"
-              />
+              <Button v-if="!assessment.complete" label="Submit" style="primary" />
             </div>
           </div>
         </div>

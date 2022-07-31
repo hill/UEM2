@@ -4,7 +4,6 @@ import { AuthService } from "../services/api.service";
 import jwtService from "../services/jwt.service";
 import { store } from "../store";
 
-import ExampleTodo from "../ExampleTodo.vue";
 import Login from "../views/Login.vue";
 import Transcript from "../views/Transcript.vue";
 import Resources from "../views/Resources.vue";
@@ -45,18 +44,6 @@ const routes = [
     name: "Course",
     component: Course,
     meta: { requiresAuth: true },
-  },
-  {
-    path: "/about",
-    name: "About",
-    meta: { requiresAuth: false },
-    component: ExampleTodo,
-  },
-  {
-    path: "/student/:studentId",
-    name: "Student",
-    component: ExampleTodo,
-    meta: { requiresAuth: false },
   },
 ];
 
@@ -103,7 +90,7 @@ router.beforeResolve(async (to, from, next) => {
       // request a new token when it is < 2 minutes away from expiring
       try {
         const { data } = await AuthService.refresh();
-        jwtService.saveToken(data.access_token);
+        jwtService.saveToken(data.access);
         API.setHeader();
         next();
       } catch (err) {

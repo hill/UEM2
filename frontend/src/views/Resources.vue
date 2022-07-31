@@ -39,9 +39,7 @@
       },
       getFilteredTopics(text) {
         this.filteredTopics = this.topics.filter((topic) => {
-          return (
-            topic.name.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0
-          );
+          return topic.name.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
         });
       },
       submitResource() {
@@ -64,42 +62,45 @@
   };
 </script>
 <template>
-  <header class="h-32 bg-red-800">
-    <h1 class="text-4xl pt-9 text-white font-serif text-center">Resources</h1>
-    <div class="mt-8 w-3/4 sm:w-1/2 xl:w-1/3 mx-auto">
-      <input
-        placeholder="Search Learning Resources"
-        class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
-        v-model="searchTerm"
-        @keyup.enter="search()"
-      />
-      <div class="text-right mt-2">
-        <a
-          class="font-serif text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
-          @click="showNewResourceModal = true"
-        >
-          + Add Resource
-        </a>
+  <div>
+    <header class="h-32 bg-red-800">
+      <h1 class="text-4xl pt-9 text-white font-serif text-center">Resources</h1>
+      <div class="mt-8 w-3/4 sm:w-1/2 xl:w-1/3 mx-auto">
+        <input
+          placeholder="Search Learning Resources"
+          class="font-serif text-sm rounded-md border-gray-300 shadow-md p-2 w-full"
+          v-model="searchTerm"
+          @keyup.enter="search()"
+        />
+        <div class="text-right mt-2">
+          <a
+            class="font-serif text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
+            @click="showNewResourceModal = true"
+          >
+            + Add Resource
+          </a>
+        </div>
       </div>
+    </header>
+    <div class="mt-6 container mx-auto">
+      <SearchResult
+        v-for="resource in resources"
+        :name="resource.title"
+        :url="resource.url"
+        :votes="resource.votes"
+        :topics="resource.topics"
+        :id="resource.id"
+        :key="resource.id"
+      />
     </div>
-  </header>
-  <div class="mt-6 container mx-auto">
-    <SearchResult
-      v-for="resource in resources"
-      :name="resource.name"
-      :url="resource.url"
-      :votes="resource.votes"
-      :topics="resource.topics"
-      :id="resource.id"
-    />
+    <Modal v-model="showNewResourceModal">
+      <div class="bg-white rounded-lg p-2 space-y-3">
+        <h1 class="text-xl font-serif">Add Resource</h1>
+        <Field label="Title" v-model="newResource.title" />
+        <Field label="URL" type="url" v-model="newResource.url" />
+        <TagField label="Topics" v-model="newResource.topics" />
+        <Button label="add" @click="submitResource()" />
+      </div>
+    </Modal>
   </div>
-  <Modal v-model="showNewResourceModal">
-    <div class="bg-white rounded-lg p-2 space-y-3">
-      <h1 class="text-xl font-serif">Add Resource</h1>
-      <Field label="Title" v-model="newResource.title" />
-      <Field label="URL" type="url" v-model="newResource.url" />
-      <TagField label="Topics" v-model="newResource.topics" />
-      <Button label="add" @click="submitResource()" />
-    </div>
-  </Modal>
 </template>

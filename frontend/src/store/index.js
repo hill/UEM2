@@ -25,11 +25,7 @@ export const store = createStore({
     // When you need an asynchronous action alongside a mutation
     signup: ({ commit }, authCreds) => {
       return new Promise((resolve, reject) => {
-        AuthService.register(
-          authCreds.name,
-          authCreds.email,
-          authCreds.password
-        )
+        AuthService.register(authCreds.name, authCreds.email, authCreds.password)
           .then(({ data }) => {
             resolve(data);
           })
@@ -42,7 +38,8 @@ export const store = createStore({
       return new Promise((resolve, reject) => {
         AuthService.login(authCreds.email, authCreds.password)
           .then(({ data }) => {
-            JwtService.saveToken(data.access_token);
+            JwtService.saveToken(data.access);
+            JwtService.saveRefreshToken(data.refresh);
             API.setHeader();
             AuthService.getMe()
               .then((res) => {
